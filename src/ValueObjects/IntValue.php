@@ -8,6 +8,8 @@ use Runn\Validation\Validator;
 use Runn\Validation\Validators\IntValidator;
 
 /**
+ * Simple integer number  value class
+ *
  * Class IntValue
  * @package Runn\ValueObjects
  */

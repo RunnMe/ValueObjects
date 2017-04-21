@@ -8,6 +8,8 @@ use Runn\Validation\Validator;
 use Runn\Validation\Validators\StringValidator;
 
 /**
+ * Simple string value class
+ *
  * Class StringValue
  * @package Runn\ValueObjects
  */

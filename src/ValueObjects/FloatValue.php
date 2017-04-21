@@ -8,6 +8,8 @@ use Runn\Validation\Validator;
 use Runn\Validation\Validators\FloatValidator;
 
 /**
+ * Simple float number value class
+ *
  * Class FloatValue
  * @package Runn\ValueObjects
  */

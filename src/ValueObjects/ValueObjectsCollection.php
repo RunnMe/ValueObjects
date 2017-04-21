@@ -5,7 +5,7 @@ namespace Runn\ValueObjects;
 use Runn\Core\TypedCollection;
 
 /**
- * Collection of value objects
+ * Typed collection of value objects
  *
  * Class ValueObjectsCollection
  * @package Runn\ValueObjects

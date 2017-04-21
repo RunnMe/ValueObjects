@@ -2,12 +2,13 @@
 
 namespace Runn\ValueObjects;
 
-use Runn\Core\HasInnerCastingInterface;
 use Runn\Core\ObjectAsArrayInterface;
 use Runn\Core\StdGetSetInterface;
 use Runn\Core\StdGetSetTrait;
 
 /**
+ * Complex value object consists of one or more columns with values
+ *
  * Class ComplexValueObject
  * @package Runn\ValueObjects
  */

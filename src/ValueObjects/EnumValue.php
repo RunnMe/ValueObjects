@@ -6,6 +6,8 @@ use Runn\Validation\Validator;
 use Runn\Validation\Validators\EnumValidator;
 
 /**
+ * Simple enumerated value class
+ *
  * Class EnumValue
  * @package Runn\ValueObjects
  */

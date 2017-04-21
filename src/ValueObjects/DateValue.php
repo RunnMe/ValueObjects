@@ -8,6 +8,8 @@ use Runn\Validation\Validator;
 use Runn\Validation\Validators\DateValidator;
 
 /**
+ * Simple date value class
+ *
  * Class DateValue
  * @package Runn\ValueObjects
  */

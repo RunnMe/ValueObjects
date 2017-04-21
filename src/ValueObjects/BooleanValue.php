@@ -8,6 +8,8 @@ use Runn\Validation\Validator;
 use Runn\Validation\Validators\BooleanValidator;
 
 /**
+ * Simple boolean value class
+ *
  * Class BooleanValue
  * @package Runn\ValueObjects
  */
