@@ -238,6 +238,18 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
         };
     }
 
+    public function testGetValue()
+    {
+        $object = new class(['value' => 42]) extends ComplexValueObject {
+            protected static $schema = [
+                'value' => ['class' => IntValue::class]
+            ];
+        };
+        $this->assertInstanceOf(IntValue::class, $object->value);
+        $this->assertSame(42, $object->value->getValue());
+        $this->assertEquals(['value' => 42], $object->getValue());
+    }
+
     public function testIsEqual()
     {
         $object1 = new testComplexValueObject(['foo' => 42]);
