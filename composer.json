@@ -10,9 +10,9 @@
     }
   ],
   "require": {
-    "php": ">=7.1",
-    "runn/core" : "7.1.*",
-    "runn/validation" : "7.1.*"
+    "php": ">=7.2",
+    "runn/core" : "7.2.*",
+    "runn/validation" : "7.2.*"
   },
   "require-dev": {
     "phpunit/phpunit": "5.*"
