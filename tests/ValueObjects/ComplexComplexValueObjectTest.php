@@ -1,0 +1,116 @@
+<?php
+
+namespace Runn\tests\ValueObjects\ComplexValueObject;
+
+use Runn\Core\CollectionInterface;
+use Runn\Core\ObjectAsArrayInterface;
+use Runn\Core\TypedCollection;
+use Runn\ValueObjects\ComplexValueObject;
+use Runn\ValueObjects\IntValue;
+use Runn\ValueObjects\StringValue;
+use Runn\ValueObjects\ValueObjectInterface;
+use Runn\ValueObjects\ValueObjectsCollection;
+
+class InnerComplexValueObject extends ComplexValueObject {
+    protected static $schema = [
+        'baz' => ['class' => StringValue::class],
+    ];
+}
+
+class ComplexComplexValueObjectTest extends \PHPUnit_Framework_TestCase
+{
+
+    public function testValidSubComplex()
+    {
+        $object = new class([
+            'foo' => 42,
+            'bar' => new InnerComplexValueObject(['baz' => 'blabla'])
+        ]) extends ComplexValueObject {
+            protected static $schema = [
+                'foo' => ['class' => IntValue::class],
+                'bar' => ['class' => InnerComplexValueObject::class],
+            ];
+        };
+
+        $this->assertInstanceOf(ComplexValueObject::class, $object);
+        $this->assertInstanceOf(ObjectAsArrayInterface::class, $object);
+        $this->assertInstanceOf(ValueObjectInterface::class, $object);
+
+        $this->assertSame(['foo' => 42, 'bar' => ['baz' => 'blabla']], $object->getValue());
+
+        $this->assertEquals(2, count($object));
+
+        $this->assertInstanceOf(IntValue::class, $object->foo);
+        $this->assertSame(42, $object->foo->getValue());
+
+        $this->assertInstanceOf(InnerComplexValueObject::class, $object->bar);
+        $this->assertInstanceOf(ObjectAsArrayInterface::class, $object->bar);
+        $this->assertInstanceOf(ValueObjectInterface::class, $object->bar);
+
+        $this->assertInstanceOf(StringValue::class, $object->bar->baz);
+        $this->assertSame('blabla', $object->bar->baz->getValue());
+    }
+
+    public function testValidCastSubComplex()
+    {
+        $object = new class([
+
+            'foo' => 42,
+            'bar' => ['baz' => 'blabla']
+
+        ]) extends ComplexValueObject {
+            protected static $schema = [
+                'foo' => ['class' => IntValue::class],
+                'bar' => ['class' => InnerComplexValueObject::class],
+            ];
+        };
+
+        $this->assertInstanceOf(ComplexValueObject::class, $object);
+        $this->assertInstanceOf(ObjectAsArrayInterface::class, $object);
+        $this->assertInstanceOf(ValueObjectInterface::class, $object);
+
+        $this->assertSame(['foo' => 42, 'bar' => ['baz' => 'blabla']], $object->getValue());
+
+        $this->assertEquals(2, count($object));
+
+        $this->assertInstanceOf(IntValue::class, $object->foo);
+        $this->assertSame(42, $object->foo->getValue());
+
+        $this->assertInstanceOf(InnerComplexValueObject::class, $object->bar);
+        $this->assertInstanceOf(ObjectAsArrayInterface::class, $object->bar);
+        $this->assertInstanceOf(ValueObjectInterface::class, $object->bar);
+
+        $this->assertInstanceOf(StringValue::class, $object->bar->baz);
+        $this->assertSame('blabla', $object->bar->baz->getValue());
+    }
+
+    public function testValidCollection()
+    {
+        $object = new class([
+            'foo' => 42,
+            'bar' => new class([new IntValue(1), new IntValue(2), new IntValue(3)]) extends ValueObjectsCollection {}
+        ]) extends ComplexValueObject {
+            protected static $schema = [
+                'foo' => ['class' => IntValue::class],
+                'bar' => ['class' => ValueObjectsCollection::class],
+            ];
+        };
+
+        $this->assertInstanceOf(ComplexValueObject::class, $object);
+        $this->assertInstanceOf(ObjectAsArrayInterface::class, $object);
+        $this->assertInstanceOf(ValueObjectInterface::class, $object);
+
+        $this->assertSame(['foo' => 42, 'bar' => [1, 2, 3]], $object->getValue());
+
+        $this->assertEquals(2, count($object));
+
+        $this->assertInstanceOf(IntValue::class, $object->foo);
+        $this->assertSame(42, $object->foo->getValue());
+
+        $this->assertInstanceOf(CollectionInterface::class, $object->bar);
+        $this->assertInstanceOf(TypedCollection::class, $object->bar);
+
+        $this->assertEquals([new IntValue(1), new IntValue(2), new IntValue(3)], $object->bar->toArray());
+    }
+
+}
