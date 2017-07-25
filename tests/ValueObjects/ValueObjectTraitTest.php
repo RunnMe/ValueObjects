@@ -13,19 +13,50 @@ class ValueObjectTraitTest
     extends \PHPUnit_Framework_TestCase
 {
 
+    public function testEmptyContsruct()
+    {
+        $obj = new class implements ValueObjectInterface {
+            use ValueObjectTrait;
+        };
+        $this->assertNull($obj->getValue());
+        $this->assertNull($obj());
+    }
+
+    public function testNullConstruct()
+    {
+        $obj = new class(null) implements ValueObjectInterface {
+            use ValueObjectTrait;
+        };
+        $this->assertNull($obj->getValue());
+        $this->assertNull($obj());
+    }
+
     public function testConstructGetValue()
     {
         $obj = new class(42) implements ValueObjectInterface {
             use ValueObjectTrait;
         };
         $this->assertSame(42, $obj->getValue());
+        $this->assertSame(42, $obj());
     }
 
-    public function testNew()
+    public function testNewStatic()
     {
         $obj = testClass::new(12);
+
         $this->assertInstanceOf(testClass::class, $obj);
         $this->assertSame(12, $obj->getValue());
+        $this->assertSame(12, $obj());
+    }
+
+    public function testNewDynamic()
+    {
+        $obj1 = testClass::new('foo');
+        $obj2 = $obj1->new('bar');
+
+        $this->assertSame(get_class($obj2), get_class($obj1));
+        $this->assertNotSame($obj2, $obj1);
+        $this->assertNotEquals($obj2, $obj1);
     }
 
     public function testIsSame()
