@@ -4,8 +4,8 @@ namespace Runn\tests\ValueObjects\Entity;
 
 use Runn\ValueObjects\ComplexValueObject;
 use Runn\ValueObjects\Entity;
-use Runn\ValueObjects\IntValue;
-use Runn\ValueObjects\StringValue;
+use Runn\ValueObjects\Values\IntValue;
+use Runn\ValueObjects\Values\StringValue;
 use Runn\ValueObjects\ValueObjectInterface;
 
 class testEntity extends Entity{

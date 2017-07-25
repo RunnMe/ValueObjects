@@ -5,8 +5,8 @@ namespace Runn\tests\ValueObjects\ValueObjectsCollection;
 use Runn\Core\CollectionInterface;
 use Runn\Core\TypedCollection;
 use Runn\Core\TypedCollectionInterface;
-use Runn\ValueObjects\IntValue;
-use Runn\ValueObjects\StringValue;
+use Runn\ValueObjects\Values\IntValue;
+use Runn\ValueObjects\Values\StringValue;
 use Runn\ValueObjects\ValueObjectsCollection;
 
 class testValueObjectsCollection extends ValueObjectsCollection {

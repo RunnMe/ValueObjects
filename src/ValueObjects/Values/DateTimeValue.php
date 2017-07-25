@@ -1,19 +1,20 @@
 <?php
 
-namespace Runn\ValueObjects;
+namespace Runn\ValueObjects\Values;
 
 use Runn\Sanitization\Sanitizer;
-use Runn\Sanitization\Sanitizers\DateSanitizer;
+use Runn\Sanitization\Sanitizers\DateTimeSanitizer;
 use Runn\Validation\Validator;
-use Runn\Validation\Validators\DateValidator;
+use Runn\Validation\Validators\DateTimeValidator;
+use Runn\ValueObjects\SingleValueObject;
 
 /**
- * Simple date value class
+ * Simple date and time value class
  *
- * Class DateValue
- * @package Runn\ValueObjects
+ * Class DateTimeValue
+ * @package Runn\ValueObjects\Values
  */
-class DateValue
+class DateTimeValue
     extends SingleValueObject
 {
 
@@ -22,7 +23,7 @@ class DateValue
      */
     protected function getDefaultValidator(): Validator
     {
-        return new DateValidator();
+        return new DateTimeValidator();
     }
 
     /**
@@ -30,7 +31,7 @@ class DateValue
      */
     protected function getDefaultSanitizer(): Sanitizer
     {
-        return new DateSanitizer();
+        return new DateTimeSanitizer();
     }
 
     /**
@@ -38,7 +39,7 @@ class DateValue
      */
     public function getValue()
     {
-        return parent::getValue()->format('Y-m-d');
+        return parent::getValue()->format('c');
     }
 
 }

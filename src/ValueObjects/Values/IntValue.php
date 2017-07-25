@@ -1,19 +1,20 @@
 <?php
 
-namespace Runn\ValueObjects;
+namespace Runn\ValueObjects\Values;
 
 use Runn\Sanitization\Sanitizer;
-use Runn\Sanitization\Sanitizers\BooleanSanitizer;
+use Runn\Sanitization\Sanitizers\IntSanitizer;
 use Runn\Validation\Validator;
-use Runn\Validation\Validators\BooleanValidator;
+use Runn\Validation\Validators\IntValidator;
+use Runn\ValueObjects\SingleValueObject;
 
 /**
- * Simple boolean value class
+ * Simple integer number value class
  *
- * Class BooleanValue
- * @package Runn\ValueObjects
+ * Class IntValue
+ * @package Runn\ValueObjects\Values
  */
-class BooleanValue
+class IntValue
     extends SingleValueObject
 {
 
@@ -22,7 +23,7 @@ class BooleanValue
      */
     protected function getDefaultValidator(): Validator
     {
-        return new BooleanValidator();
+        return new IntValidator();
     }
 
     /**
@@ -30,7 +31,7 @@ class BooleanValue
      */
     protected function getDefaultSanitizer(): Sanitizer
     {
-        return new BooleanSanitizer();
+        return new IntSanitizer();
     }
 
 }

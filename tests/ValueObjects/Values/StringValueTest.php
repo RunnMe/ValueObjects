@@ -1,8 +1,8 @@
 <?php
 
-namespace Runn\tests\ValueObjects\StringValue;
+namespace Runn\tests\ValueObjects\Values\StringValue;
 
-use Runn\ValueObjects\StringValue;
+use Runn\ValueObjects\Values\StringValue;
 use Runn\ValueObjects\SingleValueObject;
 
 class StringValueTest extends \PHPUnit_Framework_TestCase

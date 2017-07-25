@@ -5,8 +5,8 @@ namespace Runn\tests\ValueObjects\ComplexValueObject;
 
 use Runn\Core\ObjectAsArrayInterface;
 use Runn\ValueObjects\ComplexValueObject;
-use Runn\ValueObjects\IntValue;
-use Runn\ValueObjects\StringValue;
+use Runn\ValueObjects\Values\IntValue;
+use Runn\ValueObjects\Values\StringValue;
 use Runn\ValueObjects\ValueObjectInterface;
 
 class testComplexValueObject extends ComplexValueObject {
