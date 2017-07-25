@@ -34,7 +34,7 @@ abstract class SimpleValueObject
      * @param $value
      * @param \Runn\Validation\Validator|null $validator
      * @param \Runn\Sanitization\Sanitizer|null $sanitizer
-     * @throws \Runn\Validation\ValidationError
+     * @throws ValidationError
      */
     public function __construct($value = null, Validator $validator = null, Sanitizer $sanitizer = null)
     {

@@ -21,6 +21,13 @@ class ValueObjectTraitTest
         $this->assertSame(42, $obj->getValue());
     }
 
+    public function testNew()
+    {
+        $obj = testClass::new(12);
+        $this->assertInstanceOf(testClass::class, $obj);
+        $this->assertSame(12, $obj->getValue());
+    }
+
     public function testIsSame()
     {
         $obj1 = new class(24) implements ValueObjectInterface {

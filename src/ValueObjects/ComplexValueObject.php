@@ -34,9 +34,20 @@ abstract class ComplexValueObject
     }
 
     /**
+     * "Static constructor"
+     * @param mixed $value
+     * @return self
+     */
+    public static function new($value = null)
+    {
+        return new static($value);
+    }
+
+    /**
      * Std constructor.
-     * @param iterable|null $data
-     * @throws \Runn\ValueObjects\Exception
+     * @param null $value
+     * @throws Exception
+     * @internal param iterable|null $data
      */
     public function __construct(/*iterable */$data = null)
     {

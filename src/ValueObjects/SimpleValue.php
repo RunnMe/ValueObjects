@@ -17,9 +17,9 @@ abstract class SimpleValue
     /**
      * @return static
      */
-    public static function new(...$args)
+    public static function new($value = null)
     {
-        return new static(...$args);
+        return new static($value);
     }
 
     /**

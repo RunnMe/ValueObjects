@@ -21,6 +21,16 @@ abstract class ValueObjectsCollection
     }
 
     /**
+     * "Static constructor"
+     * @param mixed $value
+     * @return self
+     */
+    public static function new($value = null)
+    {
+        return new static($value);
+    }
+
+    /**
      * Does value need cast to this (or another) class?
      * @param mixed $value
      * @return bool

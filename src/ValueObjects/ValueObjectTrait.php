@@ -16,9 +16,19 @@ trait ValueObjectTrait
     protected $value;
 
     /**
+     * "Static constructor"
+     * @param mixed $value
+     * @return self
+     */
+    public static function new($value = null)
+    {
+        return new static($value);
+    }
+
+    /**
      * @param mixed $value
      */
-    public function __construct($value)
+    public function __construct($value = null)
     {
         $this->value = $value;
     }

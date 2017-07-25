@@ -3,7 +3,7 @@
 namespace Runn\ValueObjects;
 
 /**
- * Common interface for Simple and Complex Value Objects
+ * Common interface for Single and Complex Value Objects
  *
  * Interface ValueObjectInterface
  * @package Runn\ValueObjects
@@ -14,10 +14,17 @@ interface ValueObjectInterface
 {
 
     /**
+     * "Static constructor"
+     * @param mixed $value
+     * @return self
+     */
+    public static function new($value = null);
+
+    /**
      * ValueObjectInterface constructor.
      * @param mixed $value
      */
-    public function __construct($value);
+    public function __construct($value = null);
 
     /**
      * @return mixed
