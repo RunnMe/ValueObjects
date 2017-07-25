@@ -30,7 +30,17 @@ trait ValueObjectTrait
      */
     public function __construct($value = null)
     {
+        $this->setValue($value);
+    }
+
+    /**
+     * @param mixed $value
+     * @return $this
+     */
+    protected function setValue($value)
+    {
         $this->value = $value;
+        return $this;
     }
 
     /**

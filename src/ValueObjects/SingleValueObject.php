@@ -18,9 +18,7 @@ abstract class SingleValueObject
     implements ValueObjectInterface, \JsonSerializable
 {
 
-    use ValueObjectTrait {
-        __construct as trait__construct;
-    }
+    use ValueObjectTrait;
 
     /**
      * @var \Runn\Validation\Validator
@@ -43,12 +41,22 @@ abstract class SingleValueObject
     {
         $this->validator = $validator ?: $this->getDefaultValidator();
         $this->sanitizer = $sanitizer ?: $this->getDefaultSanitizer();
+        $this->setValue($value);
+    }
 
+    /**
+     * @param mixed $value
+     * @return $this
+     * @throws \Runn\Validation\ValidationError
+     */
+    protected function setValue($value)
+    {
         $success = $this->validator->validate($value);
         if (!$success) {
             throw new ValidationError($value, 'Value object validation error');
         }
-        $this->trait__construct($this->sanitizer->sanitize($value));
+        $this->value = $this->sanitizer->sanitize($value);
+        return $this;
     }
 
     /**
