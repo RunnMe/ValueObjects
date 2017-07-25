@@ -42,6 +42,14 @@ trait ValueObjectTrait
     }
 
     /**
+     * @return mixed
+     */
+    public function __invoke()
+    {
+        return $this->getValue();
+    }
+
+    /**
      * @param \Runn\ValueObjects\ValueObjectInterface $value
      * @return bool
      */

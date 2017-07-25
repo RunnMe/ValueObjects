@@ -14,7 +14,7 @@ use Runn\Validation\Validators\FloatValidator;
  * @package Runn\ValueObjects
  */
 class FloatValue
-    extends SimpleValueObject
+    extends SingleValueObject
 {
 
     /**

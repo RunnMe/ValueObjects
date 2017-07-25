@@ -14,7 +14,7 @@ use Runn\Validation\Validators\DateTimeValidator;
  * @package Runn\ValueObjects
  */
 class DateTimeValue
-    extends SimpleValueObject
+    extends SingleValueObject
 {
 
     /**

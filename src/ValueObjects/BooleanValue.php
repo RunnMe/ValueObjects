@@ -14,7 +14,7 @@ use Runn\Validation\Validators\BooleanValidator;
  * @package Runn\ValueObjects
  */
 class BooleanValue
-    extends SimpleValueObject
+    extends SingleValueObject
 {
 
     /**

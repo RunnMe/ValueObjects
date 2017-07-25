@@ -32,6 +32,11 @@ interface ValueObjectInterface
     public function getValue();
 
     /**
+     * @return mixed
+     */
+    public function __invoke();
+
+    /**
      * @param \Runn\ValueObjects\ValueObjectInterface $object
      * @return bool
      */

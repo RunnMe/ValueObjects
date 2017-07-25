@@ -14,7 +14,7 @@ use Runn\Validation\Validators\StringValidator;
  * @package Runn\ValueObjects
  */
 class StringValue
-    extends SimpleValueObject
+    extends SingleValueObject
 {
 
     /**

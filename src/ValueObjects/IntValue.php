@@ -14,7 +14,7 @@ use Runn\Validation\Validators\IntValidator;
  * @package Runn\ValueObjects
  */
 class IntValue
-    extends SimpleValueObject
+    extends SingleValueObject
 {
 
     /**

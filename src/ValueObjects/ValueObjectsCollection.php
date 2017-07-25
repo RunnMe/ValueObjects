@@ -62,6 +62,15 @@ abstract class ValueObjectsCollection
     }
 
     /**
+     * @deprecated use trait!
+     * @return mixed
+     */
+    public function __invoke()
+    {
+        return $this->getValue();
+    }
+
+    /**
      * @param \Runn\ValueObjects\ValueObjectInterface $object
      * @return bool
      */

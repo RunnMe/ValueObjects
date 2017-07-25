@@ -9,15 +9,18 @@ use Runn\Validation\Validator;
 use Runn\Validation\Validators\PassThruValidator;
 
 /**
- * Abstract simple Value Object
+ * Abstract single Value Object
  *
- * Class SimpleValueObject
+ * Class SingleValueObject
  * @package Runn\ValueObjects
  */
-abstract class SimpleValueObject
-    extends SimpleValue
-    implements ValueObjectInterface
+abstract class SingleValueObject
+    implements ValueObjectInterface, \JsonSerializable
 {
+
+    use ValueObjectTrait {
+        __construct as trait__construct;
+    }
 
     /**
      * @var \Runn\Validation\Validator
@@ -45,8 +48,7 @@ abstract class SimpleValueObject
         if (!$success) {
             throw new ValidationError($value, 'Value object validation error');
         }
-
-        parent::__construct($this->sanitizer->sanitize($value));
+        $this->trait__construct($this->sanitizer->sanitize($value));
     }
 
     /**
@@ -66,12 +68,12 @@ abstract class SimpleValueObject
     }
 
     /**
-     * @param \Runn\ValueObjects\ValueObjectInterface $object
-     * @return bool
+     * JsonSerializable implementation
+     * @return mixed
      */
-    public function isSame(ValueObjectInterface $object): bool
+    public function jsonSerialize()
     {
-        return (get_class($object) === get_class($this)) && ($object->getValue() === $this->getValue());
+        return $this->getValue();
     }
 
 }

@@ -12,7 +12,7 @@ use Runn\Validation\Validators\EnumValidator;
  * @package Runn\ValueObjects
  */
 abstract class EnumValue
-    extends SimpleValueObject
+    extends SingleValueObject
 {
 
     const VALUES = [];
