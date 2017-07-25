@@ -27,9 +27,15 @@ interface EntityInterface
     public function getPrimaryKey();
 
     /**
-     * @param \Runn\ValueObjects\EntityInterface $value
+     * @param \Runn\ValueObjects\ValueObjectInterface $object
      * @return bool
      */
-    public function isSame(self $value): bool;
+    public function isSame(ValueObjectInterface $object): bool;
+
+    /**
+     * @param \Runn\ValueObjects\EntityInterface $object
+     * @return bool
+     */
+    public function isEqual(EntityInterface $object): bool;
 
 }

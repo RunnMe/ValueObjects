@@ -14,14 +14,20 @@ interface ValueObjectInterface
 {
 
     /**
+     * ValueObjectInterface constructor.
+     * @param mixed $value
+     */
+    public function __construct($value);
+
+    /**
      * @return mixed
      */
     public function getValue();
 
     /**
-     * @param \Runn\ValueObjects\ValueObjectInterface $value
+     * @param \Runn\ValueObjects\ValueObjectInterface $object
      * @return bool
      */
-    public function isEqual(self $value): bool;
+    public function isSame(ValueObjectInterface $object): bool;
 
 }

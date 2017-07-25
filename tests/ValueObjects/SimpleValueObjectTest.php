@@ -120,22 +120,22 @@ class SimpleValueObjectTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(84, $valueObject->getValue());
     }
 
-    public function testIsEqual()
+    public function testIsSame()
     {
         $value1 = new IntValue(42);
-        $this->assertTrue($value1->isEqual($value1));
+        $this->assertTrue($value1->isSame($value1));
 
         $value2 = new StringValue(42);
-        $this->assertFalse($value1->isEqual($value2));
-        $this->assertFalse($value2->isEqual($value1));
+        $this->assertFalse($value1->isSame($value2));
+        $this->assertFalse($value2->isSame($value1));
 
         $value2 = new IntValue(24);
-        $this->assertFalse($value1->isEqual($value2));
-        $this->assertFalse($value2->isEqual($value1));
+        $this->assertFalse($value1->isSame($value2));
+        $this->assertFalse($value2->isSame($value1));
 
         $value2 = new IntValue(42);
-        $this->assertTrue($value1->isEqual($value2));
-        $this->assertTrue($value2->isEqual($value1));
+        $this->assertTrue($value1->isSame($value2));
+        $this->assertTrue($value2->isSame($value1));
     }
 
 }

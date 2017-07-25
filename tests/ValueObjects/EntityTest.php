@@ -70,25 +70,25 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(['first' => 1, 'second' => 2], $entity->getPrimaryKey());
     }
 
-    public function testIsEqual()
+    public function testIsSame()
     {
         $entity1 = new testEntity(['__id' => 1, 'foo' => 'bar']);
-        $this->assertTrue($entity1->isEqual($entity1));
+        $this->assertTrue($entity1->isSame($entity1));
 
         $entity2 = new class(['__id' => 1, 'foo' => 'bar']) extends Entity { protected static $schema = [
             '__id' => ['class' => IntValue::class],
             'foo'  => ['class' => StringValue::class],
         ];};
-        $this->assertFalse($entity1->isEqual($entity2));
-        $this->assertFalse($entity2->isEqual($entity1));
+        $this->assertFalse($entity1->isSame($entity2));
+        $this->assertFalse($entity2->isSame($entity1));
 
         $entity2 = new testEntity(['__id' => 2, 'foo' => 'bar']);
-        $this->assertFalse($entity1->isEqual($entity2));
-        $this->assertFalse($entity2->isEqual($entity1));
+        $this->assertFalse($entity1->isSame($entity2));
+        $this->assertFalse($entity2->isSame($entity1));
 
         $entity2 = new testEntity(['__id' => 1, 'foo' => 'baz']);
-        $this->assertTrue($entity1->isEqual($entity2));
-        $this->assertTrue($entity2->isEqual($entity1));
+        $this->assertTrue($entity1->isSame($entity2));
+        $this->assertTrue($entity2->isSame($entity1));
     }
 
     /**

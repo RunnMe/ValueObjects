@@ -37,12 +37,12 @@ abstract class Entity
     }
 
     /**
-     * @param \Runn\ValueObjects\ValueObjectInterface $value
+     * @param \Runn\ValueObjects\ValueObjectInterface $object
      * @return bool
      */
-    public function isEqual(ValueObjectInterface $value): bool
+    public function isSame(ValueObjectInterface $object): bool
     {
-        return (get_class($value) === get_class($this)) && ($value->getPrimaryKey() == $this->getPrimaryKey());
+        return (get_class($object) === get_class($this)) && ($object->getPrimaryKey() == $this->getPrimaryKey());
     }
 
     public static function getValueObjectClass()

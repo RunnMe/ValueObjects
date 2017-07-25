@@ -250,26 +250,26 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(['value' => 42], $object->getValue());
     }
 
-    public function testIsEqual()
+    public function testIsSame()
     {
         $object1 = new testComplexValueObject(['foo' => 42]);
-        $this->assertTrue($object1->isEqual($object1));
+        $this->assertTrue($object1->isSame($object1));
 
         $object2 = new class(['foo' => 42]) extends ComplexValueObject {
             protected static $schema = [
                 'foo' => ['class' => IntValue::class]
             ];
         };
-        $this->assertFalse($object1->isEqual($object2));
-        $this->assertFalse($object2->isEqual($object1));
+        $this->assertFalse($object1->isSame($object2));
+        $this->assertFalse($object2->isSame($object1));
 
         $object2 = new testComplexValueObject(['foo' => 24]);
-        $this->assertFalse($object1->isEqual($object2));
-        $this->assertFalse($object2->isEqual($object1));
+        $this->assertFalse($object1->isSame($object2));
+        $this->assertFalse($object2->isSame($object1));
 
         $object2 = new testComplexValueObject(['foo' => 42]);
-        $this->assertTrue($object1->isEqual($object2));
-        $this->assertTrue($object2->isEqual($object1));
+        $this->assertTrue($object1->isSame($object2));
+        $this->assertTrue($object2->isSame($object1));
     }
 
     public function testJson()
