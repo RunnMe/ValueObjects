@@ -29,7 +29,7 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Runn\ValueObjects\Exception
-     * @expectedExceptionMessage Invalid complex value object member "foo"
+     * @expectedExceptionMessage Invalid complex value object field "foo"
      */
     public function testEmptyComplexObjectInvalidKey()
     {
@@ -38,9 +38,9 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Runn\ValueObjects\Exception
-     * @expectedExceptionMessage Missing complex value object member "foo"
+     * @expectedExceptionMessage Missing complex value object field "foo"
      */
-    public function testComplexObjectMissingMember()
+    public function testComplexObjectMissingField()
     {
         $object = new class extends ComplexValueObject {
             protected static $schema = [
@@ -49,7 +49,7 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
         };
     }
 
-    public function testValidConstructOneMember()
+    public function testValidConstructOneField()
     {
         $object = new class(['foo' => 42]) extends ComplexValueObject {
             protected static $schema = [
@@ -78,7 +78,7 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(42, $object->foo->getValue());
     }
 
-    public function testValidConstructManyMembers()
+    public function testValidConstructManyFields()
     {
         $object = new class(['foo' => 42, 'bar' => 'baz']) extends ComplexValueObject {
             protected static $schema = [
@@ -172,7 +172,7 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Runn\ValueObjects\Exception
-     * @expectedExceptionMessage Missing complex value object member "foo"
+     * @expectedExceptionMessage Missing complex value object field "foo"
      */
     public function testValidConstructWithoutDefault()
     {
@@ -186,9 +186,9 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Runn\ValueObjects\Exception
-     * @expectedExceptionMessage Invalid complex value object member "baz"
+     * @expectedExceptionMessage Invalid complex value object field "baz"
      */
-    public function testInvalidMemberConstruct()
+    public function testInvalidFieldConstruct()
     {
         $object = new class(['baz' => 'blablabla']) extends ComplexValueObject {
             protected static $schema = [
@@ -200,9 +200,9 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Runn\ValueObjects\Exception
-     * @expectedExceptionMessage Invalid complex value object member "baz"
+     * @expectedExceptionMessage Invalid complex value object field "baz"
      */
-    public function testInvalidMemberSet()
+    public function testInvalidFieldSet()
     {
         $object = new class(['baz' => 'blablabla']) extends ComplexValueObject {
             protected static $schema = [
@@ -214,9 +214,9 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Runn\ValueObjects\Exception
-     * @expectedExceptionMessage Empty complex value object member "foo" class
+     * @expectedExceptionMessage Empty complex value object field "foo" class
      */
-    public function testEmptyMemberClassConstruct()
+    public function testEmptyFieldClassConstruct()
     {
         $object = new class(['foo' => 42]) extends ComplexValueObject {
             protected static $schema = [
@@ -227,9 +227,9 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Runn\ValueObjects\Exception
-     * @expectedExceptionMessage Invalid complex value object member "foo" class
+     * @expectedExceptionMessage Invalid complex value object field "foo" class
      */
-    public function testInvalidMemberClassConstruct()
+    public function testInvalidFieldClassConstruct()
     {
         $object = new class(['foo' => 42]) extends ComplexValueObject {
             protected static $schema = [

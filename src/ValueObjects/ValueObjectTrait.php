@@ -13,7 +13,10 @@ namespace Runn\ValueObjects;
 trait ValueObjectTrait
 {
 
-    protected $value;
+    protected $__value;
+
+    protected $__notsetters = ['value'];
+    protected $__notgetters = ['value'];
 
     /**
      * "Static constructor"
@@ -39,7 +42,7 @@ trait ValueObjectTrait
      */
     protected function setValue($value)
     {
-        $this->value = $value;
+        $this->__value = $value;
         return $this;
     }
 
@@ -48,7 +51,7 @@ trait ValueObjectTrait
      */
     public function getValue()
     {
-        return $this->value;
+        return $this->__value;
     }
 
     /**

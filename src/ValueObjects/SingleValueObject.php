@@ -55,7 +55,7 @@ abstract class SingleValueObject
         if (!$success) {
             throw new ValidationError($value, 'Value object validation error');
         }
-        $this->value = $this->sanitizer->sanitize($value);
+        $this->__value = $this->sanitizer->sanitize($value);
         return $this;
     }
 

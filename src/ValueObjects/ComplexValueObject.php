@@ -11,14 +11,15 @@ use Runn\Core\StdGetSetTrait;
  *
  * Class ComplexValueObject
  * @package Runn\ValueObjects
+ *
  */
 abstract class ComplexValueObject
-    implements ObjectAsArrayInterface, StdGetSetInterface, ValueObjectInterface
+    implements ValueObjectInterface, ObjectAsArrayInterface, StdGetSetInterface
 {
 
-    use StdGetSetTrait {
-        innerGet as protected traitInnerGet;
-    }
+    use ValueObjectTrait;
+
+    use StdGetSetTrait;
 
     /**
      * @var array
@@ -34,27 +35,18 @@ abstract class ComplexValueObject
     }
 
     /**
-     * "Static constructor"
-     * @param mixed $value
-     * @return self
-     */
-    public static function new($value = null)
-    {
-        return new static($value);
-    }
-
-    /**
      * Std constructor.
-     * @param null $value
-     * @throws Exception
-     * @internal param iterable|null $data
+     *
+     * @todo: use setValue()
+     *
+     * @param iterable|null $data
+     * @throws \Runn\ValueObjects\Exception
      */
     public function __construct(/*iterable */$data = null)
     {
         if (null !== $data) {
             $this->fromArray($data);
         }
-
         foreach (static::getSchema() as $key => $schema) {
             if (!isset($this->$key)) {
                 if (array_key_exists('default', $schema)) {
@@ -64,7 +56,7 @@ abstract class ComplexValueObject
                     }
                     $this->innerSet($key, $default);
                 } else {
-                    throw new Exception('Missing complex value object member "' . $key . '"');
+                    throw new Exception('Missing complex value object field "' . $key . '"');
                 }
             }
         }
@@ -93,29 +85,20 @@ abstract class ComplexValueObject
     protected function innerCast($key, $value)
     {
         if (!array_key_exists($key, static::getSchema())) {
-            throw new Exception('Invalid complex value object member "' . $key . '"');
+            throw new Exception('Invalid complex value object field "' . $key . '"');
         }
 
         if (empty(static::getSchema()[$key]['class'])) {
-            throw new Exception('Empty complex value object member "' . $key . '" class');
+            throw new Exception('Empty complex value object field "' . $key . '" class');
         }
 
         $class = static::getSchema()[$key]['class'];
 
         if (!is_subclass_of($class, ValueObjectInterface::class)) {
-            throw new Exception('Invalid complex value object member "' . $key . '" class');
+            throw new Exception('Invalid complex value object field "' . $key . '" class');
         }
 
         return new $class($value);
-    }
-
-    protected function innerGet($key)
-    {
-        if (in_array($key, ['value'], true)) {
-            return $this->__data[$key] ?? null;
-        } else {
-            return $this->traitInnerGet($key);
-        }
     }
 
     /**
@@ -131,26 +114,9 @@ abstract class ComplexValueObject
     }
 
     /**
-     * @deprecated use trait!
-     * @return mixed
-     */
-    public function __invoke()
-    {
-        return $this->getValue();
-    }
-
-    /**
-     * @param \Runn\ValueObjects\ValueObjectInterface $object
-     * @return bool
-     */
-    public function isSame(ValueObjectInterface $object): bool
-    {
-        return (get_class($object) === get_class($this)) && ($object->getValue() === $this->getValue());
-    }
-
-    /**
+     * JsonSerializable implementation
      * Is used to avoid null values serialization
-     * @return array|ø
+     * @return array|null
      */
     public function jsonSerialize()
     {
