@@ -22,7 +22,7 @@ interface EntityInterface
 
     /**
      * This method can return either single scalar value or an array consisting of all PK fields' values
-     * @return mixed
+     * @return mixed|array
      */
     public function getPrimaryKey();
 
