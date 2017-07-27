@@ -29,7 +29,7 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Runn\ValueObjects\Exception
-     * @expectedExceptionMessage Invalid complex value object field "foo"
+     * @expectedExceptionMessage Invalid complex value object field key: "foo"
      */
     public function testEmptyComplexObjectInvalidKey()
     {
@@ -186,7 +186,7 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Runn\ValueObjects\Exception
-     * @expectedExceptionMessage Invalid complex value object field "baz"
+     * @expectedExceptionMessage Invalid complex value object field key: "baz"
      */
     public function testInvalidFieldConstruct()
     {
@@ -200,7 +200,7 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Runn\ValueObjects\Exception
-     * @expectedExceptionMessage Invalid complex value object field "baz"
+     * @expectedExceptionMessage Invalid complex value object field key: "baz"
      */
     public function testInvalidFieldSet()
     {

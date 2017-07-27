@@ -34,23 +34,27 @@ abstract class ComplexValueObject
         return static::$schema;
     }
 
-    /**
-     * Std constructor.
-     *
-     * @todo: use setValue()
-     *
-     * @param iterable|null $data
-     * @throws \Runn\ValueObjects\Exception
-     */
-    public function __construct(/*iterable */$data = null)
+    protected function setValue(/*iterable */$data = null)
     {
-        if (null !== $data) {
-            $this->fromArray($data);
+        $schema = static::getSchema();
+        if (empty($data)) {
+            $data = [];
         }
-        foreach (static::getSchema() as $key => $schema) {
+
+        foreach ($data as $key => $val) {
+            if (!array_key_exists($key, $schema)) {
+                throw new Exception('Invalid complex value object field key: "' . $key . '"');
+            }
+            if ($this->needCasting($key, $val)) {
+                $val = $this->innerCast($key, $val);
+            }
+            $this->innerSet($key, $val);
+        }
+
+        foreach ($schema as $key => $field) {
             if (!isset($this->$key)) {
-                if (array_key_exists('default', $schema)) {
-                    $default = $schema['default'];
+                if (array_key_exists('default', $field)) {
+                    $default = $field['default'];
                     if (null !== $default && $this->needCasting($key, $default)) {
                         $default = $this->innerCast($key, $default);
                     }
@@ -85,7 +89,7 @@ abstract class ComplexValueObject
     protected function innerCast($key, $value)
     {
         if (!array_key_exists($key, static::getSchema())) {
-            throw new Exception('Invalid complex value object field "' . $key . '"');
+            throw new Exception('Invalid complex value object field key: "' . $key . '"');
         }
 
         if (empty(static::getSchema()[$key]['class'])) {
