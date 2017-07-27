@@ -7,7 +7,7 @@ use Runn\Core\StdGetSetInterface;
 use Runn\Core\StdGetSetTrait;
 
 /**
- * Complex value object consists of one or more columns with values
+ * Complex value object consists of one or more fields with values
  *
  * Class ComplexValueObject
  * @package Runn\ValueObjects

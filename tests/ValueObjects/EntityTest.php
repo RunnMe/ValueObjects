@@ -30,7 +30,7 @@ class testValueObject2 extends ComplexValueObject {
 class EntityTest extends \PHPUnit_Framework_TestCase
 {
 
-    public function testPkColumns()
+    public function testPkFields()
     {
         $entity = new class extends Entity {const PK_FIELDS = [];};
 
