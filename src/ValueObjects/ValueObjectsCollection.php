@@ -15,19 +15,38 @@ abstract class ValueObjectsCollection
     implements ValueObjectInterface
 {
 
+    use ValueObjectTrait;
+
+    /**
+     * @param iterable|null $data
+     */
+    public function __construct(/* iterable */$data = null)
+    {
+        parent::__construct($data);
+    }
+
+    /**
+     * @return string
+     */
     public static function getType()
     {
         return ValueObjectInterface::class;
     }
 
     /**
-     * "Static constructor"
-     * @param mixed $value
-     * @return self
+     * @return array
      */
-    public static function new($value = null)
+    protected function notgetters(): array
     {
-        return new static($value);
+        return ['type', 'value'];
+    }
+
+    /**
+     * @return array
+     */
+    protected function notsetters(): array
+    {
+        return ['value'];
     }
 
     /**
@@ -59,24 +78,6 @@ abstract class ValueObjectsCollection
             $ret[$key] = null !== $el ? $el->getValue() : null;
         }
         return $ret;
-    }
-
-    /**
-     * @deprecated use trait!
-     * @return mixed
-     */
-    public function __invoke()
-    {
-        return $this->getValue();
-    }
-
-    /**
-     * @param \Runn\ValueObjects\ValueObjectInterface $object
-     * @return bool
-     */
-    public function isSame(ValueObjectInterface $object): bool
-    {
-        return (get_class($object) === get_class($this)) && ($object->getValue() === $this->getValue());
     }
 
 }
