@@ -15,8 +15,21 @@ trait ValueObjectTrait
 
     protected $__value;
 
-    protected $__notsetters = ['value'];
-    protected $__notgetters = ['value'];
+    /**
+     * @return array
+     */
+    protected function notgetters(): array
+    {
+        return ['value'];
+    }
+
+    /**
+     * @return array
+     */
+    protected function notsetters(): array
+    {
+        return ['value'];
+    }
 
     /**
      * "Static constructor"

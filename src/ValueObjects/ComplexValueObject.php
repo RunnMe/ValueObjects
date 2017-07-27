@@ -17,9 +17,12 @@ abstract class ComplexValueObject
     implements ValueObjectInterface, ObjectAsArrayInterface, StdGetSetInterface
 {
 
-    use ValueObjectTrait;
+    use ValueObjectTrait, StdGetSetTrait
+    {
+        ValueObjectTrait::notgetters insteadof StdGetSetTrait;
+        ValueObjectTrait::notsetters insteadof StdGetSetTrait;
+    }
 
-    use StdGetSetTrait;
 
     /**
      * @var array
