@@ -1,20 +1,21 @@
 <?php
 
-namespace Runn\ValueObjects;
+namespace Runn\ValueObjects\Values;
 
 use Runn\Sanitization\Sanitizer;
 use Runn\Sanitization\Sanitizers\StringSanitizer;
 use Runn\Validation\Validator;
 use Runn\Validation\Validators\StringValidator;
+use Runn\ValueObjects\SingleValueObject;
 
 /**
  * Simple string value class
  *
  * Class StringValue
- * @package Runn\ValueObjects
+ * @package Runn\ValueObjects\Values
  */
 class StringValue
-    extends SimpleValueObject
+    extends SingleValueObject
 {
 
     /**

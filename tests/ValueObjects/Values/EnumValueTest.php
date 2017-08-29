@@ -1,8 +1,8 @@
 <?php
 
-namespace Runn\tests\ValueObjects\IntValue;
+namespace Runn\tests\ValueObjects\Values\IntValue;
 
-use Runn\ValueObjects\EnumValue;
+use Runn\ValueObjects\Values\EnumValue;
 
 class EnumValueTest extends \PHPUnit_Framework_TestCase
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace Runn\tests\ValueObjects\FloatValue;
+namespace Runn\tests\ValueObjects\Values\FloatValue;
 
-use Runn\ValueObjects\FloatValue;
+use Runn\ValueObjects\Values\FloatValue;
 
 class FloatValueTest extends \PHPUnit_Framework_TestCase
 {

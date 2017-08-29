@@ -15,9 +15,38 @@ abstract class ValueObjectsCollection
     implements ValueObjectInterface
 {
 
+    use ValueObjectTrait;
+
+    /**
+     * @param iterable|null $data
+     */
+    public function __construct(/* iterable */$data = null)
+    {
+        parent::__construct($data);
+    }
+
+    /**
+     * @return string
+     */
     public static function getType()
     {
         return ValueObjectInterface::class;
+    }
+
+    /**
+     * @return array
+     */
+    protected function notgetters(): array
+    {
+        return ['type', 'value'];
+    }
+
+    /**
+     * @return array
+     */
+    protected function notsetters(): array
+    {
+        return ['value'];
     }
 
     /**
@@ -49,15 +78,6 @@ abstract class ValueObjectsCollection
             $ret[$key] = null !== $el ? $el->getValue() : null;
         }
         return $ret;
-    }
-
-    /**
-     * @param \Runn\ValueObjects\ValueObjectInterface $value
-     * @return bool
-     */
-    public function isEqual(ValueObjectInterface $value): bool
-    {
-        return (get_class($value) === get_class($this)) && ($value->getValue() === $this->getValue());
     }
 
 }

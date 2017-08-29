@@ -5,8 +5,8 @@ namespace Runn\tests\ValueObjects\ComplexValueObject;
 
 use Runn\Core\ObjectAsArrayInterface;
 use Runn\ValueObjects\ComplexValueObject;
-use Runn\ValueObjects\IntValue;
-use Runn\ValueObjects\StringValue;
+use Runn\ValueObjects\Values\IntValue;
+use Runn\ValueObjects\Values\StringValue;
 use Runn\ValueObjects\ValueObjectInterface;
 
 class testComplexValueObject extends ComplexValueObject {
@@ -29,7 +29,7 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Runn\ValueObjects\Exception
-     * @expectedExceptionMessage Invalid complex value object member "foo"
+     * @expectedExceptionMessage Invalid complex value object field key: "foo"
      */
     public function testEmptyComplexObjectInvalidKey()
     {
@@ -38,9 +38,9 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Runn\ValueObjects\Exception
-     * @expectedExceptionMessage Missing complex value object member "foo"
+     * @expectedExceptionMessage Missing complex value object field "foo"
      */
-    public function testComplexObjectMissingMember()
+    public function testComplexObjectMissingField()
     {
         $object = new class extends ComplexValueObject {
             protected static $schema = [
@@ -49,7 +49,7 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
         };
     }
 
-    public function testValidConstructOneMember()
+    public function testValidConstructOneField()
     {
         $object = new class(['foo' => 42]) extends ComplexValueObject {
             protected static $schema = [
@@ -78,7 +78,7 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(42, $object->foo->getValue());
     }
 
-    public function testValidConstructManyMembers()
+    public function testValidConstructManyFields()
     {
         $object = new class(['foo' => 42, 'bar' => 'baz']) extends ComplexValueObject {
             protected static $schema = [
@@ -172,7 +172,7 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Runn\ValueObjects\Exception
-     * @expectedExceptionMessage Missing complex value object member "foo"
+     * @expectedExceptionMessage Missing complex value object field "foo"
      */
     public function testValidConstructWithoutDefault()
     {
@@ -186,9 +186,9 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Runn\ValueObjects\Exception
-     * @expectedExceptionMessage Invalid complex value object member "baz"
+     * @expectedExceptionMessage Invalid complex value object field key: "baz"
      */
-    public function testInvalidMemberConstruct()
+    public function testInvalidFieldConstruct()
     {
         $object = new class(['baz' => 'blablabla']) extends ComplexValueObject {
             protected static $schema = [
@@ -200,9 +200,9 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Runn\ValueObjects\Exception
-     * @expectedExceptionMessage Invalid complex value object member "baz"
+     * @expectedExceptionMessage Invalid complex value object field key: "baz"
      */
-    public function testInvalidMemberSet()
+    public function testInvalidFieldSet()
     {
         $object = new class(['baz' => 'blablabla']) extends ComplexValueObject {
             protected static $schema = [
@@ -214,9 +214,9 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Runn\ValueObjects\Exception
-     * @expectedExceptionMessage Empty complex value object member "foo" class
+     * @expectedExceptionMessage Empty complex value object field "foo" class
      */
-    public function testEmptyMemberClassConstruct()
+    public function testEmptyFieldClassConstruct()
     {
         $object = new class(['foo' => 42]) extends ComplexValueObject {
             protected static $schema = [
@@ -227,9 +227,9 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Runn\ValueObjects\Exception
-     * @expectedExceptionMessage Invalid complex value object member "foo" class
+     * @expectedExceptionMessage Invalid complex value object field "foo" class
      */
-    public function testInvalidMemberClassConstruct()
+    public function testInvalidFieldClassConstruct()
     {
         $object = new class(['foo' => 42]) extends ComplexValueObject {
             protected static $schema = [
@@ -250,26 +250,26 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(['value' => 42], $object->getValue());
     }
 
-    public function testIsEqual()
+    public function testIsSame()
     {
         $object1 = new testComplexValueObject(['foo' => 42]);
-        $this->assertTrue($object1->isEqual($object1));
+        $this->assertTrue($object1->isSame($object1));
 
         $object2 = new class(['foo' => 42]) extends ComplexValueObject {
             protected static $schema = [
                 'foo' => ['class' => IntValue::class]
             ];
         };
-        $this->assertFalse($object1->isEqual($object2));
-        $this->assertFalse($object2->isEqual($object1));
+        $this->assertFalse($object1->isSame($object2));
+        $this->assertFalse($object2->isSame($object1));
 
         $object2 = new testComplexValueObject(['foo' => 24]);
-        $this->assertFalse($object1->isEqual($object2));
-        $this->assertFalse($object2->isEqual($object1));
+        $this->assertFalse($object1->isSame($object2));
+        $this->assertFalse($object2->isSame($object1));
 
         $object2 = new testComplexValueObject(['foo' => 42]);
-        $this->assertTrue($object1->isEqual($object2));
-        $this->assertTrue($object2->isEqual($object1));
+        $this->assertTrue($object1->isSame($object2));
+        $this->assertTrue($object2->isSame($object1));
     }
 
     public function testJson()

@@ -1,8 +1,8 @@
 <?php
 
-namespace Runn\tests\ValueObjects\BooleanValue;
+namespace Runn\tests\ValueObjects\Values\BooleanValue;
 
-use Runn\ValueObjects\BooleanValue;
+use Runn\ValueObjects\Values\BooleanValue;
 
 class BooleanValueTest extends \PHPUnit_Framework_TestCase
 {

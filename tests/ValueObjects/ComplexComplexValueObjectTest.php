@@ -6,8 +6,8 @@ use Runn\Core\CollectionInterface;
 use Runn\Core\ObjectAsArrayInterface;
 use Runn\Core\TypedCollection;
 use Runn\ValueObjects\ComplexValueObject;
-use Runn\ValueObjects\IntValue;
-use Runn\ValueObjects\StringValue;
+use Runn\ValueObjects\Values\IntValue;
+use Runn\ValueObjects\Values\StringValue;
 use Runn\ValueObjects\ValueObjectInterface;
 use Runn\ValueObjects\ValueObjectsCollection;
 
