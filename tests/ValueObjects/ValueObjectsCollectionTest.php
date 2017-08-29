@@ -5,8 +5,8 @@ namespace Runn\tests\ValueObjects\ValueObjectsCollection;
 use Runn\Core\CollectionInterface;
 use Runn\Core\TypedCollection;
 use Runn\Core\TypedCollectionInterface;
-use Runn\ValueObjects\IntValue;
-use Runn\ValueObjects\StringValue;
+use Runn\ValueObjects\Values\IntValue;
+use Runn\ValueObjects\Values\StringValue;
 use Runn\ValueObjects\ValueObjectsCollection;
 
 class testValueObjectsCollection extends ValueObjectsCollection {
@@ -109,10 +109,10 @@ class ValueObjectsCollectionTest
         };
     }
 
-    public function testIsEqual()
+    public function testIsSame()
     {
         $collection1 = new testValueObjectsCollection([1, 2, 3]);
-        $this->assertTrue($collection1->isEqual($collection1));
+        $this->assertTrue($collection1->isSame($collection1));
 
         $collection2 = new class([1, 2, 3]) extends ValueObjectsCollection {
             public static function getType()
@@ -121,16 +121,16 @@ class ValueObjectsCollectionTest
             }
         };
 
-        $this->assertFalse($collection1->isEqual($collection2));
-        $this->assertFalse($collection2->isEqual($collection1));
+        $this->assertFalse($collection1->isSame($collection2));
+        $this->assertFalse($collection2->isSame($collection1));
 
         $collection2 = new testValueObjectsCollection([1, 2]);
-        $this->assertFalse($collection1->isEqual($collection2));
-        $this->assertFalse($collection2->isEqual($collection1));
+        $this->assertFalse($collection1->isSame($collection2));
+        $this->assertFalse($collection2->isSame($collection1));
 
         $collection2 = new testValueObjectsCollection([1, 2, 3]);
-        $this->assertTrue($collection1->isEqual($collection2));
-        $this->assertTrue($collection2->isEqual($collection1));
+        $this->assertTrue($collection1->isSame($collection2));
+        $this->assertTrue($collection2->isSame($collection1));
     }
 
 }

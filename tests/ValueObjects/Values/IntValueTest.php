@@ -1,8 +1,8 @@
 <?php
 
-namespace Runn\tests\ValueObjects\IntValue;
+namespace Runn\tests\ValueObjects\Values\IntValue;
 
-use Runn\ValueObjects\IntValue;
+use Runn\ValueObjects\Values\IntValue;
 
 class IntValueTest extends \PHPUnit_Framework_TestCase
 {

@@ -7,18 +7,22 @@ use Runn\Core\StdGetSetInterface;
 use Runn\Core\StdGetSetTrait;
 
 /**
- * Complex value object consists of one or more columns with values
+ * Complex value object consists of one or more fields with values
  *
  * Class ComplexValueObject
  * @package Runn\ValueObjects
+ *
  */
 abstract class ComplexValueObject
-    implements ObjectAsArrayInterface, StdGetSetInterface, ValueObjectInterface
+    implements ValueObjectInterface, ObjectAsArrayInterface, StdGetSetInterface
 {
 
-    use StdGetSetTrait {
-        innerGet as protected traitInnerGet;
+    use ValueObjectTrait, StdGetSetTrait
+    {
+        ValueObjectTrait::notgetters insteadof StdGetSetTrait;
+        ValueObjectTrait::notsetters insteadof StdGetSetTrait;
     }
+
 
     /**
      * @var array
@@ -33,27 +37,33 @@ abstract class ComplexValueObject
         return static::$schema;
     }
 
-    /**
-     * Std constructor.
-     * @param iterable|null $data
-     * @throws \Runn\ValueObjects\Exception
-     */
-    public function __construct(/*iterable */$data = null)
+    protected function setValue(/*iterable */$data = null)
     {
-        if (null !== $data) {
-            $this->fromArray($data);
+        $schema = static::getSchema();
+        if (empty($data)) {
+            $data = [];
         }
 
-        foreach (static::getSchema() as $key => $schema) {
+        foreach ($data as $key => $val) {
+            if (!array_key_exists($key, $schema)) {
+                throw new Exception('Invalid complex value object field key: "' . $key . '"');
+            }
+            if ($this->needCasting($key, $val)) {
+                $val = $this->innerCast($key, $val);
+            }
+            $this->innerSet($key, $val);
+        }
+
+        foreach ($schema as $key => $field) {
             if (!isset($this->$key)) {
-                if (array_key_exists('default', $schema)) {
-                    $default = $schema['default'];
+                if (array_key_exists('default', $field)) {
+                    $default = $field['default'];
                     if (null !== $default && $this->needCasting($key, $default)) {
                         $default = $this->innerCast($key, $default);
                     }
                     $this->innerSet($key, $default);
                 } else {
-                    throw new Exception('Missing complex value object member "' . $key . '"');
+                    throw new Exception('Missing complex value object field "' . $key . '"');
                 }
             }
         }
@@ -82,29 +92,20 @@ abstract class ComplexValueObject
     protected function innerCast($key, $value)
     {
         if (!array_key_exists($key, static::getSchema())) {
-            throw new Exception('Invalid complex value object member "' . $key . '"');
+            throw new Exception('Invalid complex value object field key: "' . $key . '"');
         }
 
         if (empty(static::getSchema()[$key]['class'])) {
-            throw new Exception('Empty complex value object member "' . $key . '" class');
+            throw new Exception('Empty complex value object field "' . $key . '" class');
         }
 
         $class = static::getSchema()[$key]['class'];
 
         if (!is_subclass_of($class, ValueObjectInterface::class)) {
-            throw new Exception('Invalid complex value object member "' . $key . '" class');
+            throw new Exception('Invalid complex value object field "' . $key . '" class');
         }
 
         return new $class($value);
-    }
-
-    protected function innerGet($key)
-    {
-        if (in_array($key, ['value'], true)) {
-            return $this->__data[$key] ?? null;
-        } else {
-            return $this->traitInnerGet($key);
-        }
     }
 
     /**
@@ -120,17 +121,9 @@ abstract class ComplexValueObject
     }
 
     /**
-     * @param \Runn\ValueObjects\ValueObjectInterface $value
-     * @return bool
-     */
-    public function isEqual(ValueObjectInterface $value): bool
-    {
-        return (get_class($value) === get_class($this)) && ($value->getValue() === $this->getValue());
-    }
-
-    /**
+     * JsonSerializable implementation
      * Is used to avoid null values serialization
-     * @return array|ø
+     * @return array|null
      */
     public function jsonSerialize()
     {
