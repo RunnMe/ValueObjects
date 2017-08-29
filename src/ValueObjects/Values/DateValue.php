@@ -1,20 +1,21 @@
 <?php
 
-namespace Runn\ValueObjects;
+namespace Runn\ValueObjects\Values;
 
 use Runn\Sanitization\Sanitizer;
 use Runn\Sanitization\Sanitizers\DateSanitizer;
 use Runn\Validation\Validator;
 use Runn\Validation\Validators\DateValidator;
+use Runn\ValueObjects\SingleValueObject;
 
 /**
  * Simple date value class
  *
  * Class DateValue
- * @package Runn\ValueObjects
+ * @package Runn\ValueObjects\Values
  */
 class DateValue
-    extends SimpleValueObject
+    extends SingleValueObject
 {
 
     /**

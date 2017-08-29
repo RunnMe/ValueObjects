@@ -1,8 +1,8 @@
 <?php
 
-namespace Runn\tests\ValueObjects\DateTimeValue;
+namespace Runn\tests\ValueObjects\Values\DateTimeValue;
 
-use Runn\ValueObjects\DateTimeValue;
+use Runn\ValueObjects\Values\DateTimeValue;
 
 class DateTimeValueTest extends \PHPUnit_Framework_TestCase
 {

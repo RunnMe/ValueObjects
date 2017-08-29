@@ -3,85 +3,51 @@
 namespace Runn\ValueObjects;
 
 /**
- * Complex Value Object with primary key consists of one or more columns of this object
- * Default primary key column name id '__id'
+ * Complex Value Object with primary key consists of one or more fields of this object
+ * Default primary key field name is '__id'
  *
  * Class Entity
  * @package Runn\ValueObjects
  */
 abstract class Entity
     extends ComplexValueObject
-    implements ValueObjectCastingInterface
+    implements EntityInterface
 {
 
-    const PK_COLUMNS = ['__id'];
+    const PK_FIELDS = ['__id'];
 
     /**
      * @return array
      */
-    public static function getPrimaryKeyColumns()
+    public static function getPrimaryKeyFields(): array
     {
-        return static::PK_COLUMNS;
+        return static::PK_FIELDS;
     }
 
     /**
-     * @return array
+     * @return mixed|array
      */
     public function getPrimaryKey()
     {
         $ret = [];
-        foreach (static::getPrimaryKeyColumns() as $column) {
-            $ret[$column] = $this->$column->getValue();
+        foreach (static::getPrimaryKeyFields() as $field) {
+            $ret[$field] = $this->$field->getValue();
+        }
+        if (empty($ret)) {
+            return null;
+        } elseif (1 == count($ret)) {
+            return array_shift($ret);
         }
         return $ret;
     }
 
     /**
-     * @param \Runn\ValueObjects\ValueObjectInterface $value
+     * @param \Runn\ValueObjects\EntityInterface $object
      * @return bool
      */
-    public function isEqual(ValueObjectInterface $value): bool
+    public function isEqual(EntityInterface $object): bool
     {
-        return (get_class($value) === get_class($this)) && ($value->getPrimaryKey() == $this->getPrimaryKey());
-    }
-
-    public static function getValueObjectClass()
-    {
-        return ComplexValueObject::class;
-    }
-
-    /**
-     * @param string|null $class
-     * @return \Runn\ValueObjects\ValueObjectInterface
-     * @throws \Runn\ValueObjects\Exception
-     */
-    public function toValueObject($class = null): ValueObjectInterface
-    {
-        if (null === $class) {
-            $class = static::getValueObjectClass();
-        }
-        if (!is_a($class, ComplexValueObject::class, true)) {
-            throw new Exception('Invalid complex value object class');
-        }
-
-        $data   = $this->getValue();
-        $schema = static::getSchema();
-        foreach (static::getPrimaryKeyColumns() as $column) {
-            unset($data[$column]);
-            unset($schema[$column]);
-        }
-
-        if ($class === ComplexValueObject::class) {
-            $classDef = 'extends \\Runn\\ValueObjects\\ComplexValueObject { protected static $schema = ' . var_export($schema, true) . ';};';
-            return eval('return new class(' . var_export($data, true) . ') ' . $classDef);
-        } else {
-            return new $class($data);
-        }
-    }
-
-    public static function fromValueObject(ValueObjectInterface $source, array $primaryKey = [])
-    {
-        return new static($primaryKey + $source->getValue());
+        return (get_class($object) === get_class($this)) && ($object->getPrimaryKey() == $this->getPrimaryKey());
     }
 
 }

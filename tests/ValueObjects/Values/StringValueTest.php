@@ -1,9 +1,9 @@
 <?php
 
-namespace Runn\tests\ValueObjects\StringValue;
+namespace Runn\tests\ValueObjects\Values\StringValue;
 
-use Runn\ValueObjects\StringValue;
-use Runn\ValueObjects\SimpleValueObject;
+use Runn\ValueObjects\Values\StringValue;
+use Runn\ValueObjects\SingleValueObject;
 
 class StringValueTest extends \PHPUnit_Framework_TestCase
 {
@@ -12,7 +12,7 @@ class StringValueTest extends \PHPUnit_Framework_TestCase
     {
         $valueObject = new StringValue(null);
 
-        $this->assertInstanceOf(SimpleValueObject::class, $valueObject);
+        $this->assertInstanceOf(SingleValueObject::class, $valueObject);
         $this->assertInstanceOf(StringValue::class, $valueObject);
 
         $this->assertSame('', $valueObject->getValue());
