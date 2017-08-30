@@ -23,7 +23,6 @@ abstract class ComplexValueObject
         ValueObjectTrait::notsetters insteadof StdGetSetTrait;
     }
 
-
     /**
      * @var array
      */
@@ -37,6 +36,12 @@ abstract class ComplexValueObject
         return static::$schema;
     }
 
+    /**
+     * @param iterable|null $data
+     * @throws \Runn\ValueObjects\Exception
+     *
+     * @7.1
+     */
     protected function setValue(/*iterable */$data = null)
     {
         $schema = static::getSchema();
