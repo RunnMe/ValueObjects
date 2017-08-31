@@ -1,6 +1,7 @@
 7.0.1, 7.1.1, 7.2.1
 ===================
 Some refactoring and improvements
+ComplexValueObjects are immutable now
 
 7.0.0, 7.1.0, 7.2.0
 ===================

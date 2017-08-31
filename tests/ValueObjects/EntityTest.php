@@ -133,4 +133,19 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($entity2->isEqual($entity1));
     }
 
+    /**
+     * @expectedException \Runn\ValueObjects\Exception
+     * @expectedExceptionMessage Can not set field "__id" value because of value object is constructed
+     */
+    public function testImmutablePk()
+    {
+        $entity = new testEntity(['__id' => 42, 'foo' => 'bar']);
+
+        $this->assertSame(42, $entity->getPrimaryKey());
+        $this->assertSame(42, $entity->__id->getValue());
+        $this->assertSame('bar', $entity->foo->getValue());
+
+        $entity->__id = 13;
+    }
+
 }

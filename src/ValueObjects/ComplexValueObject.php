@@ -21,6 +21,7 @@ abstract class ComplexValueObject
     {
         ValueObjectTrait::notgetters insteadof StdGetSetTrait;
         ValueObjectTrait::notsetters insteadof StdGetSetTrait;
+        StdGetSetTrait::innerSet as trait_innerSet;
     }
 
     /**
@@ -34,6 +35,17 @@ abstract class ComplexValueObject
     public static function getSchema()
     {
         return static::$schema;
+    }
+
+    protected $constructed = false;
+
+    /**
+     * @param mixed $value
+     */
+    public function __construct($value = null)
+    {
+        $this->setValue($value);
+        $this->constructed = true;
     }
 
     /**
@@ -111,6 +123,14 @@ abstract class ComplexValueObject
         }
 
         return new $class($value);
+    }
+
+    protected function innerSet($key, $val)
+    {
+        if ($this->constructed) {
+            throw new Exception('Can not set field "' . $key . '" value because of value object is constructed');
+        }
+        $this->trait_innerSet($key, $val);
     }
 
     /**
