@@ -41,6 +41,19 @@ abstract class Entity
         return $ret;
     }
 
+    protected function setField($field, $value)
+    {
+        if ($this->constructed) {
+            if (in_array($field, static::getPrimaryKeyFields())) {
+                throw new Exception('Can not set field "' . $field . '" value because of it is part of primary key');
+            }
+        }
+        if ($this->needCasting($field, $value)) {
+            $value = $this->innerCast($field, $value);
+        }
+        $this->trait_innerSet($field, $value);
+    }
+
     /**
      * @param \Runn\ValueObjects\EntityInterface $object
      * @return bool
