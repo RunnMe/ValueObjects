@@ -5,6 +5,7 @@ namespace Runn\ValueObjects;
 /**
  * Complex Value Object with primary key consists of one or more fields of this object
  * Default primary key field name is '__id'
+ * Mutable except it's primary key fields
  *
  * Class Entity
  * @package Runn\ValueObjects
