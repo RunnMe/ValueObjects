@@ -54,7 +54,7 @@ abstract class ComplexValueObject
      *
      * @7.1
      */
-    protected function setValue(/*iterable */$data = null)
+    protected function setValue(iterable $data = null)
     {
         if (empty($data)) {
             $data = [];

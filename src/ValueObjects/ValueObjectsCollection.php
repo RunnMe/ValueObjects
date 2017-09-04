@@ -22,7 +22,7 @@ abstract class ValueObjectsCollection
      *
      * @7.1
      */
-    public function __construct(/* iterable */$data = null)
+    public function __construct(iterable $data = null)
     {
         parent::__construct($data);
     }
