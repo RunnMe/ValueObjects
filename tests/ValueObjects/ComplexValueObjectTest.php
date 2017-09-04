@@ -238,6 +238,18 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
         };
     }
 
+    /**
+     * @expectedException \Runn\ValueObjects\Exception
+     * @expectedExceptionMessage Can not set field "foo" value because of value object is constructed
+     */
+    public function testImmutable()
+    {
+        $object = new testComplexValueObject(['foo' => 42]);
+        $this->assertSame(42, $object->foo->getValue());
+
+        $object->foo = 13;
+    }
+
     public function testGetValue()
     {
         $object = new class(['value' => 42]) extends ComplexValueObject {
