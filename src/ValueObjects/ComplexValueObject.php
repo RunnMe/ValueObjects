@@ -56,34 +56,42 @@ abstract class ComplexValueObject
      */
     protected function setValue(/*iterable */$data = null)
     {
-        $schema = static::getSchema();
         if (empty($data)) {
             $data = [];
         }
+        $schema = static::getSchema();
 
         foreach ($data as $key => $val) {
             if (!array_key_exists($key, $schema)) {
                 throw new Exception('Invalid complex value object field key: "' . $key . '"');
             }
-            if ($this->needCasting($key, $val)) {
-                $val = $this->innerCast($key, $val);
-            }
-            $this->innerSet($key, $val);
+            $this->setField($key, $val);
         }
 
         foreach ($schema as $key => $field) {
             if (!isset($this->$key)) {
-                if (array_key_exists('default', $field)) {
-                    $default = $field['default'];
-                    if (null !== $default && $this->needCasting($key, $default)) {
-                        $default = $this->innerCast($key, $default);
-                    }
-                    $this->innerSet($key, $default);
-                } else {
+                if (!array_key_exists('default', $field)) {
                     throw new Exception('Missing complex value object field "' . $key . '"');
                 }
+                $this->setField($key, $field['default']);
             }
         }
+    }
+
+    protected function setField($field, $value)
+    {
+        if ($this->constructed) {
+            throw new Exception('Can not set field "' . $field . '" value because of value object is constructed');
+        }
+        if ($this->needCasting($field, $value)) {
+            $value = $this->innerCast($field, $value);
+        }
+        $this->trait_innerSet($field, $value);
+    }
+
+    protected function innerSet($key, $val)
+    {
+        $this->setField($key, $val);
     }
 
     /**
@@ -123,14 +131,6 @@ abstract class ComplexValueObject
         }
 
         return new $class($value);
-    }
-
-    protected function innerSet($key, $val)
-    {
-        if ($this->constructed) {
-            throw new Exception('Can not set field "' . $key . '" value because of value object is constructed');
-        }
-        $this->trait_innerSet($key, $val);
     }
 
     /**
