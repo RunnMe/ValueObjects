@@ -66,10 +66,7 @@ abstract class ComplexValueObject
         $schema = static::getSchema();
 
         foreach ($data as $key => $val) {
-            if (!array_key_exists($key, $schema)) {
-                throw new Exception('Invalid complex value object field key: "' . $key . '"');
-            }
-            $this->setField($key, $val);
+            $this->$key = $val;
         }
 
         foreach ($schema as $key => $field) {
@@ -77,25 +74,31 @@ abstract class ComplexValueObject
                 if (!array_key_exists('default', $field)) {
                     throw new Exception('Missing complex value object field "' . $key . '"');
                 }
-                $this->setField($key, $field['default']);
+                $this->$key = $field['default'];
             }
         }
-    }
-
-    protected function setField($field, $value)
-    {
-        if ($this->constructed) {
-            throw new Exception('Can not set field "' . $field . '" value because of value object is constructed');
-        }
-        if ($this->needCasting($field, $value)) {
-            $value = $this->innerCast($field, $value);
-        }
-        $this->trait_innerSet($field, $value);
     }
 
     protected function innerSet($key, $val)
     {
         $this->setField($key, $val);
+    }
+
+    protected function setField($field, $value)
+    {
+        if (!array_key_exists($field, static::getSchema())) {
+            throw new Exception('Invalid complex value object field key: "' . $field . '"');
+        }
+
+        if ($this->constructed) {
+            throw new Exception('Can not set field "' . $field . '" value because of value object is constructed');
+        }
+
+        if ($this->needCasting($field, $value)) {
+            $value = $this->innerCast($field, $value);
+        }
+
+        $this->trait_innerSet($field, $value);
     }
 
     /**
@@ -120,10 +123,6 @@ abstract class ComplexValueObject
 
     protected function innerCast($key, $value)
     {
-        if (!array_key_exists($key, static::getSchema())) {
-            throw new Exception('Invalid complex value object field key: "' . $key . '"');
-        }
-
         if (empty(static::getSchema()[$key]['class'])) {
             throw new Exception('Empty complex value object field "' . $key . '" class');
         }
