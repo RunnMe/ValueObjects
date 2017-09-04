@@ -8,6 +8,7 @@ use Runn\Core\StdGetSetTrait;
 
 /**
  * Complex value object consists of one or more fields with values
+ * Immutable
  *
  * Class ComplexValueObject
  * @package Runn\ValueObjects
@@ -37,6 +38,9 @@ abstract class ComplexValueObject
         return static::$schema;
     }
 
+    /**
+     * @var bool
+     */
     protected $constructed = false;
 
     /**
