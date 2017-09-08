@@ -2,11 +2,11 @@
 
 namespace Runn\tests\ValueObjects\Entity;
 
+use Runn\Core\Std;
 use Runn\ValueObjects\ComplexValueObject;
 use Runn\ValueObjects\Entity;
 use Runn\ValueObjects\Values\IntValue;
 use Runn\ValueObjects\Values\StringValue;
-use Runn\ValueObjects\ValueObjectInterface;
 
 class testEntity extends Entity{
     protected static $schema = [
@@ -56,6 +56,18 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(['foo', 'bar'], get_class($entity)::getPrimaryKeyFields());
     }
 
+    public function testIsPrimaryKeyScalar()
+    {
+        $entity = new class extends Entity {const PK_FIELDS = ['id'];};
+        $class = get_class($entity);
+        $this->assertTrue($class::isPrimaryKeyScalar());
+
+        $entity = new class extends Entity {const PK_FIELDS = ['id1', 'id2'];};
+        $class = get_class($entity);
+        $this->assertFalse($class::isPrimaryKeyScalar());
+
+    }
+
     public function testGetPk()
     {
         $entity = new class(['__id' => 1, 'foo' => 'bar']) extends Entity {
@@ -81,6 +93,33 @@ class EntityTest extends \PHPUnit_Framework_TestCase
             ];
         };
         $this->assertSame(['first' => 1, 'second' => 2], $entity->getPrimaryKey());
+    }
+
+    public function testConformsPK()
+    {
+        $entity = new class extends Entity {const PK_FIELDS = ['id'];};
+        $class = get_class($entity);
+
+        $this->assertTrue($class::conformsToPrimaryKey(1));
+        $this->assertTrue($class::conformsToPrimaryKey('foo'));
+        $this->assertFalse($class::conformsToPrimaryKey([]));
+        $this->assertTrue($class::conformsToPrimaryKey(['id' => 1]));
+        $this->assertTrue($class::conformsToPrimaryKey(new Std(['id' => 1])));
+        $this->assertFalse($class::conformsToPrimaryKey(['id' => 1, 'foo' => 'bar']));
+        $this->assertFalse($class::conformsToPrimaryKey(new Std(['id' => 1, 'foo' => 'bar'])));
+
+        $entity = new class extends Entity {const PK_FIELDS = ['id1', 'id2'];};
+        $class = get_class($entity);
+
+        $this->assertFalse($class::conformsToPrimaryKey(1));
+        $this->assertFalse($class::conformsToPrimaryKey('foo'));
+        $this->assertFalse($class::conformsToPrimaryKey([]));
+        $this->assertFalse($class::conformsToPrimaryKey(['id1' => 1]));
+        $this->assertFalse($class::conformsToPrimaryKey(new Std(['id1' => 1])));
+        $this->assertTrue($class::conformsToPrimaryKey(['id1' => 1, 'id2' => 2]));
+        $this->assertTrue($class::conformsToPrimaryKey(new Std(['id1' => 1, 'id2' => 2])));
+        $this->assertFalse($class::conformsToPrimaryKey(['id1' => 1, 'id2' => 2, 'id3' => 3]));
+        $this->assertFalse($class::conformsToPrimaryKey(new Std(['id1' => 1, 'id2' => 2, 'id3' => 3])));
     }
 
     public function testIsSame()

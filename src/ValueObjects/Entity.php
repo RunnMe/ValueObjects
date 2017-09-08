@@ -1,6 +1,7 @@
 <?php
 
 namespace Runn\ValueObjects;
+use Runn\Core\ObjectAsArrayInterface;
 
 /**
  * Complex Value Object with primary key consists of one or more fields of this object
@@ -26,6 +27,15 @@ abstract class Entity
     }
 
     /**
+     * This method returns "true" if primary key is scalar
+     * @return bool
+     */
+    public static function isPrimaryKeyScalar(): bool
+    {
+        return 1 === count(static::getPrimaryKeyFields());
+    }
+
+    /**
      * @return mixed|array
      */
     public function getPrimaryKey()
@@ -40,6 +50,31 @@ abstract class Entity
             return array_shift($ret);
         }
         return $ret;
+    }
+
+    /**
+     * This method checks if $data can be used as primary key value
+     * @param mixed $data
+     * @return bool
+     */
+    public static function conformsToPrimaryKey($data): bool
+    {
+        $fields = static::getPrimaryKeyFields();
+        if (1 === count($fields)) {
+            if (is_scalar($data)) {
+                return true;
+            }
+            return 1 === count($data) && (isset($data[$fields[0]]) || isset($data->{$fields[0]}));
+        }
+        if (is_array($data) || ($data instanceof ObjectAsArrayInterface)) {
+            if (is_array($data)) {
+                $keys = array_keys($data);
+            } else {
+                $keys = $data->keys();
+            }
+            return empty(array_diff($keys, $fields)) && empty(array_diff($fields, $keys));
+        }
+        return false;
     }
 
     protected function setField($field, $value)
