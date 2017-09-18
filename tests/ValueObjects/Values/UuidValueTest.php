@@ -17,7 +17,7 @@ class UuidValueTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidString
+     * @expectedException \Runn\Validation\Exceptions\InvalidUuid
      */
     public function testInvalidString()
     {
