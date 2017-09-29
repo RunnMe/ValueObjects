@@ -1,6 +1,7 @@
 7.0.2, 7.1.2, 7.2.2
 ===================
 * EmailValue class is added
+* UuidValue class is added
 
 7.0.1, 7.1.1, 7.2.1
 ===================
