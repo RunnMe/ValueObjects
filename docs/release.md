@@ -2,6 +2,7 @@
 ===================
 * EmailValue class is added
 * UuidValue class is added
+* Entity class development
 
 7.0.1, 7.1.1, 7.2.1
 ===================
