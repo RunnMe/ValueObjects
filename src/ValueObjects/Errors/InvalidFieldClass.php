@@ -6,32 +6,32 @@ use Runn\ValueObjects\Exception;
 use Throwable;
 
 /**
- * Class InvalidFieldValue
+ * Class EmptyFieldClass
  * @package Runn\ValueObjects\Errors
  *
- * Class holds info about one field in complex value object error
+ * Invalid field class error
  */
-class InvalidFieldValue
+class InvalidFieldClass
     extends Exception
     implements ComplexValueObjectError
-
 {
 
     protected $field;
-    protected $value;
+    protected $class;
 
     /**
-     * InvalidFieldValue constructor.
+     * EmptyFieldClass constructor.
      * @param string $field
-     * @param int $value
+     * @param string $class
      * @param string $message
      * @param int $code
      * @param Throwable|null $previous
+     * @internal param int $value
      */
-    public function __construct(string $field, $value, $message = "", $code = 0, Throwable $previous = null)
+    public function __construct(string $field, string $class, $message = "", $code = 0, Throwable $previous = null)
     {
         $this->field = $field;
-        $this->value = $value;
+        $this->class = $class;
         parent::__construct($message, $code, $previous);
     }
 
@@ -44,11 +44,11 @@ class InvalidFieldValue
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getValue()
+    public function getClass(): string
     {
-        return $this->value;
+        return $this->class;
     }
 
 }
