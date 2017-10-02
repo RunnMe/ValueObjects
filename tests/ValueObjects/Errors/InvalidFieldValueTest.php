@@ -16,7 +16,7 @@ class InvalidFieldValueTest extends \PHPUnit_Framework_TestCase
         if (PHP_VERSION_ID >= 70100) {
             $this->expectException(\ArgumentCountError::class);
         } else {
-            $this->expectOutputString('Too few arguments to function Runn\ValueObjects\Errors\InvalidFieldValue::__construct()');
+            $this->expectException(\TypeError::class);
         }
         $error = new InvalidFieldValue();
     }
