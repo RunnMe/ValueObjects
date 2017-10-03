@@ -13,7 +13,7 @@ use Throwable;
  */
 class InvalidField
     extends Exception
-    implements ComplexValueObjectError
+    implements ComplexValueObjectFieldError
 {
 
     protected $field;

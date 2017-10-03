@@ -264,6 +264,27 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
         $this->fail();
     }
 
+    public function testInvalidFieldValueConstruct()
+    {
+        try {
+            $object = new class(['foo' => 'blablabla']) extends ComplexValueObject {
+                protected static $schema = [
+                    'foo' => ['class' => IntValue::class],
+                ];
+            };
+        } catch (ComplexValueObjectErrors $errors) {
+            $this->assertCount(2, $errors);
+
+            $this->assertInstanceOf(InvalidFieldValue::class, $errors[0]);
+            $this->assertSame('foo', $errors[0]->getField());
+            $this->assertSame('blablabla', $errors[0]->getValue());
+            $this->assertSame('Invalid complex value object field "foo" value', $errors[0]->getMessage());
+
+            return;
+        }
+        $this->fail();
+    }
+
     /*
      * @expectedException \Runn\ValueObjects\Exception
      * @expectedExceptionMessage Invalid complex value object field "foo" class

@@ -8,11 +8,4 @@ namespace Runn\ValueObjects\Errors;
  */
 interface ComplexValueObjectError
     extends \Throwable
-{
-
-    /**
-     * @return string
-     */
-    public function getField(): string;
-
-}
+{}

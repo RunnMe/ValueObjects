@@ -7,6 +7,7 @@ use Runn\Core\StdGetSetInterface;
 use Runn\Core\StdGetSetTrait;
 use Runn\ValueObjects\Errors\ComplexValueObjectErrors;
 use Runn\ValueObjects\Errors\EmptyFieldClass;
+use Runn\ValueObjects\Errors\InvalidComplexValue;
 use Runn\ValueObjects\Errors\InvalidField;
 use Runn\ValueObjects\Errors\InvalidFieldClass;
 use Runn\ValueObjects\Errors\InvalidFieldValue;
@@ -103,6 +104,31 @@ abstract class ComplexValueObject
         if (!$errors->empty()) {
             throw $errors;
         }
+
+        try {
+
+            $res = $this->validate();
+
+            if (false === $res) {
+                $errors[] = new InvalidComplexValue('Invalid complex value');
+            } elseif ($res instanceof \Generator) {
+                $exceptionType = ComplexValueObjectErrors::getType();
+                foreach ($res as $error) {
+                    if ($error instanceof $exceptionType) {
+                        $errors->add($error);
+                    }
+                }
+            }
+
+        } catch (\Throwable $e) {
+            $errors->add($e);
+            throw $errors;
+        }
+
+        if (!$errors->empty()) {
+            throw $errors;
+        }
+
     }
 
     protected function innerSet($key, $val)
@@ -160,6 +186,15 @@ abstract class ComplexValueObject
         }
 
         return new $class($value);
+    }
+
+    /**
+     * @return bool|\Generator
+     * @throws \Throwable|\Runn\Core\Exceptions
+     */
+    protected function validate()
+    {
+        return true;
     }
 
     /**

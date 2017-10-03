@@ -13,7 +13,7 @@ use Throwable;
  */
 class InvalidFieldValue
     extends Exception
-    implements ComplexValueObjectError
+    implements ComplexValueObjectFieldError
 
 {
 
