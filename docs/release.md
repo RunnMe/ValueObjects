@@ -2,6 +2,7 @@
 ===================
 * `ComplexValueObjectErrors` class is added. It collects all `ComplexValueObject` construct errors.
 * `ComplexValueObject::validate()` method is added for complex value post-validation
+* `ComplexValueObject::jsonSerialize()` method minor fix
 
 7.0.2, 7.1.2, 7.2.2
 ===================

@@ -2,6 +2,7 @@
 ===================
 * Добавлен класс `ComplexValueObjectErrors` и теперь собираются все ошибки в конструкторе `ComplexValueObject`
 * Добавлен метод `ComplexValueObject::validate()`, предназначенный для пост-валидации комплексного значения
+* Исправление ошибки в методе `ComplexValueObject::jsonSerialize()`
 
 7.0.2, 7.1.2, 7.2.2
 ===================

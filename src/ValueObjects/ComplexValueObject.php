@@ -216,7 +216,17 @@ abstract class ComplexValueObject
      */
     public function jsonSerialize()
     {
-        return array_filter($this->getValue());
+        $ret = [];
+        foreach ($this as $key => $val) {
+            if (null !== $val) {
+                if ($val instanceof \JsonSerializable) {
+                    $ret[$key] = $val->jsonSerialize();
+                } else {
+                    $ret[$key] = $val;
+                }
+            }
+        }
+        return $ret;
     }
 
 }
