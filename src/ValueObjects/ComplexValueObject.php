@@ -78,11 +78,7 @@ abstract class ComplexValueObject
             try {
                 $this->$key = $val;
             // @7.1
-            } catch (InvalidField $exception) {
-                $errors->add($exception);
-            } catch (EmptyFieldClass $exception) {
-                $errors->add($exception);
-            } catch (InvalidFieldClass $exception) {
+            } catch (InvalidField | EmptyFieldClass | InvalidFieldClass $exception) {
                 $errors->add($exception);
             } catch (\Throwable $exception) {
                 $errors->add(
