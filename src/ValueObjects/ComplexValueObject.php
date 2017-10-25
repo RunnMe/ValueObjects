@@ -5,6 +5,13 @@ namespace Runn\ValueObjects;
 use Runn\Core\ObjectAsArrayInterface;
 use Runn\Core\StdGetSetInterface;
 use Runn\Core\StdGetSetTrait;
+use Runn\ValueObjects\Errors\ComplexValueObjectErrors;
+use Runn\ValueObjects\Errors\EmptyFieldClass;
+use Runn\ValueObjects\Errors\InvalidComplexValue;
+use Runn\ValueObjects\Errors\InvalidField;
+use Runn\ValueObjects\Errors\InvalidFieldClass;
+use Runn\ValueObjects\Errors\InvalidFieldValue;
+use Runn\ValueObjects\Errors\MissingField;
 
 /**
  * Complex value object consists of one or more fields with values
@@ -54,7 +61,7 @@ abstract class ComplexValueObject
 
     /**
      * @param iterable|null $data
-     * @throws \Runn\ValueObjects\Exception
+     * @throws \Runn\ValueObjects\Errors\ComplexValueObjectErrors
      *
      * @7.1
      */
@@ -65,18 +72,59 @@ abstract class ComplexValueObject
         }
         $schema = static::getSchema();
 
+        $errors = new ComplexValueObjectErrors;
+
         foreach ($data as $key => $val) {
-            $this->$key = $val;
+            try {
+                $this->$key = $val;
+            // @7.1
+            } catch (InvalidField | EmptyFieldClass | InvalidFieldClass $exception) {
+                $errors->add($exception);
+            } catch (\Throwable $exception) {
+                $errors->add(
+                    new InvalidFieldValue($key, $val, 'Invalid complex value object field "' . $key . '" value', 0, $exception)
+                );
+            }
         }
 
         foreach ($schema as $key => $field) {
             if (!isset($this->$key)) {
                 if (!array_key_exists('default', $field)) {
-                    throw new Exception('Missing complex value object field "' . $key . '"');
+                    $errors[] = new MissingField($key, 'Missing complex value object field "' . $key . '"');
+                    continue;
                 }
                 $this->$key = $field['default'];
             }
         }
+
+        if (!$errors->empty()) {
+            throw $errors;
+        }
+
+        try {
+
+            $res = $this->validate();
+
+            if (false === $res) {
+                $errors[] = new InvalidComplexValue('Invalid complex value');
+            } elseif ($res instanceof \Generator) {
+                $exceptionType = ComplexValueObjectErrors::getType();
+                foreach ($res as $error) {
+                    if ($error instanceof $exceptionType) {
+                        $errors->add($error);
+                    }
+                }
+            }
+
+        } catch (\Throwable $e) {
+            $errors->add($e);
+            throw $errors;
+        }
+
+        if (!$errors->empty()) {
+            throw $errors;
+        }
+
     }
 
     protected function innerSet($key, $val)
@@ -87,7 +135,7 @@ abstract class ComplexValueObject
     protected function setField($field, $value)
     {
         if (!array_key_exists($field, static::getSchema())) {
-            throw new Exception('Invalid complex value object field key: "' . $field . '"');
+            throw new InvalidField($field,'Invalid complex value object field key: "' . $field . '"');
         }
 
         if ($this->constructed) {
@@ -124,16 +172,25 @@ abstract class ComplexValueObject
     protected function innerCast($key, $value)
     {
         if (empty(static::getSchema()[$key]['class'])) {
-            throw new Exception('Empty complex value object field "' . $key . '" class');
+            throw new EmptyFieldClass($key, 'Empty complex value object field "' . $key . '" class');
         }
 
         $class = static::getSchema()[$key]['class'];
 
         if (!is_subclass_of($class, ValueObjectInterface::class)) {
-            throw new Exception('Invalid complex value object field "' . $key . '" class');
+            throw new InvalidFieldClass($key, $class, 'Invalid complex value object field "' . $key . '" class');
         }
 
         return new $class($value);
+    }
+
+    /**
+     * @return bool|\Generator
+     * @throws \Throwable|\Runn\Core\Exceptions
+     */
+    protected function validate()
+    {
+        return true;
     }
 
     /**
@@ -155,7 +212,17 @@ abstract class ComplexValueObject
      */
     public function jsonSerialize()
     {
-        return array_filter($this->getValue());
+        $ret = [];
+        foreach ($this as $key => $val) {
+            if (null !== $val) {
+                if ($val instanceof \JsonSerializable) {
+                    $ret[$key] = $val->jsonSerialize();
+                } else {
+                    $ret[$key] = $val;
+                }
+            }
+        }
+        return $ret;
     }
 
 }

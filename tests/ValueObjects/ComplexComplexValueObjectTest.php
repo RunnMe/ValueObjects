@@ -17,6 +17,12 @@ class InnerComplexValueObject extends ComplexValueObject {
     ];
 }
 
+class NullableInnerComplexValueObject extends ComplexValueObject {
+    protected static $schema = [
+        'baz' => ['class' => StringValue::class, 'default' => null],
+    ];
+}
+
 class ComplexComplexValueObjectTest extends \PHPUnit_Framework_TestCase
 {
 
@@ -111,6 +117,51 @@ class ComplexComplexValueObjectTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(TypedCollection::class, $object->bar);
 
         $this->assertEquals([new IntValue(1), new IntValue(2), new IntValue(3)], $object->bar->toArray());
+    }
+
+    public function testJsonEncode()
+    {
+        $object = new class([
+
+            'foo' => 42,
+            'bar' => ['baz' => null]
+
+        ]) extends ComplexValueObject {
+            protected static $schema = [
+                'foo' => ['class' => IntValue::class],
+                'bar' => ['class' => NullableInnerComplexValueObject::class],
+            ];
+        };
+
+        $this->assertInstanceOf(ComplexValueObject::class, $object);
+        $this->assertInstanceOf(ObjectAsArrayInterface::class, $object);
+        $this->assertInstanceOf(ValueObjectInterface::class, $object);
+
+        $this->assertSame(['foo' => 42, 'bar' => ['baz' => null]], $object->getValue());
+
+        $this->assertEquals(2, count($object));
+
+        $this->assertInstanceOf(IntValue::class, $object->foo);
+        $this->assertSame(42, $object->foo->getValue());
+
+        $this->assertInstanceOf(NullableInnerComplexValueObject::class, $object->bar);
+        $this->assertInstanceOf(ObjectAsArrayInterface::class, $object->bar);
+        $this->assertInstanceOf(ValueObjectInterface::class, $object->bar);
+
+        $this->assertSame(null, $object->bar->baz);
+
+        $this->assertSame(
+            'null',
+            json_encode($object->bar->baz)
+        );
+        $this->assertSame(
+            '{}',
+            json_encode($object->bar, JSON_FORCE_OBJECT)
+        );
+        $this->assertSame(
+            '{"foo":42,"bar":{}}',
+            json_encode($object, JSON_FORCE_OBJECT)
+        );
     }
 
 }
