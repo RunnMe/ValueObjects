@@ -7,10 +7,21 @@ use Runn\Core\Exception;
 use Runn\Core\Exceptions;
 use Runn\ValueObjects\ComplexValueObject;
 use Runn\ValueObjects\Errors\ComplexValueObjectErrors;
+use Runn\ValueObjects\Errors\EmptyFieldClass;
 use Runn\ValueObjects\Errors\InvalidComplexValue;
+use Runn\ValueObjects\Errors\InvalidField;
+use Runn\ValueObjects\Errors\InvalidFieldClass;
+use Runn\ValueObjects\Errors\InvalidFieldValue;
+use Runn\ValueObjects\Errors\MissingField;
+use Runn\ValueObjects\Values\BooleanValue;
 use Runn\ValueObjects\Values\IntValue;
 
-class CustomComplexValueObjectError extends ComplexValueObjectErrors {}
+class CustomComplexValueObjectErrors extends ComplexValueObjectErrors {}
+class CustomInvalidFieldError extends InvalidField {}
+class CustomEmptyFieldClassError extends EmptyFieldClass {}
+class CustomInvalidFieldClassError extends InvalidFieldClass {}
+class CustomInvalidFieldValueError extends InvalidFieldValue {}
+class CustomMissingField extends MissingField {}
 
 class ComplexValueObjectValidateTest extends \PHPUnit_Framework_TestCase
 {
@@ -151,29 +162,58 @@ class ComplexValueObjectValidateTest extends \PHPUnit_Framework_TestCase
     {
         try {
 
-            $object = new class(['first' => 1, 'second' => 2]) extends ComplexValueObject {
+            $object = new class([
+                'foo' => 'bar',
+                'first' => 1,
+                'second' => 2,
+                'third' => [],
+            ]) extends ComplexValueObject {
                 /** @7.1 */
-                /*protected */const ERRORS = ['COLLECTION' => CustomComplexValueObjectError::class];
-                protected static $schema = [
-                    'first' => ['class' => IntValue::class],
-                    'second' => ['class' => IntValue::class],
+                /*protected */const ERRORS = [
+                    'COLLECTION' => CustomComplexValueObjectErrors::class,
+                    'INVALID_FIELD' => CustomInvalidFieldError::class,
+                    'EMPTY_FIELD_CLASS' => CustomEmptyFieldClassError::class,
+                    'INVALID_FIELD_CLASS' => CustomInvalidFieldClassError::class,
+                    'INVALID_FIELD_VALUE' => CustomInvalidFieldValueError::class,
+                    'MISSING_FIELD' => CustomMissingField::class,
                 ];
-                protected function validate()
-                {
-                    throw new InvalidComplexValue('First exception');
-                }
+                protected static $schema = [
+                    'first' => ['class' => null],
+                    'second' => ['class' => \stdClass::class],
+                    'third' => ['class' => BooleanValue::class],
+                ];
             };
 
         } catch (ComplexValueObjectErrors $errors) {
-            $this->assertCount(1, $errors);
 
-            $this->assertInstanceOf(CustomComplexValueObjectError::class, $errors);
+            $this->assertCount(7, $errors);
+
+            $this->assertInstanceOf(CustomComplexValueObjectErrors::class, $errors);
             $this->assertInstanceOf(ComplexValueObjectErrors::class, $errors);
 
-            $this->assertInstanceOf(InvalidComplexValue::class, $errors[0]);
-            $this->assertSame('First exception', $errors[0]->getMessage());
+            $this->assertInstanceOf(CustomInvalidFieldError::class, $errors[0]);
+            $this->assertSame('foo', $errors[0]->getField());
+
+            $this->assertInstanceOf(CustomEmptyFieldClassError::class, $errors[1]);
+            $this->assertSame('first', $errors[1]->getField());
+
+            $this->assertInstanceOf(CustomInvalidFieldClassError::class, $errors[2]);
+            $this->assertSame('second', $errors[2]->getField());
+
+            $this->assertInstanceOf(CustomInvalidFieldValueError::class, $errors[3]);
+            $this->assertSame('third', $errors[3]->getField());
+
+            $this->assertInstanceOf(CustomMissingField::class, $errors[4]);
+            $this->assertSame('first', $errors[4]->getField());
+
+            $this->assertInstanceOf(CustomMissingField::class, $errors[5]);
+            $this->assertSame('second', $errors[5]->getField());
+
+            $this->assertInstanceOf(CustomMissingField::class, $errors[6]);
+            $this->assertSame('third', $errors[6]->getField());
 
             return;
+
         }
         $this->fail();
     }

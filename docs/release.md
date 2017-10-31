@@ -1,6 +1,6 @@
 7.0.4, 7.1.4, 7.2.4
 ===================
-* `ComplexValueObject::ERRORS['COLLECTION']` constant containing errors collection class name is added 
+* `ComplexValueObject::ERRORS` constant containing custom error class names is added 
 
 7.0.3, 7.1.3, 7.2.3
 ===================
