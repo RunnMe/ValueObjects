@@ -152,7 +152,7 @@ class ComplexValueObjectValidateTest extends \PHPUnit_Framework_TestCase
         try {
 
             $object = new class(['first' => 1, 'second' => 2]) extends ComplexValueObject {
-                protected const ERRORS = CustomComplexValueObjectError::class;
+                protected const ERRORS = ['COLLECTION' => CustomComplexValueObjectError::class];
                 protected static $schema = [
                     'first' => ['class' => IntValue::class],
                     'second' => ['class' => IntValue::class],
