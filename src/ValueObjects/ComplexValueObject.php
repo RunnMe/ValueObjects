@@ -32,7 +32,8 @@ abstract class ComplexValueObject
         StdGetSetTrait::innerSet as trait_innerSet;
     }
 
-    protected const ERRORS = [
+    /** @7.1 */
+    /*protected */const ERRORS = [
         'COLLECTION' => ComplexValueObjectErrors::class,
     ];
 
