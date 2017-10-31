@@ -32,6 +32,8 @@ abstract class ComplexValueObject
         StdGetSetTrait::innerSet as trait_innerSet;
     }
 
+    protected const ERRORS = ComplexValueObjectErrors::class;
+
     /**
      * @var array
      */
@@ -72,7 +74,8 @@ abstract class ComplexValueObject
         }
         $schema = static::getSchema();
 
-        $errors = new ComplexValueObjectErrors;
+        $errorsCollectionClass = static::ERRORS;
+        $errors = new $errorsCollectionClass;
 
         foreach ($data as $key => $val) {
             try {

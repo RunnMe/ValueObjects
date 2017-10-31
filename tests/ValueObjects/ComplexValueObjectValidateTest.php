@@ -10,6 +10,8 @@ use Runn\ValueObjects\Errors\ComplexValueObjectErrors;
 use Runn\ValueObjects\Errors\InvalidComplexValue;
 use Runn\ValueObjects\Values\IntValue;
 
+class CustomComplexValueObjectError extends ComplexValueObjectErrors {}
+
 class ComplexValueObjectValidateTest extends \PHPUnit_Framework_TestCase
 {
 
@@ -139,6 +141,36 @@ class ComplexValueObjectValidateTest extends \PHPUnit_Framework_TestCase
 
             $this->assertInstanceOf(InvalidComplexValue::class, $errors[1]);
             $this->assertSame('Second exception', $errors[1]->getMessage());
+
+            return;
+        }
+        $this->fail();
+    }
+
+    public function testCustomErrorsCollection()
+    {
+        try {
+
+            $object = new class(['first' => 1, 'second' => 2]) extends ComplexValueObject {
+                protected const ERRORS = CustomComplexValueObjectError::class;
+                protected static $schema = [
+                    'first' => ['class' => IntValue::class],
+                    'second' => ['class' => IntValue::class],
+                ];
+                protected function validate()
+                {
+                    throw new InvalidComplexValue('First exception');
+                }
+            };
+
+        } catch (ComplexValueObjectErrors $errors) {
+            $this->assertCount(1, $errors);
+
+            $this->assertInstanceOf(CustomComplexValueObjectError::class, $errors);
+            $this->assertInstanceOf(ComplexValueObjectErrors::class, $errors);
+
+            $this->assertInstanceOf(InvalidComplexValue::class, $errors[0]);
+            $this->assertSame('First exception', $errors[0]->getMessage());
 
             return;
         }
