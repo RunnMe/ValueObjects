@@ -33,7 +33,7 @@ abstract class ComplexValueObject
     }
 
     /** @7.1 */
-    /*protected */const ERRORS = [
+    protected const ERRORS = [
         'COLLECTION' => ComplexValueObjectErrors::class,
         'INVALID_FIELD' => InvalidField::class,
         'EMPTY_FIELD_CLASS' => EmptyFieldClass::class,

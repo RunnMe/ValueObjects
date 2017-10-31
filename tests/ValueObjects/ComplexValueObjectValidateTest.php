@@ -169,7 +169,7 @@ class ComplexValueObjectValidateTest extends \PHPUnit_Framework_TestCase
                 'third' => [],
             ]) extends ComplexValueObject {
                 /** @7.1 */
-                /*protected */const ERRORS = [
+                protected const ERRORS = [
                     'COLLECTION' => CustomComplexValueObjectErrors::class,
                     'INVALID_FIELD' => CustomInvalidFieldError::class,
                     'EMPTY_FIELD_CLASS' => CustomEmptyFieldClassError::class,
