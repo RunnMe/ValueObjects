@@ -32,6 +32,16 @@ abstract class ComplexValueObject
         StdGetSetTrait::innerSet as trait_innerSet;
     }
 
+    /** @7.1 */
+    /*protected */const ERRORS = [
+        'COLLECTION' => ComplexValueObjectErrors::class,
+        'INVALID_FIELD' => InvalidField::class,
+        'EMPTY_FIELD_CLASS' => EmptyFieldClass::class,
+        'INVALID_FIELD_CLASS' => InvalidFieldClass::class,
+        'INVALID_FIELD_VALUE' => InvalidFieldValue::class,
+        'MISSING_FIELD' => MissingField::class,
+    ];
+
     /**
      * @var array
      */
@@ -55,8 +65,21 @@ abstract class ComplexValueObject
      */
     public function __construct($value = null)
     {
+        $this->checkExceptionClasses();
         $this->setValue($value);
         $this->constructed = true;
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected function checkExceptionClasses()
+    {
+        foreach (self::ERRORS as $type => $class) {
+            if (empty(static::ERRORS[$type]) || !is_a(static::ERRORS[$type], $class, true)) {
+                throw new Exception("Class " . get_called_class() . "::ERRORS['" . $type . "'] must be " . $class . " or extends it");
+            }
+        }
     }
 
     /**
@@ -72,7 +95,9 @@ abstract class ComplexValueObject
         }
         $schema = static::getSchema();
 
-        $errors = new ComplexValueObjectErrors;
+        $errorsCollectionClass = static::ERRORS['COLLECTION'];
+        /** @var ComplexValueObjectErrors $errors */
+        $errors = new $errorsCollectionClass;
 
         foreach ($data as $key => $val) {
             try {
@@ -85,8 +110,9 @@ abstract class ComplexValueObject
             } catch (InvalidFieldClass $exception) {
                 $errors->add($exception);
             } catch (\Throwable $exception) {
+                $errorInvalidFieldValue = static::ERRORS['INVALID_FIELD_VALUE'];
                 $errors->add(
-                    new InvalidFieldValue($key, $val, 'Invalid complex value object field "' . $key . '" value', 0, $exception)
+                    new $errorInvalidFieldValue($key, $val, 'Invalid complex value object field "' . $key . '" value', 0, $exception)
                 );
             }
         }
@@ -94,7 +120,8 @@ abstract class ComplexValueObject
         foreach ($schema as $key => $field) {
             if (!isset($this->$key)) {
                 if (!array_key_exists('default', $field)) {
-                    $errors[] = new MissingField($key, 'Missing complex value object field "' . $key . '"');
+                    $errorMissingField = static::ERRORS['MISSING_FIELD'];
+                    $errors[] = new $errorMissingField($key, 'Missing complex value object field "' . $key . '"');
                     continue;
                 }
                 $this->$key = $field['default'];
@@ -139,7 +166,8 @@ abstract class ComplexValueObject
     protected function setField($field, $value)
     {
         if (!array_key_exists($field, static::getSchema())) {
-            throw new InvalidField($field,'Invalid complex value object field key: "' . $field . '"');
+            $errorsInvalidField = static::ERRORS['INVALID_FIELD'];
+            throw new $errorsInvalidField($field,'Invalid complex value object field key: "' . $field . '"');
         }
 
         if ($this->constructed) {
@@ -176,13 +204,15 @@ abstract class ComplexValueObject
     protected function innerCast($key, $value)
     {
         if (empty(static::getSchema()[$key]['class'])) {
-            throw new EmptyFieldClass($key, 'Empty complex value object field "' . $key . '" class');
+            $errorEmptyFieldClass = static::ERRORS['EMPTY_FIELD_CLASS'];
+            throw new $errorEmptyFieldClass($key, 'Empty complex value object field "' . $key . '" class');
         }
 
         $class = static::getSchema()[$key]['class'];
 
         if (!is_subclass_of($class, ValueObjectInterface::class)) {
-            throw new InvalidFieldClass($key, $class, 'Invalid complex value object field "' . $key . '" class');
+            $errorInvalidFieldClass = static::ERRORS['INVALID_FIELD_CLASS'];
+            throw new $errorInvalidFieldClass($key, $class, 'Invalid complex value object field "' . $key . '" class');
         }
 
         return new $class($value);
