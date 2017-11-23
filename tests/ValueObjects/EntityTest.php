@@ -84,6 +84,16 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         ];};
         $this->assertSame(1, $entity->getPrimaryKey());
 
+        $entity = new class() extends Entity {
+            const PK_FIELDS = ['first', 'second'];
+            protected static $schema = [
+                'first' => ['class' => IntValue::class, 'default' => null],
+                'second' => ['class' => IntValue::class, 'default' => null],
+                'foo'  => ['class' => StringValue::class, 'default' => null],
+            ];
+        };
+        $this->assertSame(null, $entity->getPrimaryKey());
+
         $entity = new class(['first' => 1, 'second' => 2, 'foo' => 'bar']) extends Entity {
             const PK_FIELDS = ['first', 'second'];
             protected static $schema = [
@@ -100,6 +110,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $entity = new class extends Entity {const PK_FIELDS = ['id'];};
         $class = get_class($entity);
 
+        $this->assertTrue($class::conformsToPrimaryKey(null));
         $this->assertTrue($class::conformsToPrimaryKey(1));
         $this->assertTrue($class::conformsToPrimaryKey('foo'));
         $this->assertFalse($class::conformsToPrimaryKey([]));
@@ -111,6 +122,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $entity = new class extends Entity {const PK_FIELDS = ['id1', 'id2'];};
         $class = get_class($entity);
 
+        $this->assertTrue($class::conformsToPrimaryKey(null));
         $this->assertFalse($class::conformsToPrimaryKey(1));
         $this->assertFalse($class::conformsToPrimaryKey('foo'));
         $this->assertFalse($class::conformsToPrimaryKey([]));

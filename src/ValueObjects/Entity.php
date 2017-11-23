@@ -16,7 +16,8 @@ abstract class Entity
     implements EntityInterface
 {
 
-    const PK_FIELDS = ['__id'];
+    // @7.1
+    /*protected */const PK_FIELDS = ['__id'];
 
     /**
      * @return array
@@ -42,9 +43,9 @@ abstract class Entity
     {
         $ret = [];
         foreach (static::getPrimaryKeyFields() as $field) {
-            $ret[$field] = $this->$field->getValue();
+            $ret[$field] = $this->$field ? $this->$field->getValue() : null;
         }
-        if (empty($ret)) {
+        if (empty(array_filter($ret))) {
             return null;
         } elseif (1 == count($ret)) {
             return array_shift($ret);
@@ -59,6 +60,9 @@ abstract class Entity
      */
     public static function conformsToPrimaryKey($data): bool
     {
+        if (null === $data) {
+            return true;
+        }
         $fields = static::getPrimaryKeyFields();
         if (1 === count($fields)) {
             if (is_scalar($data)) {
@@ -96,7 +100,7 @@ abstract class Entity
      */
     public function isEqual(EntityInterface $object): bool
     {
-        return (get_class($object) === get_class($this)) && ($object->getPrimaryKey() == $this->getPrimaryKey());
+        return (get_class($object) === get_class($this)) && ($object->getPrimaryKey() == $this->getPrimaryKey() && (null !== $object->getPrimaryKey()));
     }
 
 }
