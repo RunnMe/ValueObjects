@@ -91,6 +91,15 @@ abstract class ComplexValueObject
     }
 
     /**
+     * All fields are required!
+     * @return array
+     */
+    protected static function getRequiredFieldsList()
+    {
+        return static::getFieldsList();
+    }
+
+    /**
      * @param iterable|null $data
      * @throws \Runn\ValueObjects\Errors\ComplexValueObjectErrors
      *
@@ -127,12 +136,16 @@ abstract class ComplexValueObject
 
         foreach ($schema as $key => $field) {
             if (!isset($this->$key)) {
-                if (!array_key_exists('default', $field)) {
-                    $errorMissingField = static::ERRORS['MISSING_FIELD'];
-                    $errors[] = new $errorMissingField($key, 'Missing complex value object field "' . $key . '"');
-                    continue;
+                if (in_array($key, static::getRequiredFieldsList())) {
+                    if (!array_key_exists('default', $field)) {
+                        $errorMissingField = static::ERRORS['MISSING_FIELD'];
+                        $errors[] = new $errorMissingField($key, 'Missing complex value object field "' . $key . '"');
+                        continue;
+                    }
+                    $this->$key = $field['default'];
+                } else {
+                    $this->$key = null;
                 }
-                $this->$key = $field['default'];
             }
         }
 
@@ -196,6 +209,9 @@ abstract class ComplexValueObject
     protected function needCasting($key, $value): bool
     {
         if (null === $value) {
+            if (!in_array($key, static::getRequiredFieldsList())) {
+                return false;
+            }
             if (isset(static::getSchema()[$key])) {
                 $schema = static::getSchema()[$key];
                 if (array_key_exists('default', $schema) && null === $schema['default']) {

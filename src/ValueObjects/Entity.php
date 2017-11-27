@@ -1,6 +1,7 @@
 <?php
 
 namespace Runn\ValueObjects;
+
 use Runn\Core\ObjectAsArrayInterface;
 
 /**
@@ -104,11 +105,20 @@ abstract class Entity
         return array_values(array_diff(static::getFieldsList(), static::getPrimaryKeyFields()));
     }
 
+    /**
+     * All fields except primary key are required!
+     * @return array
+     */
+    protected static function getRequiredFieldsList()
+    {
+        return static::getFieldsListWoPk();
+    }
+
     protected function setField($field, $value)
     {
         if ($this->constructed) {
-            if (in_array($field, static::getPrimaryKeyFields())) {
-                throw new Exception('Can not set field "' . $field . '" value because of it is part of primary key');
+            if ($this->issetPrimaryKey() && in_array($field, static::getPrimaryKeyFields())) {
+                throw new Exception('Can not set field "' . $field . '" value because of it is part of primary key which is already set');
             }
         }
         if ($this->needCasting($field, $value)) {

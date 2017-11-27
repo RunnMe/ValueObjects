@@ -223,6 +223,19 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $entity->__id = 13;
     }
 
+    public function testMutablePk()
+    {
+        $entity = new testEntity(['foo' => 'bar']);
+
+        $this->assertFalse($entity->issetPrimaryKey());
+        $this->assertNull($entity->getPrimaryKey());
+
+        $entity->__id = 13;
+
+        $this->assertTrue($entity->issetPrimaryKey());
+        $this->assertSame(13, $entity->getPrimaryKey());
+    }
+
     public function testMutableField()
     {
         $entity = new testEntity(['__id' => 42, 'foo' => 'bar']);
