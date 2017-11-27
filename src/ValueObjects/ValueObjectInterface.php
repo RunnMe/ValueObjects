@@ -37,6 +37,11 @@ interface ValueObjectInterface
     public function __invoke();
 
     /**
+     * @return string
+     */
+    public function __toString(): string;
+
+    /**
      * @param \Runn\ValueObjects\ValueObjectInterface $object
      * @return bool
      */
