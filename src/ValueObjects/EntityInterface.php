@@ -27,6 +27,12 @@ interface EntityInterface
     public static function isPrimaryKeyScalar(): bool;
 
     /**
+     * This method tells about is primary key already set
+     * @return bool
+     */
+    public function issetPrimaryKey(): bool;
+
+    /**
      * This method can return either single scalar value or an array consisting of all PK fields' values
      * @return mixed|array
      */

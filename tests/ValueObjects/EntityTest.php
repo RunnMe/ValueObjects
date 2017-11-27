@@ -38,22 +38,34 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(ComplexValueObject::class, $entity);
 
         $this->assertSame(get_class($entity)::PK_FIELDS, get_class($entity)::getPrimaryKeyFields());
+        $this->assertSame([], get_class($entity)::getFieldsList());
         $this->assertSame([], get_class($entity)::getPrimaryKeyFields());
+        $this->assertSame([], get_class($entity)::getFieldsListWoPk());
+        $this->assertFalse($entity->issetPrimaryKey());
 
         $entity = new class extends Entity {};
 
         $this->assertSame(get_class($entity)::PK_FIELDS, get_class($entity)::getPrimaryKeyFields());
+        $this->assertSame([], get_class($entity)::getFieldsList());
         $this->assertSame(['__id'], get_class($entity)::getPrimaryKeyFields());
+        $this->assertSame([], get_class($entity)::getFieldsListWoPk());
+        $this->assertFalse($entity->issetPrimaryKey());
 
         $entity = new class extends Entity {const PK_FIELDS = ['id'];};
 
         $this->assertSame(get_class($entity)::PK_FIELDS, get_class($entity)::getPrimaryKeyFields());
+        $this->assertSame([], get_class($entity)::getFieldsList());
         $this->assertSame(['id'], get_class($entity)::getPrimaryKeyFields());
+        $this->assertSame([], get_class($entity)::getFieldsListWoPk());
+        $this->assertFalse($entity->issetPrimaryKey());
 
         $entity = new class extends Entity {const PK_FIELDS = ['foo', 'bar'];};
 
         $this->assertSame(get_class($entity)::PK_FIELDS, get_class($entity)::getPrimaryKeyFields());
+        $this->assertSame([], get_class($entity)::getFieldsList());
         $this->assertSame(['foo', 'bar'], get_class($entity)::getPrimaryKeyFields());
+        $this->assertSame([], get_class($entity)::getFieldsListWoPk());
+        $this->assertFalse($entity->issetPrimaryKey());
     }
 
     public function testIsPrimaryKeyScalar()
@@ -76,13 +88,19 @@ class EntityTest extends \PHPUnit_Framework_TestCase
             '__id' => ['class' => IntValue::class],
             'foo'  => ['class' => StringValue::class],
         ];};
+        $this->assertSame(['__id', 'foo'], get_class($entity)::getFieldsList());
         $this->assertSame(null, $entity->getPrimaryKey());
+        $this->assertFalse($entity->issetPrimaryKey());
+        $this->assertSame(['__id', 'foo'], get_class($entity)::getFieldsListWoPk());
 
         $entity = new class(['__id' => 1, 'foo' => 'bar']) extends Entity { protected static $schema = [
             '__id' => ['class' => IntValue::class],
             'foo'  => ['class' => StringValue::class],
         ];};
+        $this->assertSame(['__id', 'foo'], get_class($entity)::getFieldsList());
         $this->assertSame(1, $entity->getPrimaryKey());
+        $this->assertTrue($entity->issetPrimaryKey());
+        $this->assertSame(['foo'], get_class($entity)::getFieldsListWoPk());
 
         $entity = new class() extends Entity {
             const PK_FIELDS = ['first', 'second'];
@@ -92,7 +110,10 @@ class EntityTest extends \PHPUnit_Framework_TestCase
                 'foo'  => ['class' => StringValue::class, 'default' => null],
             ];
         };
+        $this->assertSame(['first', 'second', 'foo'], get_class($entity)::getFieldsList());
         $this->assertSame(null, $entity->getPrimaryKey());
+        $this->assertFalse($entity->issetPrimaryKey());
+        $this->assertSame(['foo'], get_class($entity)::getFieldsListWoPk());
 
         $entity = new class(['first' => 1, 'second' => 2, 'foo' => 'bar']) extends Entity {
             const PK_FIELDS = ['first', 'second'];
@@ -102,7 +123,10 @@ class EntityTest extends \PHPUnit_Framework_TestCase
                 'foo'  => ['class' => StringValue::class],
             ];
         };
+        $this->assertSame(['first', 'second', 'foo'], get_class($entity)::getFieldsList());
         $this->assertSame(['first' => 1, 'second' => 2], $entity->getPrimaryKey());
+        $this->assertTrue($entity->issetPrimaryKey());
+        $this->assertSame(['foo'], get_class($entity)::getFieldsListWoPk());
     }
 
     public function testConformsPK()

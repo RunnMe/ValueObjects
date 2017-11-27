@@ -37,6 +37,21 @@ abstract class Entity
     }
 
     /**
+     * This method tells about primary key is already set (all ones fields are not null)
+     * @return bool
+     */
+    public function issetPrimaryKey(): bool
+    {
+        foreach (static::getPrimaryKeyFields() as $field) {
+            if (null !== $this->$field) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * This method can return either single scalar value or an array consisting of all PK fields' values
      * @return mixed|array
      */
     public function getPrimaryKey()
@@ -79,6 +94,14 @@ abstract class Entity
             return empty(array_diff($keys, $fields)) && empty(array_diff($fields, $keys));
         }
         return false;
+    }
+
+    /**
+     * @return array
+     */
+    public static function getFieldsListWoPk()
+    {
+        return array_values(array_diff(static::getFieldsList(), static::getPrimaryKeyFields()));
     }
 
     protected function setField($field, $value)
