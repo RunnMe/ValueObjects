@@ -1,6 +1,7 @@
 7.0.4, 7.1.4, 7.2.4
 ===================
-* Добавлен метод `ValueObjectInterface::__toString()`. 
+* Добавлен метод `ValueObjectInterface::__toString()`
+* Дальнейшие улучшения классов `ComplexValueObject` и `Entity`
 
 7.0.3, 7.1.3, 7.2.3
 ===================

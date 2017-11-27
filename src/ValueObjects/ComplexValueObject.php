@@ -56,6 +56,14 @@ abstract class ComplexValueObject
     }
 
     /**
+     * @return array
+     */
+    public static function getFieldsList()
+    {
+        return array_keys(static::getSchema());
+    }
+
+    /**
      * @var bool
      */
     protected $constructed = false;

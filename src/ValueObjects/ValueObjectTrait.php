@@ -20,7 +20,7 @@ trait ValueObjectTrait
      */
     protected function notgetters(): array
     {
-        return ['schema', 'value', 'field'];
+        return ['schema', 'value', 'field', 'fieldsList'];
     }
 
     /**
@@ -28,7 +28,7 @@ trait ValueObjectTrait
      */
     protected function notsetters(): array
     {
-        return ['schema', 'value', 'field'];
+        return ['schema', 'value', 'field', 'fieldsList'];
     }
 
     /**
