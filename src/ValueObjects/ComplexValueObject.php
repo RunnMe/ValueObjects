@@ -64,6 +64,15 @@ abstract class ComplexValueObject
     }
 
     /**
+     * All fields are required!
+     * @return array
+     */
+    protected static function getRequiredFieldsList()
+    {
+        return static::getFieldsList();
+    }
+
+    /**
      * @var bool
      */
     protected $constructed = false;
@@ -88,15 +97,6 @@ abstract class ComplexValueObject
                 throw new Exception("Class " . get_called_class() . "::ERRORS['" . $type . "'] must be " . $class . " or extends it");
             }
         }
-    }
-
-    /**
-     * All fields are required!
-     * @return array
-     */
-    protected static function getRequiredFieldsList()
-    {
-        return static::getFieldsList();
     }
 
     /**

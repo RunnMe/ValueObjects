@@ -38,7 +38,7 @@ abstract class Entity
     }
 
     /**
-     * This method tells about primary key is already set (all ones fields are not null)
+     * This method tells about primary key is already set (at least one it's field is not null)
      * @return bool
      */
     public function issetPrimaryKey(): bool

@@ -11,6 +11,7 @@ namespace Runn\ValueObjects;
  * @implements \Runn\ValueObjects\ValueObjectInterface
  */
 trait ValueObjectTrait
+    //implements ValueObjectInterface
 {
 
     protected $__value;
@@ -33,6 +34,7 @@ trait ValueObjectTrait
 
     /**
      * "Static constructor"
+     *
      * @param mixed $value
      * @return self
      */
