@@ -35,11 +35,12 @@ class DateTimeValue
     }
 
     /**
-     * @return string
+     * JsonSerializable implementation
+     * @return mixed
      */
-    public function getValue()
+    public function jsonSerialize()
     {
-        return parent::getValue()->format('c');
+        return $this->getValue()->format('c');
     }
 
 }

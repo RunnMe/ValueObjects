@@ -2,6 +2,7 @@
 ===================
 * `ValueObjectInterface::__toString()` method is added. 
 * `ComplexValueObject` and `Entity` classes improvements
+* `DateTimeValue` and `DateValue` classes `getValue()` method returns `DateTime` object now
 
 7.0.3, 7.1.3, 7.2.3
 ===================
