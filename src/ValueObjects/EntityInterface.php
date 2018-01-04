@@ -3,7 +3,7 @@
 namespace Runn\ValueObjects;
 
 /**
- * Interface for Entities
+ * Common interface for Entities
  *
  * Interface EntityInterface
  * @package Runn\ValueObjects
@@ -39,17 +39,16 @@ interface EntityInterface
     public function getPrimaryKey();
 
     /**
+     * @return mixed
+     */
+    public function getValueWithoutPrimaryKey();
+
+    /**
      * This method checks if $data can be used as primary key value
      * @param mixed $data
      * @return bool
      */
     public static function conformsToPrimaryKey($data): bool;
-
-    /**
-     * @param \Runn\ValueObjects\ValueObjectInterface $object
-     * @return bool
-     */
-    public function isSame(ValueObjectInterface $object): bool;
 
     /**
      * @param \Runn\ValueObjects\EntityInterface $object

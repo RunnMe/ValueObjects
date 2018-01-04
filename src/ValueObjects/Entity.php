@@ -69,6 +69,18 @@ abstract class Entity
         return $ret;
     }
 
+    public function getValueWithoutPrimaryKey()
+    {
+        $ret = [];
+        foreach ($this as $key => $el) {
+            if (in_array($key, static::getPrimaryKeyFields())) {
+                continue;
+            }
+            $ret[$key] = null !== $el ? $el->getValue() : null;
+        }
+        return $ret;
+    }
+
     /**
      * This method checks if $data can be used as primary key value
      * @param mixed $data
@@ -128,12 +140,32 @@ abstract class Entity
     }
 
     /**
+     * @param \Runn\ValueObjects\ValueObjectInterface $object
+     * @return bool
+     */
+    public function isSame(ValueObjectInterface $object): bool
+    {
+        if (!($object instanceof EntityInterface)) {
+            return false;
+        }
+        return
+            (get_class($object) === get_class($this))
+                &&
+            (null !== $object->getPrimaryKey())
+                &&
+            ($object->getPrimaryKey() == $this->getPrimaryKey());
+    }
+
+    /**
      * @param \Runn\ValueObjects\EntityInterface $object
      * @return bool
      */
     public function isEqual(EntityInterface $object): bool
     {
-        return (get_class($object) === get_class($this)) && ($object->getPrimaryKey() == $this->getPrimaryKey() && (null !== $object->getPrimaryKey()));
+        return
+            (get_class($object) === get_class($this))
+                &&
+            ($this->getValueWithoutPrimaryKey() === $object->getValueWithoutPrimaryKey());
     }
 
 }

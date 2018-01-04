@@ -3,7 +3,7 @@
 namespace Runn\ValueObjects;
 
 /**
- * ValueObjectInterface implementation
+ * ValueObjectInterface default implementation
  *
  * Trait ValueObjectTrait
  * @package Runn\ValueObjects

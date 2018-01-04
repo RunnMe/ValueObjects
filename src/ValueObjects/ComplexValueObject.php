@@ -110,7 +110,6 @@ abstract class ComplexValueObject
         if (empty($data)) {
             $data = [];
         }
-        $schema = static::getSchema();
 
         $errorsCollectionClass = static::ERRORS['COLLECTION'];
         /** @var ComplexValueObjectErrors $errors */
@@ -134,7 +133,7 @@ abstract class ComplexValueObject
             }
         }
 
-        foreach ($schema as $key => $field) {
+        foreach (static::getSchema() as $key => $field) {
             if (!isset($this->$key)) {
                 if (in_array($key, static::getRequiredFieldsList())) {
                     if (!array_key_exists('default', $field)) {
@@ -170,7 +169,6 @@ abstract class ComplexValueObject
 
         } catch (\Throwable $e) {
             $errors->add($e);
-            throw $errors;
         }
 
         if (!$errors->empty()) {
@@ -186,13 +184,13 @@ abstract class ComplexValueObject
 
     protected function setField($field, $value)
     {
-        if (!array_key_exists($field, static::getSchema())) {
-            $errorsInvalidField = static::ERRORS['INVALID_FIELD'];
-            throw new $errorsInvalidField($field,'Invalid complex value object field key: "' . $field . '"');
-        }
-
         if ($this->constructed) {
             throw new Exception('Can not set field "' . $field . '" value because of value object is constructed');
+        }
+
+        if (!in_array($field, static::getFieldsList())) {
+            $errorsInvalidField = static::ERRORS['INVALID_FIELD'];
+            throw new $errorsInvalidField($field,'Invalid complex value object field key: "' . $field . '"');
         }
 
         if ($this->needCasting($field, $value)) {

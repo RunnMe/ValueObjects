@@ -3,6 +3,7 @@
 * Добавлен метод `ValueObjectInterface::__toString()`
 * Дальнейшие улучшения классов `ComplexValueObject` и `Entity`
 * Метод `getValue()` объектов классов `DateTimeValue` и `DateValue` возвращает отныне объект класса `DateTime`
+* Уточнение понятий "равенства" и "эквивалентности" для `Entity`
 
 7.0.3, 7.1.3, 7.2.3
 ===================

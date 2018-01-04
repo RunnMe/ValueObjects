@@ -5,6 +5,7 @@ namespace Runn\tests\ValueObjects\Entity;
 use Runn\Core\Std;
 use Runn\ValueObjects\ComplexValueObject;
 use Runn\ValueObjects\Entity;
+use Runn\ValueObjects\Values\BooleanValue;
 use Runn\ValueObjects\Values\IntValue;
 use Runn\ValueObjects\Values\StringValue;
 
@@ -129,6 +130,43 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(['foo'], get_class($entity)::getFieldsListWoPk());
     }
 
+    public function testGetValueWoPk()
+    {
+        $entity = new class(['__id' => 1, 'foo' => 'bar']) extends Entity {
+            const PK_FIELDS = [];
+            protected static $schema = [
+                '__id' => ['class' => IntValue::class],
+                'foo'  => ['class' => StringValue::class],
+            ];};
+        $this->assertSame(['__id' => 1, 'foo' => 'bar'], $entity->getValueWithoutPrimaryKey());
+
+        $entity = new class(['__id' => 1, 'foo' => 'bar']) extends Entity { protected static $schema = [
+            '__id' => ['class' => IntValue::class],
+            'foo'  => ['class' => StringValue::class],
+        ];};
+        $this->assertSame(['foo' => 'bar'], $entity->getValueWithoutPrimaryKey());
+
+        $entity = new class() extends Entity {
+            const PK_FIELDS = ['first', 'second'];
+            protected static $schema = [
+                'first' => ['class' => IntValue::class, 'default' => null],
+                'second' => ['class' => IntValue::class, 'default' => null],
+                'foo'  => ['class' => StringValue::class, 'default' => null],
+            ];
+        };
+        $this->assertSame(['foo' => null], $entity->getValueWithoutPrimaryKey());
+
+        $entity = new class(['first' => 1, 'second' => 2, 'foo' => 'bar']) extends Entity {
+            const PK_FIELDS = ['first', 'second'];
+            protected static $schema = [
+                'first' => ['class' => IntValue::class],
+                'second' => ['class' => IntValue::class],
+                'foo'  => ['class' => StringValue::class],
+            ];
+        };
+        $this->assertSame(['foo' => 'bar'], $entity->getValueWithoutPrimaryKey());
+    }
+
     public function testConformsPK()
     {
         $entity = new class extends Entity {const PK_FIELDS = ['id'];};
@@ -163,6 +201,9 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $entity1 = new testEntity(['__id' => 1, 'foo' => 'bar']);
         $this->assertTrue($entity1->isSame($entity1));
 
+        $entity2 = new BooleanValue(true);
+        $this->assertFalse($entity1->isSame($entity2));
+
         $entity2 = new class(['__id' => 1, 'foo' => 'bar']) extends Entity { protected static $schema = [
             '__id' => ['class' => IntValue::class],
             'foo'  => ['class' => StringValue::class],
@@ -175,8 +216,8 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($entity2->isSame($entity1));
 
         $entity2 = new testEntity(['__id' => 1, 'foo' => 'baz']);
-        $this->assertFalse($entity1->isSame($entity2));
-        $this->assertFalse($entity2->isSame($entity1));
+        $this->assertTrue($entity1->isSame($entity2));
+        $this->assertTrue($entity2->isSame($entity1));
 
         $entity2 = new testEntity(['__id' => 1, 'foo' => 'bar']);
         $this->assertTrue($entity1->isSame($entity2));
@@ -196,12 +237,12 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($entity2->isEqual($entity1));
 
         $entity2 = new testEntity(['__id' => 2, 'foo' => 'bar']);
-        $this->assertFalse($entity1->isEqual($entity2));
-        $this->assertFalse($entity2->isEqual($entity1));
-
-        $entity2 = new testEntity(['__id' => 1, 'foo' => 'baz']);
         $this->assertTrue($entity1->isEqual($entity2));
         $this->assertTrue($entity2->isEqual($entity1));
+
+        $entity2 = new testEntity(['__id' => 1, 'foo' => 'baz']);
+        $this->assertFalse($entity1->isEqual($entity2));
+        $this->assertFalse($entity2->isEqual($entity1));
 
         $entity2 = new testEntity(['__id' => 1, 'foo' => 'bar']);
         $this->assertTrue($entity1->isEqual($entity2));
