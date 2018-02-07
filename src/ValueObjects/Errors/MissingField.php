@@ -6,14 +6,14 @@ use Runn\ValueObjects\Exception;
 use Throwable;
 
 /**
+ * Missing field error
+ *
  * Class MissingField
  * @package Runn\ValueObjects\Errors
- *
- * Missing field error
  */
 class MissingField
     extends Exception
-    implements ComplexValueObjectFieldError
+    implements ComplexValueObjectFieldErrorInterface
 {
 
     protected $field;

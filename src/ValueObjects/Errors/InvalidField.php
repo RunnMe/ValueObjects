@@ -6,14 +6,14 @@ use Runn\ValueObjects\Exception;
 use Throwable;
 
 /**
+ * Invalid colplex value object field's name error
+ *
  * Class InvalidField
  * @package Runn\ValueObjects\Errors
- *
- * Invalid field name error
  */
 class InvalidField
     extends Exception
-    implements ComplexValueObjectFieldError
+    implements ComplexValueObjectFieldErrorInterface
 {
 
     protected $field;

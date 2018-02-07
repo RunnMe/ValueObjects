@@ -24,6 +24,7 @@ class SingleValueObjectTest extends \PHPUnit_Framework_TestCase
 
         $this->assertNull($valueObject->getValue());
         $this->assertNull($valueObject());
+        $this->assertSame('', (string)$valueObject);
     }
 
     public function testNullConstruct()
@@ -36,6 +37,7 @@ class SingleValueObjectTest extends \PHPUnit_Framework_TestCase
 
         $this->assertNull($valueObject->getValue());
         $this->assertNull($valueObject());
+        $this->assertSame('', (string)$valueObject);
     }
 
     public function testConstructPassThru()
@@ -48,6 +50,7 @@ class SingleValueObjectTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(\JsonSerializable::class, $valueObject);
 
         $this->assertSame('foo', $valueObject->getValue());
+        $this->assertSame('foo', (string)$valueObject);
 
         $reflect = new \ReflectionObject($valueObject);
 
@@ -94,6 +97,7 @@ class SingleValueObjectTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(\JsonSerializable::class, $valueObject);
 
         $this->assertSame(42, $valueObject->getValue());
+        $this->assertSame('42', (string)$valueObject);
     }
 
     /**
@@ -125,6 +129,7 @@ class SingleValueObjectTest extends \PHPUnit_Framework_TestCase
 
         $valueObject = new testClass(42, new PassThruValidator(), $sanitizer);
         $this->assertSame(84, $valueObject->getValue());
+        $this->assertSame('84', (string)$valueObject);
     }
 
     public function testJson()

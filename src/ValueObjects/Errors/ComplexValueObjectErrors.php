@@ -5,6 +5,8 @@ namespace Runn\ValueObjects\Errors;
 use Runn\Core\Exceptions;
 
 /**
+ * Complex value object errors collection
+ *
  * Class ComplexValueObjectErrors
  * @package Runn\ValueObjects\Errors
  */
@@ -14,7 +16,7 @@ class ComplexValueObjectErrors
 
     public static function getType()
     {
-        return ComplexValueObjectError::class;
+        return ComplexValueObjectErrorInterface::class;
     }
 
 }

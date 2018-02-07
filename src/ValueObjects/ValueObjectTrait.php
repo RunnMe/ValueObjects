@@ -3,7 +3,7 @@
 namespace Runn\ValueObjects;
 
 /**
- * ValueObjectInterface implementation
+ * ValueObjectInterface default implementation
  *
  * Trait ValueObjectTrait
  * @package Runn\ValueObjects
@@ -11,6 +11,7 @@ namespace Runn\ValueObjects;
  * @implements \Runn\ValueObjects\ValueObjectInterface
  */
 trait ValueObjectTrait
+    //implements ValueObjectInterface
 {
 
     protected $__value;
@@ -20,7 +21,7 @@ trait ValueObjectTrait
      */
     protected function notgetters(): array
     {
-        return ['schema', 'value', 'field'];
+        return ['schema', 'value', 'field', 'fieldsList'];
     }
 
     /**
@@ -28,11 +29,12 @@ trait ValueObjectTrait
      */
     protected function notsetters(): array
     {
-        return ['schema', 'value', 'field'];
+        return ['schema', 'value', 'field', 'fieldsList'];
     }
 
     /**
      * "Static constructor"
+     *
      * @param mixed $value
      * @return self
      */
@@ -73,6 +75,14 @@ trait ValueObjectTrait
     public function __invoke()
     {
         return $this->getValue();
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return $this->getValue() ?? '';
     }
 
     /**

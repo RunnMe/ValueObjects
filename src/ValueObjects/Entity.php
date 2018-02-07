@@ -1,6 +1,7 @@
 <?php
 
 namespace Runn\ValueObjects;
+
 use Runn\Core\ObjectAsArrayInterface;
 
 /**
@@ -16,7 +17,8 @@ abstract class Entity
     implements EntityInterface
 {
 
-    const PK_FIELDS = ['__id'];
+    // @7.1
+    protected const PK_FIELDS = ['__id'];
 
     /**
      * @return array
@@ -36,18 +38,45 @@ abstract class Entity
     }
 
     /**
+     * This method tells about primary key is already set (at least one it's field is not null)
+     * @return bool
+     */
+    public function issetPrimaryKey(): bool
+    {
+        foreach (static::getPrimaryKeyFields() as $field) {
+            if (null !== $this->$field) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * This method can return either single scalar value or an array consisting of all PK fields' values
      * @return mixed|array
      */
     public function getPrimaryKey()
     {
         $ret = [];
         foreach (static::getPrimaryKeyFields() as $field) {
-            $ret[$field] = $this->$field->getValue();
+            $ret[$field] = $this->$field ? $this->$field->getValue() : null;
         }
-        if (empty($ret)) {
+        if (empty(array_filter($ret))) {
             return null;
         } elseif (1 == count($ret)) {
             return array_shift($ret);
+        }
+        return $ret;
+    }
+
+    public function getValueWithoutPrimaryKey()
+    {
+        $ret = [];
+        foreach ($this as $key => $el) {
+            if (in_array($key, static::getPrimaryKeyFields())) {
+                continue;
+            }
+            $ret[$key] = null !== $el ? $el->getValue() : null;
         }
         return $ret;
     }
@@ -59,6 +88,9 @@ abstract class Entity
      */
     public static function conformsToPrimaryKey($data): bool
     {
+        if (null === $data) {
+            return true;
+        }
         $fields = static::getPrimaryKeyFields();
         if (1 === count($fields)) {
             if (is_scalar($data)) {
@@ -77,11 +109,28 @@ abstract class Entity
         return false;
     }
 
+    /**
+     * @return array
+     */
+    public static function getFieldsListWoPk()
+    {
+        return array_values(array_diff(static::getFieldsList(), static::getPrimaryKeyFields()));
+    }
+
+    /**
+     * All fields except primary key are required!
+     * @return array
+     */
+    protected static function getRequiredFieldsList()
+    {
+        return static::getFieldsListWoPk();
+    }
+
     protected function setField($field, $value)
     {
         if ($this->constructed) {
-            if (in_array($field, static::getPrimaryKeyFields())) {
-                throw new Exception('Can not set field "' . $field . '" value because of it is part of primary key');
+            if ($this->issetPrimaryKey() && in_array($field, static::getPrimaryKeyFields())) {
+                throw new Exception('Can not set field "' . $field . '" value because of it is part of primary key which is already set');
             }
         }
         if ($this->needCasting($field, $value)) {
@@ -91,12 +140,32 @@ abstract class Entity
     }
 
     /**
+     * @param \Runn\ValueObjects\ValueObjectInterface $object
+     * @return bool
+     */
+    public function isSame(ValueObjectInterface $object): bool
+    {
+        if (!($object instanceof EntityInterface)) {
+            return false;
+        }
+        return
+            (get_class($object) === get_class($this))
+                &&
+            (null !== $object->getPrimaryKey())
+                &&
+            ($object->getPrimaryKey() == $this->getPrimaryKey());
+    }
+
+    /**
      * @param \Runn\ValueObjects\EntityInterface $object
      * @return bool
      */
     public function isEqual(EntityInterface $object): bool
     {
-        return (get_class($object) === get_class($this)) && ($object->getPrimaryKey() == $this->getPrimaryKey());
+        return
+            (get_class($object) === get_class($this))
+                &&
+            ($this->getValueWithoutPrimaryKey() === $object->getValueWithoutPrimaryKey());
     }
 
 }

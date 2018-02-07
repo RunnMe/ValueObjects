@@ -3,30 +3,29 @@
 namespace Runn\ValueObjects\Errors;
 
 use Runn\ValueObjects\Exception;
-use Throwable;
 
 /**
+ * Empty complex value object field's class name error
  * Class EmptyFieldClass
  * @package Runn\ValueObjects\Errors
  *
- * Field class is empty error
  */
 class EmptyFieldClass
     extends Exception
-    implements ComplexValueObjectFieldError
+    implements ComplexValueObjectFieldErrorInterface
 {
 
     protected $field;
 
     /**
      * EmptyFieldClass constructor.
+     *
      * @param string $field
      * @param string $message
      * @param int $code
-     * @param Throwable|null $previous
-     * @internal param int $value
+     * @param \Throwable|null $previous
      */
-    public function __construct(string $field, $message = "", $code = 0, Throwable $previous = null)
+    public function __construct(string $field, $message = "", $code = 0, \Throwable $previous = null)
     {
         $this->field = $field;
         parent::__construct($message, $code, $previous);
