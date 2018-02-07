@@ -20,6 +20,7 @@ class ValueObjectTraitTest
         };
         $this->assertNull($obj->getValue());
         $this->assertNull($obj());
+        $this->assertSame('', (string)$obj);
     }
 
     public function testNullConstruct()
@@ -29,6 +30,7 @@ class ValueObjectTraitTest
         };
         $this->assertNull($obj->getValue());
         $this->assertNull($obj());
+        $this->assertSame('', (string)$obj);
     }
 
     public function testConstructGetValue()
@@ -38,6 +40,7 @@ class ValueObjectTraitTest
         };
         $this->assertSame(42, $obj->getValue());
         $this->assertSame(42, $obj());
+        $this->assertSame('42', (string)$obj);
     }
 
     public function testNewStatic()
@@ -47,6 +50,7 @@ class ValueObjectTraitTest
         $this->assertInstanceOf(testClass::class, $obj);
         $this->assertSame(12, $obj->getValue());
         $this->assertSame(12, $obj());
+        $this->assertSame('12', (string)$obj);
     }
 
     public function testNewDynamic()

@@ -6,14 +6,14 @@ use Runn\ValueObjects\Exception;
 use Throwable;
 
 /**
+ * Invalid complex value object field's value error
+ *
  * Class InvalidFieldValue
  * @package Runn\ValueObjects\Errors
- *
- * Class holds info about one field in complex value object error
  */
 class InvalidFieldValue
     extends Exception
-    implements ComplexValueObjectFieldError
+    implements ComplexValueObjectFieldErrorInterface
 
 {
 
