@@ -39,8 +39,8 @@ abstract class SingleValueObject
      */
     public function __construct($value = null, Validator $validator = null, Sanitizer $sanitizer = null)
     {
-        $this->validator = $validator ?: $this->getDefaultValidator();
-        $this->sanitizer = $sanitizer ?: $this->getDefaultSanitizer();
+        $this->validator = $validator ?? $this->getDefaultValidator();
+        $this->sanitizer = $sanitizer ?? $this->getDefaultSanitizer();
         $this->setValue($value);
     }
 

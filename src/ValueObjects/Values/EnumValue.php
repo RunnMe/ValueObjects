@@ -16,7 +16,8 @@ abstract class EnumValue
     extends SingleValueObject
 {
 
-    const VALUES = [];
+    // @7.1
+    /*public */const VALUES = [];
 
     /**
      * @return \Runn\Validation\Validator

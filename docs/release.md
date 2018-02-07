@@ -1,3 +1,11 @@
+7.0.4, 7.1.4, 7.2.4
+===================
+* `ValueObjectInterface::__toString()` method is added. 
+* `ComplexValueObject` and `Entity` classes improvements
+* `DateTimeValue` and `DateValue` classes `getValue()` method returns `DateTime` object now
+* Refinement of the concepts of "equality" and "equivalence" for `Entity`
+* License identifier update
+
 7.0.3, 7.1.3, 7.2.3
 ===================
 * `ComplexValueObjectErrors` class is added. It collects all `ComplexValueObject` construct errors.

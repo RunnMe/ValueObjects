@@ -3,15 +3,15 @@
 namespace Runn\ValueObjects\Errors;
 
 use Runn\ValueObjects\Exception;
-use Throwable;
 
 /**
+ * Invalid complex value error
+ *
  * Class InvalidComplexValue
  * @package Runn\ValueObjects\Errors
- *
- * Invalid complex value error
  */
 class InvalidComplexValue
     extends Exception
-    implements ComplexValueObjectError
-{}
+    implements ComplexValueObjectErrorInterface
+{
+}

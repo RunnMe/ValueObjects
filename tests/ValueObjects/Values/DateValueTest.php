@@ -18,7 +18,7 @@ class DateValueTest extends \PHPUnit_Framework_TestCase
     public function testConstruct()
     {
         $valueObject = new DateValue('2010-01-01');
-        $this->assertSame((new \DateTime('2010-01-01'))->format('Y-m-d'), $valueObject->getValue());
+        $this->assertEquals((new \DateTime('2010-01-01')), $valueObject->getValue());
     }
 
     /**

@@ -6,14 +6,15 @@ use Runn\ValueObjects\Exception;
 use Throwable;
 
 /**
+ * Invalid complex value object field's class error
+ *
  * Class EmptyFieldClass
  * @package Runn\ValueObjects\Errors
  *
- * Invalid field class error
  */
 class InvalidFieldClass
     extends Exception
-    implements ComplexValueObjectFieldError
+    implements ComplexValueObjectFieldErrorInterface
 {
 
     protected $field;

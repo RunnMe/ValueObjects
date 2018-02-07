@@ -3,7 +3,7 @@
 namespace Runn\ValueObjects;
 
 /**
- * Interface for Entities
+ * Common interface for Entities
  *
  * Interface EntityInterface
  * @package Runn\ValueObjects
@@ -27,10 +27,21 @@ interface EntityInterface
     public static function isPrimaryKeyScalar(): bool;
 
     /**
+     * This method tells about is primary key already set
+     * @return bool
+     */
+    public function issetPrimaryKey(): bool;
+
+    /**
      * This method can return either single scalar value or an array consisting of all PK fields' values
      * @return mixed|array
      */
     public function getPrimaryKey();
+
+    /**
+     * @return mixed
+     */
+    public function getValueWithoutPrimaryKey();
 
     /**
      * This method checks if $data can be used as primary key value
@@ -38,12 +49,6 @@ interface EntityInterface
      * @return bool
      */
     public static function conformsToPrimaryKey($data): bool;
-
-    /**
-     * @param \Runn\ValueObjects\ValueObjectInterface $object
-     * @return bool
-     */
-    public function isSame(ValueObjectInterface $object): bool;
 
     /**
      * @param \Runn\ValueObjects\EntityInterface $object
