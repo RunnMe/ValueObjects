@@ -18,7 +18,7 @@ abstract class Entity
 {
 
     // @7.1
-    /*protected */const PK_FIELDS = ['__id'];
+    protected const PK_FIELDS = ['__id'];
 
     /**
      * @return array

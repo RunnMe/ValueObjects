@@ -46,7 +46,6 @@ class EntityTest extends \PHPUnit_Framework_TestCase
 
         $entity = new class extends Entity {};
 
-        $this->assertSame(get_class($entity)::PK_FIELDS, get_class($entity)::getPrimaryKeyFields());
         $this->assertSame([], get_class($entity)::getFieldsList());
         $this->assertSame(['__id'], get_class($entity)::getPrimaryKeyFields());
         $this->assertSame([], get_class($entity)::getFieldsListWoPk());
