@@ -46,15 +46,17 @@ class ComplexComplexValueObjectTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(2, count($object));
 
-        $this->assertInstanceOf(IntValue::class, $object->foo);
-        $this->assertSame(42, $object->foo->getValue());
+        $this->assertSame(42, $object->foo);
+        $this->assertInstanceOf(IntValue::class, $object->getObject('foo'));
+        $this->assertEquals(new IntValue(42), $object->getObject('foo'));
 
         $this->assertInstanceOf(InnerComplexValueObject::class, $object->bar);
         $this->assertInstanceOf(ObjectAsArrayInterface::class, $object->bar);
         $this->assertInstanceOf(ValueObjectInterface::class, $object->bar);
 
-        $this->assertInstanceOf(StringValue::class, $object->bar->baz);
-        $this->assertSame('blabla', $object->bar->baz->getValue());
+        $this->assertSame('blabla', $object->bar->baz);
+        $this->assertInstanceOf(StringValue::class, $object->bar->getObject('baz'));
+        $this->assertEquals(new StringValue('blabla'), $object->bar->getObject('baz'));
     }
 
     public function testValidCastSubComplex()
@@ -79,15 +81,17 @@ class ComplexComplexValueObjectTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(2, count($object));
 
-        $this->assertInstanceOf(IntValue::class, $object->foo);
-        $this->assertSame(42, $object->foo->getValue());
+        $this->assertSame(42, $object->foo);
+        $this->assertInstanceOf(IntValue::class, $object->getObject('foo'));
+        $this->assertEquals(new IntValue(42), $object->getObject('foo'));
 
         $this->assertInstanceOf(InnerComplexValueObject::class, $object->bar);
         $this->assertInstanceOf(ObjectAsArrayInterface::class, $object->bar);
         $this->assertInstanceOf(ValueObjectInterface::class, $object->bar);
 
-        $this->assertInstanceOf(StringValue::class, $object->bar->baz);
-        $this->assertSame('blabla', $object->bar->baz->getValue());
+        $this->assertSame('blabla', $object->bar->baz);
+        $this->assertInstanceOf(StringValue::class, $object->bar->getObject('baz'));
+        $this->assertEquals(new StringValue('blabla'), $object->bar->getObject('baz'));
     }
 
     public function testValidCollection()
@@ -110,8 +114,9 @@ class ComplexComplexValueObjectTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(2, count($object));
 
-        $this->assertInstanceOf(IntValue::class, $object->foo);
-        $this->assertSame(42, $object->foo->getValue());
+        $this->assertSame(42, $object->foo);
+        $this->assertInstanceOf(IntValue::class, $object->getObject('foo'));
+        $this->assertEquals(new IntValue(42), $object->getObject('foo'));
 
         $this->assertInstanceOf(CollectionInterface::class, $object->bar);
         $this->assertInstanceOf(TypedCollection::class, $object->bar);
@@ -141,8 +146,9 @@ class ComplexComplexValueObjectTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(2, count($object));
 
-        $this->assertInstanceOf(IntValue::class, $object->foo);
-        $this->assertSame(42, $object->foo->getValue());
+        $this->assertSame(42, $object->foo);
+        $this->assertInstanceOf(IntValue::class, $object->getObject('foo'));
+        $this->assertEquals(new IntValue(42), $object->getObject('foo'));
 
         $this->assertInstanceOf(NullableInnerComplexValueObject::class, $object->bar);
         $this->assertInstanceOf(ObjectAsArrayInterface::class, $object->bar);

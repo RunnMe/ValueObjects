@@ -87,8 +87,9 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1, count($object));
         $this->assertSame(['foo'], get_class($object)::getFieldsList());
 
-        $this->assertInstanceOf(IntValue::class, $object->foo);
-        $this->assertSame(42, $object->foo->getValue());
+        $this->assertSame(42, $object->foo);
+        $this->assertInstanceOf(IntValue::class, $object->getObject('foo'));
+        $this->assertEquals(new IntValue(42), $object->getObject('foo'));
 
         $object = new class(['foo' => new IntValue(42)]) extends ComplexValueObject {
             protected static $schema = [
@@ -103,8 +104,9 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1, count($object));
         $this->assertSame(['foo'], get_class($object)::getFieldsList());
 
-        $this->assertInstanceOf(IntValue::class, $object->foo);
-        $this->assertSame(42, $object->foo->getValue());
+        $this->assertSame(42, $object->foo);
+        $this->assertInstanceOf(IntValue::class, $object->getObject('foo'));
+        $this->assertEquals(new IntValue(42), $object->getObject('foo'));
     }
 
     public function testValidConstructManyFields()
@@ -123,10 +125,13 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(2, count($object));
         $this->assertSame(['foo', 'bar'], get_class($object)::getFieldsList());
 
-        $this->assertInstanceOf(IntValue::class, $object->foo);
-        $this->assertSame(42, $object->foo->getValue());
-        $this->assertInstanceOf(StringValue::class, $object->bar);
-        $this->assertSame('baz', $object->bar->getValue());
+        $this->assertSame(42, $object->foo);
+        $this->assertInstanceOf(IntValue::class, $object->getObject('foo'));
+        $this->assertEquals(new IntValue(42), $object->getObject('foo'));
+
+        $this->assertSame('baz', $object->bar);
+        $this->assertInstanceOf(StringValue::class, $object->getObject('bar'));
+        $this->assertEquals(new StringValue('baz'), $object->getObject('bar'));
 
         $object = new class(['foo' => new IntValue(42), 'bar' => new StringValue('baz')]) extends ComplexValueObject {
             protected static $schema = [
@@ -142,10 +147,13 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(2, count($object));
         $this->assertSame(['foo', 'bar'], get_class($object)::getFieldsList());
 
-        $this->assertInstanceOf(IntValue::class, $object->foo);
-        $this->assertSame(42, $object->foo->getValue());
-        $this->assertInstanceOf(StringValue::class, $object->bar);
-        $this->assertSame('baz', $object->bar->getValue());
+        $this->assertSame(42, $object->foo);
+        $this->assertInstanceOf(IntValue::class, $object->getObject('foo'));
+        $this->assertEquals(new IntValue(42), $object->getObject('foo'));
+
+        $this->assertSame('baz', $object->bar);
+        $this->assertInstanceOf(StringValue::class, $object->getObject('bar'));
+        $this->assertEquals(new StringValue('baz'), $object->getObject('bar'));
     }
 
     public function testValidConstructWithDefault()
@@ -164,10 +172,13 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(2, count($object));
         $this->assertSame(['foo', 'bar'], get_class($object)::getFieldsList());
 
-        $this->assertInstanceOf(IntValue::class, $object->foo);
-        $this->assertSame(42, $object->foo->getValue());
-        $this->assertInstanceOf(StringValue::class, $object->bar);
-        $this->assertSame('baz', $object->bar->getValue());
+        $this->assertSame(42, $object->foo);
+        $this->assertInstanceOf(IntValue::class, $object->getObject('foo'));
+        $this->assertEquals(new IntValue(42), $object->getObject('foo'));
+
+        $this->assertSame('baz', $object->bar);
+        $this->assertInstanceOf(StringValue::class, $object->getObject('bar'));
+        $this->assertEquals(new StringValue('baz'), $object->getObject('bar'));
     }
 
     public function testValidConstructWithDefaultNull()
@@ -187,8 +198,10 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(['foo', 'bar'], get_class($object)::getFieldsList());
 
         $this->assertNull($object->foo);
-        $this->assertInstanceOf(StringValue::class, $object->bar);
-        $this->assertSame('baz', $object->bar->getValue());
+
+        $this->assertSame('baz', $object->bar);
+        $this->assertInstanceOf(StringValue::class, $object->getObject('bar'));
+        $this->assertEquals(new StringValue('baz'), $object->getObject('bar'));
     }
 
     public function testValidConstructWithDefaultValue()
@@ -209,8 +222,10 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(['foo', 'bar'], get_class($object)::getFieldsList());
 
         $this->assertNull($object->foo);
-        $this->assertInstanceOf(StringValue::class, $object->bar);
-        $this->assertSame('baz', $object->bar->getValue());
+
+        $this->assertSame('baz', $object->bar);
+        $this->assertInstanceOf(StringValue::class, $object->getObject('bar'));
+        $this->assertEquals(new StringValue('baz'), $object->getObject('bar'));
     }
 
     public function testValidConstructWithoutDefault()
@@ -344,7 +359,10 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
     public function testImmutable()
     {
         $object = new testComplexValueObject(['foo' => 42]);
-        $this->assertSame(42, $object->foo->getValue());
+
+        $this->assertSame(42, $object->foo);
+        $this->assertInstanceOf(IntValue::class, $object->getObject('foo'));
+        $this->assertEquals(new IntValue(42), $object->getObject('foo'));
 
         $object->foo = 13;
     }
@@ -356,8 +374,11 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
                 'value' => ['class' => IntValue::class]
             ];
         };
-        $this->assertInstanceOf(IntValue::class, $object->value);
-        $this->assertSame(42, $object->value->getValue());
+
+        $this->assertSame(42, $object->value);
+        $this->assertInstanceOf(IntValue::class, $object->getObject('value'));
+        $this->assertEquals(new IntValue(42), $object->getObject('value'));
+
         $this->assertEquals(['value' => 42], $object->getValue());
     }
 

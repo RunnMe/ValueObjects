@@ -59,7 +59,7 @@ abstract class Entity
     {
         $ret = [];
         foreach (static::getPrimaryKeyFields() as $field) {
-            $ret[$field] = $this->$field ? $this->$field->getValue() : null;
+            $ret[$field] = $this->$field;
         }
         if (empty(array_filter($ret))) {
             return null;
@@ -76,7 +76,7 @@ abstract class Entity
             if (in_array($key, static::getPrimaryKeyFields())) {
                 continue;
             }
-            $ret[$key] = null !== $el ? $el->getValue() : null;
+            $ret[$key] = $el instanceof ValueObjectInterface ? $el->getValue() : $el;
         }
         return $ret;
     }

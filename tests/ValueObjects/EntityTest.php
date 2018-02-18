@@ -258,8 +258,13 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $entity = new testEntity(['__id' => 42, 'foo' => 'bar']);
 
         $this->assertSame(42, $entity->getPrimaryKey());
-        $this->assertSame(42, $entity->__id->getValue());
-        $this->assertSame('bar', $entity->foo->getValue());
+        $this->assertSame(42, $entity->__id);
+        $this->assertInstanceOf(IntValue::class, $entity->getObject('__id'));
+        $this->assertEquals(new IntValue(42), $entity->getObject('__id'));
+
+        $this->assertSame('bar', $entity->foo);
+        $this->assertInstanceOf(StringValue::class, $entity->getObject('foo'));
+        $this->assertEquals(new StringValue('bar'), $entity->getObject('foo'));
 
         $entity->__id = 13;
     }
@@ -282,15 +287,23 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $entity = new testEntity(['__id' => 42, 'foo' => 'bar']);
 
         $this->assertSame(42, $entity->getPrimaryKey());
-        $this->assertSame(42, $entity->__id->getValue());
-        $this->assertSame('bar', $entity->foo->getValue());
+        $this->assertSame(42, $entity->__id);
+        $this->assertInstanceOf(IntValue::class, $entity->getObject('__id'));
+        $this->assertEquals(new IntValue(42), $entity->getObject('__id'));
+
+        $this->assertSame('bar', $entity->foo);
+        $this->assertInstanceOf(StringValue::class, $entity->getObject('foo'));
+        $this->assertEquals(new StringValue('bar'), $entity->getObject('foo'));
 
         $entity->foo = new StringValue('baz');
-        $this->assertSame('baz', $entity->foo->getValue());
+        $this->assertSame('baz', $entity->foo);
+        $this->assertInstanceOf(StringValue::class, $entity->getObject('foo'));
+        $this->assertEquals(new StringValue('baz'), $entity->getObject('foo'));
 
         $entity->foo = 'bla';
-        $this->assertInstanceOf(StringValue::class, $entity->foo);
-        $this->assertSame('bla', $entity->foo->getValue());
+        $this->assertSame('bla', $entity->foo);
+        $this->assertInstanceOf(StringValue::class, $entity->getObject('foo'));
+        $this->assertEquals(new StringValue('bla'), $entity->getObject('foo'));
     }
 
 }
