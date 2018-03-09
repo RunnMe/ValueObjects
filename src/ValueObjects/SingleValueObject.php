@@ -9,15 +9,16 @@ use Runn\Validation\Validator;
 use Runn\Validation\Validators\PassThruValidator;
 
 /**
- * Abstract simple Value Object
+ * Abstract single Value Object
  *
- * Class SimpleValueObject
+ * Class SingleValueObject
  * @package Runn\ValueObjects
  */
-abstract class SimpleValueObject
-    extends SimpleValue
-    implements ValueObjectInterface
+abstract class SingleValueObject
+    implements ValueObjectInterface, \JsonSerializable
 {
+
+    use ValueObjectTrait;
 
     /**
      * @var \Runn\Validation\Validator
@@ -34,19 +35,28 @@ abstract class SimpleValueObject
      * @param $value
      * @param \Runn\Validation\Validator|null $validator
      * @param \Runn\Sanitization\Sanitizer|null $sanitizer
-     * @throws \Runn\Validation\ValidationError
+     * @throws ValidationError
      */
     public function __construct($value = null, Validator $validator = null, Sanitizer $sanitizer = null)
     {
-        $this->validator = $validator ?: $this->getDefaultValidator();
-        $this->sanitizer = $sanitizer ?: $this->getDefaultSanitizer();
+        $this->validator = $validator ?? $this->getDefaultValidator();
+        $this->sanitizer = $sanitizer ?? $this->getDefaultSanitizer();
+        $this->setValue($value);
+    }
 
+    /**
+     * @param mixed $value
+     * @return $this
+     * @throws \Runn\Validation\ValidationError
+     */
+    protected function setValue($value)
+    {
         $success = $this->validator->validate($value);
         if (!$success) {
             throw new ValidationError($value, 'Value object validation error');
         }
-
-        parent::__construct($this->sanitizer->sanitize($value));
+        $this->__value = $this->sanitizer->sanitize($value);
+        return $this;
     }
 
     /**
@@ -66,12 +76,12 @@ abstract class SimpleValueObject
     }
 
     /**
-     * @param \Runn\ValueObjects\ValueObjectInterface $value
-     * @return bool
+     * JsonSerializable implementation
+     * @return mixed
      */
-    public function isEqual(ValueObjectInterface $value): bool
+    public function jsonSerialize()
     {
-        return (get_class($value) === get_class($this)) && ($value->getValue() === $this->getValue());
+        return $this->getValue();
     }
 
 }

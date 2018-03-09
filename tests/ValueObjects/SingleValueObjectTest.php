@@ -1,38 +1,43 @@
 <?php
 
-namespace Runn\tests\ValueObjects\SimpleValueObject;
+namespace Runn\tests\ValueObjects\SingleValueObject;
 
 use Runn\Sanitization\Sanitizer;
 use Runn\Validation\ValidationError;
 use Runn\Validation\Validator;
 use Runn\Validation\Validators\PassThruValidator;
-use Runn\ValueObjects\IntValue;
-use Runn\ValueObjects\SimpleValue;
-use Runn\ValueObjects\SimpleValueObject;
-use Runn\ValueObjects\StringValue;
+use Runn\ValueObjects\SingleValueObject;
 use Runn\ValueObjects\ValueObjectInterface;
 
-class testClass extends SimpleValueObject {}
+class testClass extends SingleValueObject {}
 
-class SimpleValueObjectTest extends \PHPUnit_Framework_TestCase
+class SingleValueObjectTest extends \PHPUnit_Framework_TestCase
 {
 
     public function testEmptyContsruct()
     {
         $valueObject = new testClass();
-        $this->assertInstanceOf(SimpleValue::class, $valueObject);
+
+        $this->assertInstanceOf(SingleValueObject::class, $valueObject);
         $this->assertInstanceOf(ValueObjectInterface::class, $valueObject);
+        $this->assertInstanceOf(\JsonSerializable::class, $valueObject);
+
         $this->assertNull($valueObject->getValue());
         $this->assertNull($valueObject());
+        $this->assertSame('', (string)$valueObject);
     }
 
     public function testNullConstruct()
     {
         $valueObject = new testClass(null);
-        $this->assertInstanceOf(SimpleValue::class, $valueObject);
+
+        $this->assertInstanceOf(SingleValueObject::class, $valueObject);
         $this->assertInstanceOf(ValueObjectInterface::class, $valueObject);
+        $this->assertInstanceOf(\JsonSerializable::class, $valueObject);
+
         $this->assertNull($valueObject->getValue());
         $this->assertNull($valueObject());
+        $this->assertSame('', (string)$valueObject);
     }
 
     public function testConstructPassThru()
@@ -40,9 +45,12 @@ class SimpleValueObjectTest extends \PHPUnit_Framework_TestCase
         $valueObject = new testClass('foo');
 
         $this->assertInstanceOf(testClass::class, $valueObject);
-        $this->assertInstanceOf(SimpleValue::class, $valueObject);
+        $this->assertInstanceOf(SingleValueObject::class, $valueObject);
         $this->assertInstanceOf(ValueObjectInterface::class, $valueObject);
+        $this->assertInstanceOf(\JsonSerializable::class, $valueObject);
+
         $this->assertSame('foo', $valueObject->getValue());
+        $this->assertSame('foo', (string)$valueObject);
 
         $reflect = new \ReflectionObject($valueObject);
 
@@ -84,16 +92,19 @@ class SimpleValueObjectTest extends \PHPUnit_Framework_TestCase
         $valueObject = new testClass(42, $validator);
 
         $this->assertInstanceOf(testClass::class, $valueObject);
-        $this->assertInstanceOf(SimpleValue::class, $valueObject);
+        $this->assertInstanceOf(SingleValueObject::class, $valueObject);
         $this->assertInstanceOf(ValueObjectInterface::class, $valueObject);
+        $this->assertInstanceOf(\JsonSerializable::class, $valueObject);
+
         $this->assertSame(42, $valueObject->getValue());
+        $this->assertSame('42', (string)$valueObject);
     }
 
     /**
      * @expectedException \Runn\Validation\ValidationError
      * @expectedExceptionMessage Value object validation error
      */
-    public function testConstructAbormalValidatorFails()
+    public function testConstructAbnormalValidatorFails()
     {
         $validator = new class extends Validator {
             public function validate($value): bool
@@ -118,24 +129,19 @@ class SimpleValueObjectTest extends \PHPUnit_Framework_TestCase
 
         $valueObject = new testClass(42, new PassThruValidator(), $sanitizer);
         $this->assertSame(84, $valueObject->getValue());
+        $this->assertSame('84', (string)$valueObject);
     }
 
-    public function testIsEqual()
+    public function testJson()
     {
-        $value1 = new IntValue(42);
-        $this->assertTrue($value1->isEqual($value1));
+        $valueObject = new testClass(42);
+        $this->assertSame('42', json_encode($valueObject));
 
-        $value2 = new StringValue(42);
-        $this->assertFalse($value1->isEqual($value2));
-        $this->assertFalse($value2->isEqual($value1));
+        $valueObject = new testClass('foo');;
+        $this->assertSame('"foo"', json_encode($valueObject));
 
-        $value2 = new IntValue(24);
-        $this->assertFalse($value1->isEqual($value2));
-        $this->assertFalse($value2->isEqual($value1));
-
-        $value2 = new IntValue(42);
-        $this->assertTrue($value1->isEqual($value2));
-        $this->assertTrue($value2->isEqual($value1));
+        $valueObject = new testClass([1, 2, 3]);
+        $this->assertSame('[1,2,3]', json_encode($valueObject));
     }
 
 }

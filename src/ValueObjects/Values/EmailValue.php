@@ -1,20 +1,20 @@
 <?php
 
-namespace Runn\ValueObjects;
+namespace Runn\ValueObjects\Values;
 
 use Runn\Sanitization\Sanitizer;
-use Runn\Sanitization\Sanitizers\StringSanitizer;
+use Runn\Sanitization\Sanitizers\EmailSanitizer;
 use Runn\Validation\Validator;
-use Runn\Validation\Validators\StringValidator;
+use Runn\Validation\Validators\EmailValidator;
 
 /**
- * Simple string value class
+ * Email string value class
  *
- * Class StringValue
- * @package Runn\ValueObjects
+ * Class EmailValue
+ * @package Runn\ValueObjects\Values
  */
-class StringValue
-    extends SimpleValueObject
+class EmailValue
+    extends StringValue
 {
 
     /**
@@ -22,7 +22,7 @@ class StringValue
      */
     protected function getDefaultValidator(): Validator
     {
-        return new StringValidator();
+        return new EmailValidator();
     }
 
     /**
@@ -30,7 +30,7 @@ class StringValue
      */
     protected function getDefaultSanitizer(): Sanitizer
     {
-        return new StringSanitizer();
+        return new EmailSanitizer();
     }
 
 }

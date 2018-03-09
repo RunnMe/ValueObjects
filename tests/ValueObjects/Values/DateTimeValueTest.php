@@ -1,8 +1,8 @@
 <?php
 
-namespace Runn\tests\ValueObjects\DateTimeValue;
+namespace Runn\tests\ValueObjects\Values\DateTimeValue;
 
-use Runn\ValueObjects\DateTimeValue;
+use Runn\ValueObjects\Values\DateTimeValue;
 
 class DateTimeValueTest extends \PHPUnit_Framework_TestCase
 {
@@ -18,10 +18,10 @@ class DateTimeValueTest extends \PHPUnit_Framework_TestCase
     public function testConstruct()
     {
         $valueObject = new DateTimeValue('2010-01-01');
-        $this->assertSame((new \DateTime('2010-01-01'))->format('c'), $valueObject->getValue());
+        $this->assertEquals((new \DateTime('2010-01-01')), $valueObject->getValue());
 
         $valueObject = new DateTimeValue('2010-01-01 12:34:56');
-        $this->assertSame((new \DateTime('2010-01-01 12:34:56'))->format('c'), $valueObject->getValue());
+        $this->assertEquals((new \DateTime('2010-01-01 12:34:56')), $valueObject->getValue());
     }
 
     /**

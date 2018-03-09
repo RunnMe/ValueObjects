@@ -3,10 +3,14 @@
   "description": "Runn Me! Value Objects Library",
   "keywords": ["runn", "runn.me", "framework", "value object", "entity", "ddd"],
   "type": "library",
-  "license": "LGPL v.3",
+  "license": "LGPL-3.0-or-later",
   "authors": [
     {
       "name": "Albert Stepantsev"
+    },
+    {
+      "name": "Alexey Maksarov",
+      "email": "aleksey.maksarov@gmail.com"
     }
   ],
   "require": {
@@ -19,7 +23,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Running\\": "src/"
+      "Runn\\": "src/"
     }
   }
 }

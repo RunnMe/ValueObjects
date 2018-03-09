@@ -2,86 +2,170 @@
 
 namespace Runn\ValueObjects;
 
+use Runn\Core\ObjectAsArrayInterface;
+
 /**
- * Complex Value Object with primary key consists of one or more columns of this object
- * Default primary key column name id '__id'
+ * Complex Value Object with primary key consists of one or more fields of this object
+ * Default primary key field name is '__id'
+ * Mutable except it's primary key fields
  *
  * Class Entity
  * @package Runn\ValueObjects
  */
 abstract class Entity
     extends ComplexValueObject
-    implements ValueObjectCastingInterface
+    implements EntityInterface
 {
 
-    const PK_COLUMNS = ['__id'];
+    // @7.1
+    /*protected */const PK_FIELDS = ['__id'];
 
     /**
      * @return array
      */
-    public static function getPrimaryKeyColumns()
+    public static function getPrimaryKeyFields(): array
     {
-        return static::PK_COLUMNS;
+        return static::PK_FIELDS;
     }
 
     /**
-     * @return array
+     * This method returns "true" if primary key is scalar
+     * @return bool
+     */
+    public static function isPrimaryKeyScalar(): bool
+    {
+        return 1 === count(static::getPrimaryKeyFields());
+    }
+
+    /**
+     * This method tells about primary key is already set (at least one it's field is not null)
+     * @return bool
+     */
+    public function issetPrimaryKey(): bool
+    {
+        foreach (static::getPrimaryKeyFields() as $field) {
+            if (null !== $this->$field) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * This method can return either single scalar value or an array consisting of all PK fields' values
+     * @return mixed|array
      */
     public function getPrimaryKey()
     {
         $ret = [];
-        foreach (static::getPrimaryKeyColumns() as $column) {
-            $ret[$column] = $this->$column->getValue();
+        foreach (static::getPrimaryKeyFields() as $field) {
+            $ret[$field] = $this->$field;
+        }
+        if (empty(array_filter($ret))) {
+            return null;
+        } elseif (1 == count($ret)) {
+            return array_shift($ret);
+        }
+        return $ret;
+    }
+
+    public function getValueWithoutPrimaryKey()
+    {
+        $ret = [];
+        foreach ($this as $key => $el) {
+            if (in_array($key, static::getPrimaryKeyFields())) {
+                continue;
+            }
+            $ret[$key] = $el instanceof ValueObjectInterface ? $el->getValue() : $el;
         }
         return $ret;
     }
 
     /**
-     * @param \Runn\ValueObjects\ValueObjectInterface $value
+     * This method checks if $data can be used as primary key value
+     * @param mixed $data
      * @return bool
      */
-    public function isEqual(ValueObjectInterface $value): bool
+    public static function conformsToPrimaryKey($data): bool
     {
-        return (get_class($value) === get_class($this)) && ($value->getPrimaryKey() == $this->getPrimaryKey());
-    }
-
-    public static function getValueObjectClass()
-    {
-        return ComplexValueObject::class;
+        if (null === $data) {
+            return true;
+        }
+        $fields = static::getPrimaryKeyFields();
+        if (1 === count($fields)) {
+            if (is_scalar($data)) {
+                return true;
+            }
+            return 1 === count($data) && (isset($data[$fields[0]]) || isset($data->{$fields[0]}));
+        }
+        if (is_array($data) || ($data instanceof ObjectAsArrayInterface)) {
+            if (is_array($data)) {
+                $keys = array_keys($data);
+            } else {
+                $keys = $data->keys();
+            }
+            return empty(array_diff($keys, $fields)) && empty(array_diff($fields, $keys));
+        }
+        return false;
     }
 
     /**
-     * @param string|null $class
-     * @return \Runn\ValueObjects\ValueObjectInterface
-     * @throws \Runn\ValueObjects\Exception
+     * @return array
      */
-    public function toValueObject($class = null): ValueObjectInterface
+    public static function getFieldsListWoPk()
     {
-        if (null === $class) {
-            $class = static::getValueObjectClass();
-        }
-        if (!is_a($class, ComplexValueObject::class, true)) {
-            throw new Exception('Invalid complex value object class');
-        }
-
-        $data   = $this->getValue();
-        $schema = static::getSchema();
-        foreach (static::getPrimaryKeyColumns() as $column) {
-            unset($data[$column]);
-            unset($schema[$column]);
-        }
-
-        if ($class === ComplexValueObject::class) {
-            $classDef = 'extends \\Runn\\ValueObjects\\ComplexValueObject { protected static $schema = ' . var_export($schema, true) . ';};';
-            return eval('return new class(' . var_export($data, true) . ') ' . $classDef);
-        } else {
-            return new $class($data);
-        }
+        return array_values(array_diff(static::getFieldsList(), static::getPrimaryKeyFields()));
     }
 
-    public static function fromValueObject(ValueObjectInterface $source, array $primaryKey = [])
+    /**
+     * All fields except primary key are required!
+     * @return array
+     */
+    protected static function getRequiredFieldsList()
     {
-        return new static($primaryKey + $source->getValue());
+        return static::getFieldsListWoPk();
+    }
+
+    protected function setField($field, $value)
+    {
+        if ($this->constructed) {
+            if ($this->issetPrimaryKey() && in_array($field, static::getPrimaryKeyFields())) {
+                throw new Exception('Can not set field "' . $field . '" value because of it is part of primary key which is already set');
+            }
+        }
+        if ($this->needCasting($field, $value)) {
+            $value = $this->innerCast($field, $value);
+        }
+        $this->trait_innerSet($field, $value);
+    }
+
+    /**
+     * @param \Runn\ValueObjects\ValueObjectInterface $object
+     * @return bool
+     */
+    public function isSame(ValueObjectInterface $object): bool
+    {
+        if (!($object instanceof EntityInterface)) {
+            return false;
+        }
+        return
+            (get_class($object) === get_class($this))
+                &&
+            (null !== $object->getPrimaryKey())
+                &&
+            ($object->getPrimaryKey() == $this->getPrimaryKey());
+    }
+
+    /**
+     * @param \Runn\ValueObjects\EntityInterface $object
+     * @return bool
+     */
+    public function isEqual(EntityInterface $object): bool
+    {
+        return
+            (get_class($object) === get_class($this))
+                &&
+            ($this->getValueWithoutPrimaryKey() === $object->getValueWithoutPrimaryKey());
     }
 
 }

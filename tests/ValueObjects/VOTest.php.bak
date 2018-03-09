@@ -1,0 +1,29 @@
+<?php
+
+namespace Runn\tests\ValueObjects\VO;
+
+class TestValueObject
+{
+    public function __get($field)
+    {
+        $debug = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT);
+        do {
+            $frame = array_shift($debug);
+        } while (!($frame['object'] === $this && $frame['function'] == '__get' && $frame['args'][0] == $field));
+var_dump($frame);
+        echo $line = '<?php ' . file($frame['file'])[$frame['line']-1];
+        return token_get_all($line);
+    }
+}
+
+class VOTest extends \PHPUnit_Framework_TestCase
+{
+
+    public function testGetValue()
+    {
+        $x = new TestValueObject();
+        $y = $x->bar;
+        echo var_export($y);
+    }
+
+}

@@ -1,20 +1,21 @@
 <?php
 
-namespace Runn\ValueObjects;
+namespace Runn\ValueObjects\Values;
 
 use Runn\Sanitization\Sanitizer;
 use Runn\Sanitization\Sanitizers\BooleanSanitizer;
 use Runn\Validation\Validator;
 use Runn\Validation\Validators\BooleanValidator;
+use Runn\ValueObjects\SingleValueObject;
 
 /**
  * Simple boolean value class
  *
  * Class BooleanValue
- * @package Runn\ValueObjects
+ * @package Runn\ValueObjects\Values
  */
 class BooleanValue
-    extends SimpleValueObject
+    extends SingleValueObject
 {
 
     /**

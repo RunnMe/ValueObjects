@@ -1,21 +1,23 @@
 <?php
 
-namespace Runn\ValueObjects;
+namespace Runn\ValueObjects\Values;
 
 use Runn\Validation\Validator;
 use Runn\Validation\Validators\EnumValidator;
+use Runn\ValueObjects\SingleValueObject;
 
 /**
  * Simple enumerated value class
  *
  * Class EnumValue
- * @package Runn\ValueObjects
+ * @package Runn\ValueObjects\Values
  */
 abstract class EnumValue
-    extends SimpleValueObject
+    extends SingleValueObject
 {
 
-    const VALUES = [];
+    // @7.1
+    /*public */const VALUES = [];
 
     /**
      * @return \Runn\Validation\Validator

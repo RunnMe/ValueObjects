@@ -1,20 +1,21 @@
 <?php
 
-namespace Runn\ValueObjects;
+namespace Runn\ValueObjects\Values;
 
 use Runn\Sanitization\Sanitizer;
 use Runn\Sanitization\Sanitizers\IntSanitizer;
 use Runn\Validation\Validator;
 use Runn\Validation\Validators\IntValidator;
+use Runn\ValueObjects\SingleValueObject;
 
 /**
- * Simple integer number  value class
+ * Simple integer number value class
  *
  * Class IntValue
- * @package Runn\ValueObjects
+ * @package Runn\ValueObjects\Values
  */
 class IntValue
-    extends SimpleValueObject
+    extends SingleValueObject
 {
 
     /**
