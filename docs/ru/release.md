@@ -1,3 +1,8 @@
+7.0.5, 7.1.5, 7.2.5
+===================
+* Новая логика метода `ComplexValueObject::innerGet()`: для простых Value Objects возвращаются их значения вместо самих объектов
+* Добавлена константа `ComplexValueObject::SKIP_EXCESS_FIELDS`
+
 7.0.4, 7.1.4, 7.2.4
 ===================
 * Добавлен метод `ValueObjectInterface::__toString()`

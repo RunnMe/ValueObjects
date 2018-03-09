@@ -30,6 +30,7 @@ abstract class ComplexValueObject
         ValueObjectTrait::notgetters insteadof StdGetSetTrait;
         ValueObjectTrait::notsetters insteadof StdGetSetTrait;
         StdGetSetTrait::innerSet as trait_innerSet;
+        StdGetSetTrait::innerGet as trait_innerGet;
     }
 
     /** @7.1 */
@@ -41,6 +42,9 @@ abstract class ComplexValueObject
         'INVALID_FIELD_VALUE' => InvalidFieldValue::class,
         'MISSING_FIELD' => MissingField::class,
     ];
+
+    /** @7.1 */
+    /*protected */const SKIP_EXCESS_FIELDS = true;
 
     /**
      * @var array
@@ -185,8 +189,12 @@ abstract class ComplexValueObject
         }
 
         if (!in_array($field, static::getFieldsList())) {
-            $errorsInvalidField = static::ERRORS['INVALID_FIELD'];
-            throw new $errorsInvalidField($field,'Invalid complex value object field key: "' . $field . '"');
+            if (static::SKIP_EXCESS_FIELDS) {
+                return;
+            } else {
+                $errorsInvalidField = static::ERRORS['INVALID_FIELD'];
+                throw new $errorsInvalidField($field,'Invalid complex value object field key: "' . $field . '"');
+            }
         }
 
         if ($this->needCasting($field, $value)) {
@@ -246,13 +254,36 @@ abstract class ComplexValueObject
     }
 
     /**
+     * @param $key
+     * @return mixed|null
+     */
+    protected function innerGet($key)
+    {
+        $value = $this->trait_innerGet($key);
+        if ($value instanceof SingleValueObject) {
+            return $value->getValue();
+        }
+        return $value;
+    }
+
+    /**
+     * Returns the value-object by it's key
+     * @param $key
+     * @return ValueObjectInterface|null
+     */
+    public function getObject($key)
+    {
+        return $this->trait_innerGet($key);
+    }
+
+    /**
      * @return array
      */
     public function getValue()
     {
         $ret = [];
         foreach ($this as $key => $el) {
-            $ret[$key] = null !== $el ? $el->getValue() : null;
+            $ret[$key] = $el instanceof ValueObjectInterface ? $el->getValue() : $el;
         }
         return $ret;
     }

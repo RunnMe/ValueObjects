@@ -21,7 +21,7 @@ trait ValueObjectTrait
      */
     protected function notgetters(): array
     {
-        return ['schema', 'value', 'field', 'fieldsList'];
+        return ['schema', 'value', 'field', 'fieldsList', 'object'];
     }
 
     /**
