@@ -44,7 +44,7 @@ abstract class ComplexValueObject
     ];
 
     /** @7.1 */
-    /*protected */const SKIP_EXCESS_FIELDS = true;
+    protected const SKIP_EXCESS_FIELDS = true;
 
     /**
      * @var array

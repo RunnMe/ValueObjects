@@ -47,7 +47,7 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
         try {
             $object = new class(['foo' => 42]) extends ComplexValueObject {
                 /** @7.1 */
-                /*protected */const SKIP_EXCESS_FIELDS = false;
+                protected const SKIP_EXCESS_FIELDS = false;
             };
         } catch (ComplexValueObjectErrors $errors) {
             $this->assertCount(1, $errors);
@@ -288,7 +288,7 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
         try {
             $object = new class(['baz' => 'blablabla']) extends ComplexValueObject {
                 /** @7.1 */
-                /*protected */const SKIP_EXCESS_FIELDS = false;
+                protected const SKIP_EXCESS_FIELDS = false;
                 protected static $schema = [
                     'foo' => ['class' => IntValue::class],
                     'bar' => ['class' => StringValue::class],
