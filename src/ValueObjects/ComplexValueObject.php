@@ -43,6 +43,9 @@ abstract class ComplexValueObject
         'MISSING_FIELD' => MissingField::class,
     ];
 
+    /** @7.1 */
+    /*protected */const SKIP_EXCESS_FIELDS = true;
+
     /**
      * @var array
      */
@@ -190,8 +193,12 @@ abstract class ComplexValueObject
         }
 
         if (!in_array($field, static::getFieldsList())) {
-            $errorsInvalidField = static::ERRORS['INVALID_FIELD'];
-            throw new $errorsInvalidField($field,'Invalid complex value object field key: "' . $field . '"');
+            if (static::SKIP_EXCESS_FIELDS) {
+                return;
+            } else {
+                $errorsInvalidField = static::ERRORS['INVALID_FIELD'];
+                throw new $errorsInvalidField($field,'Invalid complex value object field key: "' . $field . '"');
+            }
         }
 
         if ($this->needCasting($field, $value)) {

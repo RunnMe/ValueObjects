@@ -158,7 +158,7 @@ class ComplexValueObjectValidateTest extends \PHPUnit_Framework_TestCase
         $this->fail();
     }
 
-    public function testCustomErrorsCollection()
+    public function testCustomErrorsCollectionWithSkippedFields()
     {
         try {
 
@@ -177,6 +177,66 @@ class ComplexValueObjectValidateTest extends \PHPUnit_Framework_TestCase
                     'INVALID_FIELD_VALUE' => CustomInvalidFieldValueError::class,
                     'MISSING_FIELD' => CustomMissingField::class,
                 ];
+                protected static $schema = [
+                    'first' => ['class' => null],
+                    'second' => ['class' => \stdClass::class],
+                    'third' => ['class' => BooleanValue::class],
+                ];
+            };
+
+        } catch (ComplexValueObjectErrors $errors) {
+
+            $this->assertCount(6, $errors);
+
+            $this->assertInstanceOf(CustomComplexValueObjectErrors::class, $errors);
+            $this->assertInstanceOf(ComplexValueObjectErrors::class, $errors);
+
+
+            $this->assertInstanceOf(CustomEmptyFieldClassError::class, $errors[0]);
+            $this->assertSame('first', $errors[0]->getField());
+
+            $this->assertInstanceOf(CustomInvalidFieldClassError::class, $errors[1]);
+            $this->assertSame('second', $errors[1]->getField());
+
+            $this->assertInstanceOf(CustomInvalidFieldValueError::class, $errors[2]);
+            $this->assertSame('third', $errors[2]->getField());
+
+            $this->assertInstanceOf(CustomMissingField::class, $errors[3]);
+            $this->assertSame('first', $errors[3]->getField());
+
+            $this->assertInstanceOf(CustomMissingField::class, $errors[4]);
+            $this->assertSame('second', $errors[4]->getField());
+
+            $this->assertInstanceOf(CustomMissingField::class, $errors[5]);
+            $this->assertSame('third', $errors[5]->getField());
+
+            return;
+
+        }
+        $this->fail();
+    }
+
+    public function testCustomErrorsCollectionWithNotSkippedFields()
+    {
+        try {
+
+            $object = new class([
+                'foo' => 'bar',
+                'first' => 1,
+                'second' => 2,
+                'third' => [],
+            ]) extends ComplexValueObject {
+                /** @7.1 */
+                /*protected */const ERRORS = [
+                    'COLLECTION' => CustomComplexValueObjectErrors::class,
+                    'INVALID_FIELD' => CustomInvalidFieldError::class,
+                    'EMPTY_FIELD_CLASS' => CustomEmptyFieldClassError::class,
+                    'INVALID_FIELD_CLASS' => CustomInvalidFieldClassError::class,
+                    'INVALID_FIELD_VALUE' => CustomInvalidFieldValueError::class,
+                    'MISSING_FIELD' => CustomMissingField::class,
+                ];
+                /** @7.1 */
+                /*protected */const SKIP_EXCESS_FIELDS = false;
                 protected static $schema = [
                     'first' => ['class' => null],
                     'second' => ['class' => \stdClass::class],

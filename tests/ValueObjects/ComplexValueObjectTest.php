@@ -36,10 +36,19 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
         $this->assertSame([], get_class($object)::getFieldsList());
     }
 
-    public function testEmptyComplexObjectInvalidKey()
+    public function testEmptyComplexObjectInvalidSkippedKey()
+    {
+        $object = new class(['foo' => 42]) extends ComplexValueObject {};
+        $this->assertCount(0, $object);
+    }
+
+    public function testEmptyComplexObjectInvalidNotSkippedKey()
     {
         try {
-            $object = new class(['foo' => 42]) extends ComplexValueObject {};
+            $object = new class(['foo' => 42]) extends ComplexValueObject {
+                /** @7.1 */
+                /*protected */const SKIP_EXCESS_FIELDS = false;
+            };
         } catch (ComplexValueObjectErrors $errors) {
             $this->assertCount(1, $errors);
 
@@ -249,10 +258,37 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
         $this->fail();
     }
 
-    public function testInvalidFieldConstruct()
+    public function testInvalidFieldSkippedConstruct()
     {
         try {
             $object = new class(['baz' => 'blablabla']) extends ComplexValueObject {
+                protected static $schema = [
+                    'foo' => ['class' => IntValue::class],
+                    'bar' => ['class' => StringValue::class],
+                ];
+            };
+        } catch (ComplexValueObjectErrors $errors) {
+            $this->assertCount(2, $errors);
+
+            $this->assertInstanceOf(MissingField::class, $errors[0]);
+            $this->assertSame('foo', $errors[0]->getField());
+            $this->assertSame('Missing complex value object field "foo"', $errors[0]->getMessage());
+
+            $this->assertInstanceOf(MissingField::class, $errors[1]);
+            $this->assertSame('bar', $errors[1]->getField());
+            $this->assertSame('Missing complex value object field "bar"', $errors[1]->getMessage());
+
+            return;
+        }
+        $this->fail();
+    }
+
+    public function testInvalidFieldNotSkippedConstruct()
+    {
+        try {
+            $object = new class(['baz' => 'blablabla']) extends ComplexValueObject {
+                /** @7.1 */
+                /*protected */const SKIP_EXCESS_FIELDS = false;
                 protected static $schema = [
                     'foo' => ['class' => IntValue::class],
                     'bar' => ['class' => StringValue::class],

@@ -1,6 +1,7 @@
 7.0.5, 7.1.5, 7.2.5
 ===================
 * new `ComplexValueObject::innerGet()` behavior: Simple Value Objects values are returned instead of objects
+* `ComplexValueObject::SKIP_EXCESS_FIELDS` constant is added
 
 7.0.4, 7.1.4, 7.2.4
 ===================
