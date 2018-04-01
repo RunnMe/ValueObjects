@@ -1,3 +1,7 @@
+7.0.6, 7.1.6, 7.2.6
+===================
+* `ComplexValueObject` validation minor improvements
+
 7.0.5, 7.1.5, 7.2.5
 ===================
 * new `ComplexValueObject::innerGet()` behavior: Simple Value Objects values are returned instead of objects

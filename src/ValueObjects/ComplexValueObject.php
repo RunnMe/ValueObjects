@@ -2,6 +2,7 @@
 
 namespace Runn\ValueObjects;
 
+use Runn\Core\Exceptions;
 use Runn\Core\ObjectAsArrayInterface;
 use Runn\Core\StdGetSetInterface;
 use Runn\Core\StdGetSetTrait;
@@ -152,10 +153,6 @@ abstract class ComplexValueObject
             }
         }
 
-        if (!$errors->empty()) {
-            throw $errors;
-        }
-
         try {
 
             $res = $this->validate();
@@ -167,12 +164,19 @@ abstract class ComplexValueObject
                 foreach ($res as $error) {
                     if ($error instanceof $exceptionType) {
                         $errors->add($error);
+                    } else {
+                        $errors->add(new InvalidComplexValue($error->getMessage(), $error->getCode(), $error));
                     }
                 }
             }
 
-        } catch (\Throwable $e) {
-            $errors->add($e);
+        } catch (\Throwable $error) {
+            $exceptionType = ComplexValueObjectErrors::getType();
+            if ($error instanceof Exceptions || $error instanceof $exceptionType) {
+                $errors->add($error);
+            } else {
+                $errors->add(new InvalidComplexValue($error->getMessage(), $error->getCode(), $error));
+            }
         }
 
         if (!$errors->empty()) {

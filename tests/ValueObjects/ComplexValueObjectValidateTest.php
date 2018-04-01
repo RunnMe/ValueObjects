@@ -69,7 +69,7 @@ class ComplexValueObjectValidateTest extends \PHPUnit_Framework_TestCase
         $this->fail();
     }
 
-    public function testThrowOne()
+    public function testThrowOneInvalidComplexValue()
     {
         try {
 
@@ -89,6 +89,32 @@ class ComplexValueObjectValidateTest extends \PHPUnit_Framework_TestCase
 
             $this->assertInstanceOf(InvalidComplexValue::class, $errors[0]);
             $this->assertSame('One exception', $errors[0]->getMessage());
+
+            return;
+        }
+        $this->fail();
+    }
+
+    public function testThrowOneSimple()
+    {
+        try {
+
+            $object = new class(['first' => 1, 'second' => 2]) extends ComplexValueObject {
+                protected static $schema = [
+                    'first' => ['class' => IntValue::class],
+                    'second' => ['class' => IntValue::class],
+                ];
+                protected function validate()
+                {
+                    throw new Exception('One exception');
+                }
+            };
+
+        } catch (ComplexValueObjectErrors $errors) {
+            $this->assertCount(1, $errors);
+
+            $this->assertInstanceOf(InvalidComplexValue::class, $errors[0]);
+            $this->assertSame('One exception', $errors[0]->getPrevious()->getMessage());
 
             return;
         }
@@ -145,13 +171,16 @@ class ComplexValueObjectValidateTest extends \PHPUnit_Framework_TestCase
             };
 
         } catch (ComplexValueObjectErrors $errors) {
-            $this->assertCount(2, $errors);
+            $this->assertCount(3, $errors);
 
             $this->assertInstanceOf(InvalidComplexValue::class, $errors[0]);
             $this->assertSame('First exception', $errors[0]->getMessage());
 
             $this->assertInstanceOf(InvalidComplexValue::class, $errors[1]);
             $this->assertSame('Second exception', $errors[1]->getMessage());
+
+            $this->assertInstanceOf(InvalidComplexValue::class, $errors[2]);
+            $this->assertSame('Third exception', $errors[2]->getPrevious()->getMessage());
 
             return;
         }
