@@ -139,7 +139,7 @@ abstract class ComplexValueObject
         }
 
         foreach (static::getSchema() as $key => $field) {
-            if (!isset($this->$key)) {
+            if (!isset($this->$key) || null === $this->$key) {
                 if (in_array($key, static::getRequiredFieldsList())) {
                     if (!array_key_exists('default', $field)) {
                         $errorMissingField = static::ERRORS['MISSING_FIELD'];
@@ -224,7 +224,7 @@ abstract class ComplexValueObject
             }
             if (isset(static::getSchema()[$key])) {
                 $schema = static::getSchema()[$key];
-                if (array_key_exists('default', $schema) && null === $schema['default']) {
+                if (array_key_exists('default', $schema)) {
                     return false;
                 }
             }
