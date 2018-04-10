@@ -2,6 +2,7 @@
 ===================
 * Новая логика метода `ComplexValueObject::innerGet()`: для простых Value Objects возвращаются их значения вместо самих объектов
 * Добавлена константа `ComplexValueObject::SKIP_EXCESS_FIELDS`
+* Исправлен метод `ComplexValueObject::jsonSerialize()`
 
 7.0.4, 7.1.4, 7.2.4
 ===================

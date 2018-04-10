@@ -296,12 +296,15 @@ abstract class ComplexValueObject
     public function jsonSerialize()
     {
         $ret = [];
-        foreach ($this as $key => $val) {
-            if (null !== $val) {
-                if ($val instanceof \JsonSerializable) {
-                    $ret[$key] = $val->jsonSerialize();
+        foreach ($this->keys() as $key) {
+            $obj = $this->getObject($key);
+            if (null !== $obj) {
+                if ($obj instanceof \JsonSerializable) {
+                    $ret[$key] = $obj->jsonSerialize();
+                } elseif ($obj instanceof ValueObjectInterface) {
+                    $ret[$key] = $obj->getValue();
                 } else {
-                    $ret[$key] = $val;
+                    $ret[$key] = $obj;
                 }
             }
         }
