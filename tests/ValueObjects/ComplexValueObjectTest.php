@@ -11,6 +11,8 @@ use Runn\ValueObjects\Errors\InvalidField;
 use Runn\ValueObjects\Errors\InvalidFieldClass;
 use Runn\ValueObjects\Errors\InvalidFieldValue;
 use Runn\ValueObjects\Errors\MissingField;
+use Runn\ValueObjects\Values\DateTimeValue;
+use Runn\ValueObjects\Values\DateValue;
 use Runn\ValueObjects\Values\IntValue;
 use Runn\ValueObjects\Values\StringValue;
 use Runn\ValueObjects\ValueObjectInterface;
@@ -475,6 +477,20 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
             ];
         };
         $this->assertSame('{"foo":42}', json_encode($object));
+    }
+
+    public function testJsonWithJsonSerializable()
+    {
+        $object = new class([
+            'foo' => '2010-01-01',
+            'bar' => '2010-01-02 12:01:02'
+        ]) extends ComplexValueObject {
+            protected static $schema = [
+                'foo' => ['class' => DateValue::class],
+                'bar' => ['class' => DateTimeValue::class],
+            ];
+        };
+        $this->assertSame('{"foo":"2010-01-01","bar":"2010-01-02T12:01:02' . date('P') . '"}', json_encode($object));
     }
 
 }
