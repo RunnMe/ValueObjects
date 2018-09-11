@@ -308,7 +308,7 @@ abstract class ComplexValueObject
             $obj = $this->getObject($key);
             if (null !== $obj) {
                 if ($obj instanceof \JsonSerializable) {
-                    $ret->$key = $obj->jsonSerialize();
+                    $ret->$key = $obj;
                 } elseif ($obj instanceof ValueObjectInterface) {
                     $ret->$key = $obj->getValue();
                 } else {
