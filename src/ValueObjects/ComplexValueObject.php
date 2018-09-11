@@ -299,20 +299,20 @@ abstract class ComplexValueObject
     /**
      * JsonSerializable implementation
      * Is used to avoid null values serialization
-     * @return array|null
+     * @return \stdClass|null
      */
     public function jsonSerialize()
     {
-        $ret = [];
+        $ret = new \stdClass;
         foreach ($this->keys() as $key) {
             $obj = $this->getObject($key);
             if (null !== $obj) {
                 if ($obj instanceof \JsonSerializable) {
-                    $ret[$key] = $obj->jsonSerialize();
+                    $ret->$key = $obj->jsonSerialize();
                 } elseif ($obj instanceof ValueObjectInterface) {
-                    $ret[$key] = $obj->getValue();
+                    $ret->$key = $obj->getValue();
                 } else {
-                    $ret[$key] = $obj;
+                    $ret->$key = $obj;
                 }
             }
         }
