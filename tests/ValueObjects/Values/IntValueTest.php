@@ -1,108 +1,74 @@
 <?php
 
-namespace Runn\tests\ValueObjects\Values\IntValue;
+namespace Runn\Tests\ValueObjects\Values;
 
+use PHPUnit\Framework\TestCase;
 use Runn\ValueObjects\Values\IntValue;
 
-class IntValueTest extends \PHPUnit_Framework_TestCase
+/**
+ * Class IntValueTest
+ * @package Tests\ValueObjects\Values
+ */
+class IntValueTest extends TestCase
 {
-
     /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidInt
+     * @param $input
+     * @param $expected
+     * @throws \Runn\Validation\ValidationError
+     * @dataProvider intProvider
      */
-    public function testNull()
+    public function testConstruct($input, $expected): void
     {
-        $valueObject = new IntValue(null);
-    }
-
-    public function testConstruct()
-    {
-        $valueObject = new IntValue(42);
+        $valueObject = new IntValue($input);
 
         $this->assertInternalType('integer', $valueObject->getValue());
-        $this->assertSame(42, $valueObject->getValue());
+        $this->assertSame($expected, $valueObject->getValue());
     }
 
     /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidInt
+     * @param $input
+     * @dataProvider invalidValueProvider
+     * @expectedException \Runn\Validation\ValidationError
+     * @throws \Runn\Validation\ValidationError
      */
-    public function testBooleanFalse()
+    public function testInvalidValue($input): void
     {
-        $valueObject = new IntValue(false);
+        new IntValue($input);
     }
 
     /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidInt
+     * @return array
      */
-    public function testBooleanTrue()
+    public function intProvider(): array
     {
-        $valueObject = new IntValue(true);
-    }
-
-    public function testInt()
-    {
-        $valueObject = new IntValue(0);
-        $this->assertInternalType('integer', $valueObject->getValue());
-        $this->assertSame(0, $valueObject->getValue());
-
-        $valueObject = new IntValue(42);
-        $this->assertInternalType('integer', $valueObject->getValue());
-        $this->assertSame(42, $valueObject->getValue());
+        return [
+            'zero int' => [0, 0],
+            'not zero int' => [42, 42],
+            'int is a string' => ['42', 42],
+        ];
     }
 
     /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidInt
+     * @return array
      */
-    public function testEmptyString()
+    public function invalidValueProvider(): array
     {
-        $valueObject = new IntValue('');
+        return [
+            'null' => [null],
+            'false' => [false],
+            'true' => [true],
+            'empty string' => [''],
+            'float #1' => [1.23],
+            'float #2' => [1.2e34],
+            'array' => [[1, 2, 3]],
+            'object' => [
+                new class
+                {
+                    //
+                }
+            ],
+            'resource' => [fopen('php://input', 'rb')],
+            'more than int' => [PHP_INT_MAX + 1],
+        ];
     }
-
-    public function testString()
-    {
-        $valueObject = new IntValue('42');
-        $this->assertInternalType('integer', $valueObject->getValue());
-        $this->assertSame(42, $valueObject->getValue());
-    }
-
-    /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidInt
-     */
-    public function testFloat1()
-    {
-        $valueObject = new IntValue(1.23);
-    }
-
-    /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidInt
-     */
-    public function testFloat2()
-    {
-        $valueObject = new IntValue(1.2e34);
-    }
-
-    /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidInt
-     */
-    public function testArray()
-    {
-        $valueObject = new IntValue([1, 2, 3]);
-    }
-
-    /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidInt
-     */
-    public function testObject()
-    {
-        $valueObject = new IntValue(new class {});
-    }
-
-    /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidInt
-     */
-    public function testResource()
-    {
-        $valueObject = new IntValue(fopen('php://input', 'r'));
-    }
-
 }

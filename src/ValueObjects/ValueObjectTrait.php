@@ -11,15 +11,13 @@ namespace Runn\ValueObjects;
  * @implements \Runn\ValueObjects\ValueObjectInterface
  */
 trait ValueObjectTrait
-    //implements ValueObjectInterface
 {
-
     protected $__value;
 
     /**
      * @return array
      */
-    protected function notgetters(): array
+    protected function notGetters(): array
     {
         return ['schema', 'value', 'field', 'fieldsList', 'object'];
     }
@@ -27,7 +25,7 @@ trait ValueObjectTrait
     /**
      * @return array
      */
-    protected function notsetters(): array
+    protected function notSetters(): array
     {
         return ['schema', 'value', 'field', 'fieldsList'];
     }
@@ -38,7 +36,7 @@ trait ValueObjectTrait
      * @param mixed $value
      * @return self
      */
-    public static function new($value = null)
+    public static function new($value = null): self
     {
         return new static($value);
     }
@@ -55,7 +53,7 @@ trait ValueObjectTrait
      * @param mixed $value
      * @return $this
      */
-    protected function setValue($value)
+    protected function setValue($value): self
     {
         $this->__value = $value;
         return $this;
@@ -91,7 +89,6 @@ trait ValueObjectTrait
      */
     public function isSame(ValueObjectInterface $value): bool
     {
-        return (get_class($value) === get_class($this)) && ($value->getValue() === $this->getValue());
+        return (\get_class($value) === \get_class($this)) && ($value->getValue() === $this->getValue());
     }
-
 }

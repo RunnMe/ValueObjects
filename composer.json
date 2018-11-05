@@ -11,21 +11,31 @@
     {
       "name": "Alexey Maksarov",
       "email": "aleksey.maksarov@gmail.com"
+    },
+    {
+      "name": "Pavel Omelchenko",
+      "email": "p.omelchenko@gmail.com"
     }
   ],
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
-    "php": ">=7.0",
+    "php": "^7.1",
+    "ext-json": "*",
     "runn/core" : "dev-master",
     "runn/validation" : "dev-master"
   },
   "require-dev": {
-    "phpunit/phpunit": "5.*"
+    "phpunit/phpunit": "^7"
   },
   "autoload": {
     "psr-4": {
       "Runn\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Runn\\Tests\\": "tests/"
     }
   }
 }

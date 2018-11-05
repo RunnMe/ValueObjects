@@ -13,10 +13,8 @@ use Runn\Validation\Validators\EmailValidator;
  * Class EmailValue
  * @package Runn\ValueObjects\Values
  */
-class EmailValue
-    extends StringValue
+class EmailValue extends StringValue
 {
-
     /**
      * @return \Runn\Validation\Validator
      */
@@ -32,5 +30,4 @@ class EmailValue
     {
         return new EmailSanitizer();
     }
-
 }

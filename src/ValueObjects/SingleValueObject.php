@@ -14,10 +14,8 @@ use Runn\Validation\Validators\PassThruValidator;
  * Class SingleValueObject
  * @package Runn\ValueObjects
  */
-abstract class SingleValueObject
-    implements ValueObjectInterface, \JsonSerializable
+abstract class SingleValueObject implements ValueObjectInterface, \JsonSerializable
 {
-
     use ValueObjectTrait;
 
     /**
@@ -49,7 +47,7 @@ abstract class SingleValueObject
      * @return $this
      * @throws \Runn\Validation\ValidationError
      */
-    protected function setValue($value)
+    protected function setValue($value): self
     {
         $success = $this->validator->validate($value);
         if (!$success) {
@@ -83,5 +81,4 @@ abstract class SingleValueObject
     {
         return $this->getValue();
     }
-
 }

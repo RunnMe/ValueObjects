@@ -22,20 +22,16 @@ use Runn\ValueObjects\Errors\MissingField;
  * @package Runn\ValueObjects
  *
  */
-abstract class ComplexValueObject
-    implements ValueObjectInterface, ObjectAsArrayInterface, StdGetSetInterface
+abstract class ComplexValueObject implements ValueObjectInterface, ObjectAsArrayInterface, StdGetSetInterface
 {
-
-    use ValueObjectTrait, StdGetSetTrait
-    {
-        ValueObjectTrait::notgetters insteadof StdGetSetTrait;
-        ValueObjectTrait::notsetters insteadof StdGetSetTrait;
+    use ValueObjectTrait, StdGetSetTrait {
+        ValueObjectTrait::notGetters insteadof StdGetSetTrait;
+        ValueObjectTrait::notSetters insteadof StdGetSetTrait;
         StdGetSetTrait::innerSet as trait_innerSet;
         StdGetSetTrait::innerGet as trait_innerGet;
     }
 
-    /** @7.1 */
-    /*protected */const ERRORS = [
+    protected const ERRORS = [
         'COLLECTION' => ComplexValueObjectErrors::class,
         'INVALID_FIELD' => InvalidField::class,
         'EMPTY_FIELD_CLASS' => EmptyFieldClass::class,
@@ -44,8 +40,7 @@ abstract class ComplexValueObject
         'MISSING_FIELD' => MissingField::class,
     ];
 
-    /** @7.1 */
-    /*protected */const SKIP_EXCESS_FIELDS = true;
+    protected const SKIP_EXCESS_FIELDS = true;
 
     /**
      * @var array
@@ -55,7 +50,7 @@ abstract class ComplexValueObject
     /**
      * @return array
      */
-    public static function getSchema()
+    public static function getSchema(): array
     {
         return static::$schema;
     }
@@ -63,7 +58,7 @@ abstract class ComplexValueObject
     /**
      * @return array
      */
-    public static function getFieldsList()
+    public static function getFieldsList(): array
     {
         return array_keys(static::getSchema());
     }
@@ -72,7 +67,7 @@ abstract class ComplexValueObject
      * All fields are required!
      * @return array
      */
-    protected static function getRequiredFieldsList()
+    protected static function getRequiredFieldsList(): array
     {
         return static::getFieldsList();
     }
@@ -83,7 +78,10 @@ abstract class ComplexValueObject
     protected $constructed = false;
 
     /**
-     * @param mixed $value
+     * ComplexValueObject constructor.
+     * @param null $value
+     * @throws ComplexValueObjectErrors
+     * @throws Exception
      */
     public function __construct($value = null)
     {
@@ -99,7 +97,9 @@ abstract class ComplexValueObject
     {
         foreach (self::ERRORS as $type => $class) {
             if (empty(static::ERRORS[$type]) || !is_a(static::ERRORS[$type], $class, true)) {
-                throw new Exception("Class " . get_called_class() . "::ERRORS['" . $type . "'] must be " . $class . " or extends it");
+                throw new Exception(
+                    sprintf('Class %s::ERRORS[%s] must be %s or extends it', static::class, $type, $class)
+                );
             }
         }
     }
@@ -110,7 +110,7 @@ abstract class ComplexValueObject
      *
      * @7.1
      */
-    protected function setValue(/*iterable */$data = null)
+    protected function setValue(/*iterable */ $data = null)
     {
         if (empty($data)) {
             $data = [];
@@ -123,7 +123,7 @@ abstract class ComplexValueObject
         foreach ($data as $key => $val) {
             try {
                 $this->$key = $val;
-            // @7.1
+                // @7.1
             } catch (InvalidField $exception) {
                 $errors->add($exception);
             } catch (EmptyFieldClass $exception) {
@@ -133,14 +133,20 @@ abstract class ComplexValueObject
             } catch (\Throwable $exception) {
                 $errorInvalidFieldValue = static::ERRORS['INVALID_FIELD_VALUE'];
                 $errors->add(
-                    new $errorInvalidFieldValue($key, $val, 'Invalid complex value object field "' . $key . '" value', 0, $exception)
+                    new $errorInvalidFieldValue(
+                        $key,
+                        $val,
+                        'Invalid complex value object field "' . $key . '" value',
+                        0,
+                        $exception
+                    )
                 );
             }
         }
 
         foreach (static::getSchema() as $key => $field) {
             if (!isset($this->$key)) {
-                if (in_array($key, static::getRequiredFieldsList())) {
+                if (\in_array($key, static::getRequiredFieldsList(), true)) {
                     if (!array_key_exists('default', $field)) {
                         $errorMissingField = static::ERRORS['MISSING_FIELD'];
                         $errors[] = new $errorMissingField($key, 'Missing complex value object field "' . $key . '"');
@@ -154,7 +160,6 @@ abstract class ComplexValueObject
         }
 
         try {
-
             $res = $this->validate();
 
             if (false === $res) {
@@ -169,7 +174,6 @@ abstract class ComplexValueObject
                     }
                 }
             }
-
         } catch (\Throwable $error) {
             $exceptionType = ComplexValueObjectErrors::getType();
             if ($error instanceof Exceptions || $error instanceof $exceptionType) {
@@ -182,27 +186,36 @@ abstract class ComplexValueObject
         if (!$errors->empty()) {
             throw $errors;
         }
-
     }
 
+    /**
+     * @param $key
+     * @param $val
+     * @throws Exception
+     */
     protected function innerSet($key, $val)
     {
         $this->setField($key, $val);
     }
 
+    /**
+     * @param $field
+     * @param $value
+     * @throws Exception
+     */
     protected function setField($field, $value)
     {
         if ($this->constructed) {
             throw new Exception('Can not set field "' . $field . '" value because of value object is constructed');
         }
 
-        if (!in_array($field, static::getFieldsList())) {
+        if (!\in_array($field, static::getFieldsList(), true)) {
             if (static::SKIP_EXCESS_FIELDS) {
                 return;
-            } else {
-                $errorsInvalidField = static::ERRORS['INVALID_FIELD'];
-                throw new $errorsInvalidField($field,'Invalid complex value object field key: "' . $field . '"');
             }
+
+            $errorsInvalidField = static::ERRORS['INVALID_FIELD'];
+            throw new $errorsInvalidField($field, 'Invalid complex value object field key: "' . $field . '"');
         }
 
         if ($this->needCasting($field, $value)) {
@@ -213,13 +226,14 @@ abstract class ComplexValueObject
     }
 
     /**
+     * @param mixed $key
      * @param mixed $value
      * @return bool
      */
     protected function needCasting($key, $value): bool
     {
         if (null === $value) {
-            if (!in_array($key, static::getRequiredFieldsList())) {
+            if (!\in_array($key, static::getRequiredFieldsList(), true)) {
                 return false;
             }
             if (isset(static::getSchema()[$key])) {
@@ -229,10 +243,7 @@ abstract class ComplexValueObject
                 }
             }
         }
-        if ($value instanceof ValueObjectInterface) {
-            return false;
-        }
-        return true;
+        return !($value instanceof ValueObjectInterface);
     }
 
     protected function innerCast($key, $value)
@@ -279,7 +290,7 @@ abstract class ComplexValueObject
      * @param $key
      * @return ValueObjectInterface|null
      */
-    public function getObject($key)
+    public function getObject($key): ?ValueObjectInterface
     {
         return $this->trait_innerGet($key);
     }
@@ -287,7 +298,7 @@ abstract class ComplexValueObject
     /**
      * @return array
      */
-    public function getValue()
+    public function getValue(): array
     {
         $ret = [];
         foreach ($this as $key => $el) {
@@ -301,7 +312,7 @@ abstract class ComplexValueObject
      * Is used to avoid null values serialization
      * @return \stdClass|null
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): ?\stdClass
     {
         $ret = new \stdClass;
         foreach ($this->keys() as $key) {
@@ -318,5 +329,4 @@ abstract class ComplexValueObject
         }
         return $ret;
     }
-
 }

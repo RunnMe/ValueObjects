@@ -1,7 +1,8 @@
 <?php
 
-namespace Runn\tests\ValueObjects\Entity;
+namespace Runn\Tests\ValueObjects;
 
+use PHPUnit\Framework\TestCase;
 use Runn\Core\Std;
 use Runn\ValueObjects\ComplexValueObject;
 use Runn\ValueObjects\Entity;
@@ -9,168 +10,247 @@ use Runn\ValueObjects\Values\BooleanValue;
 use Runn\ValueObjects\Values\IntValue;
 use Runn\ValueObjects\Values\StringValue;
 
-class testEntity extends Entity{
+/**
+ * Class EntityTestClass
+ * @package Runn\Tests\ValueObjects
+ */
+class EntityTestClass extends Entity
+{
+    /**
+     * @var array
+     */
     protected static $schema = [
         '__id' => ['class' => IntValue::class],
-        'foo' =>  ['class' => StringValue::class]
+        'foo' => ['class' => StringValue::class]
     ];
 }
 
-class testValueObject1 extends ComplexValueObject {
-    protected static $schema = [
-        'foo' =>  ['class' => StringValue::class]
-    ];
-}
-
-class testValueObject2 extends ComplexValueObject {
-    protected static $schema = [
-        'foo' =>  ['class' => StringValue::class]
-    ];
-}
-
-class EntityTest extends \PHPUnit_Framework_TestCase
+/**
+ * Class EntityTest
+ * @package Runn\Tests\ValueObjects
+ */
+class EntityTest extends TestCase
 {
-
-    public function testPkFields()
+    public function testPkFields(): void
     {
-        $entity = new class extends Entity {const PK_FIELDS = [];};
+        $entity = new class extends Entity
+        {
+            protected const PK_FIELDS = [];
+        };
+
+        /** @var Entity $class */
+        $class = \get_class($entity);
 
         $this->assertInstanceOf(Entity::class, $entity);
         $this->assertInstanceOf(ComplexValueObject::class, $entity);
 
-        $this->assertSame(get_class($entity)::PK_FIELDS, get_class($entity)::getPrimaryKeyFields());
-        $this->assertSame([], get_class($entity)::getFieldsList());
-        $this->assertSame([], get_class($entity)::getPrimaryKeyFields());
-        $this->assertSame([], get_class($entity)::getFieldsListWoPk());
+        $const = new \ReflectionClassConstant($class, 'PK_FIELDS');
+
+        $this->assertSame($const->getValue(), $class::getPrimaryKeyFields());
+        $this->assertSame([], $class::getFieldsList());
+        $this->assertSame([], $class::getPrimaryKeyFields());
+        $this->assertSame([], $class::getFieldsListWoPk());
         $this->assertFalse($entity->issetPrimaryKey());
 
-        $entity = new class extends Entity {};
+        $entity = new class extends Entity
+        {
+        };
 
-        $this->assertSame(get_class($entity)::PK_FIELDS, get_class($entity)::getPrimaryKeyFields());
-        $this->assertSame([], get_class($entity)::getFieldsList());
-        $this->assertSame(['__id'], get_class($entity)::getPrimaryKeyFields());
-        $this->assertSame([], get_class($entity)::getFieldsListWoPk());
+        /** @var Entity $class */
+        $class = \get_class($entity);
+
+        $const = new \ReflectionClassConstant($class, 'PK_FIELDS');
+
+        $this->assertSame($const->getValue(), $class::getPrimaryKeyFields());
+        $this->assertSame([], $class::getFieldsList());
+        $this->assertSame(['__id'], $class::getPrimaryKeyFields());
+        $this->assertSame([], $class::getFieldsListWoPk());
         $this->assertFalse($entity->issetPrimaryKey());
 
-        $entity = new class extends Entity {const PK_FIELDS = ['id'];};
+        $entity = new class extends Entity
+        {
+            protected const PK_FIELDS = ['id'];
+        };
 
-        $this->assertSame(get_class($entity)::PK_FIELDS, get_class($entity)::getPrimaryKeyFields());
-        $this->assertSame([], get_class($entity)::getFieldsList());
-        $this->assertSame(['id'], get_class($entity)::getPrimaryKeyFields());
-        $this->assertSame([], get_class($entity)::getFieldsListWoPk());
+        /** @var Entity $class */
+        $class = \get_class($entity);
+
+        $const = new \ReflectionClassConstant($class, 'PK_FIELDS');
+
+        $this->assertSame($const->getValue(), $class::getPrimaryKeyFields());
+        $this->assertSame([], $class::getFieldsList());
+        $this->assertSame(['id'], $class::getPrimaryKeyFields());
+        $this->assertSame([], $class::getFieldsListWoPk());
         $this->assertFalse($entity->issetPrimaryKey());
 
-        $entity = new class extends Entity {const PK_FIELDS = ['foo', 'bar'];};
+        $entity = new class extends Entity
+        {
+            protected const PK_FIELDS = ['foo', 'bar'];
+        };
 
-        $this->assertSame(get_class($entity)::PK_FIELDS, get_class($entity)::getPrimaryKeyFields());
-        $this->assertSame([], get_class($entity)::getFieldsList());
-        $this->assertSame(['foo', 'bar'], get_class($entity)::getPrimaryKeyFields());
-        $this->assertSame([], get_class($entity)::getFieldsListWoPk());
+        /** @var Entity $class */
+        $class = \get_class($entity);
+
+        $const = new \ReflectionClassConstant($class, 'PK_FIELDS');
+
+        $this->assertSame($const->getValue(), $class::getPrimaryKeyFields());
+        $this->assertSame([], $class::getFieldsList());
+        $this->assertSame(['foo', 'bar'], $class::getPrimaryKeyFields());
+        $this->assertSame([], $class::getFieldsListWoPk());
         $this->assertFalse($entity->issetPrimaryKey());
     }
 
-    public function testIsPrimaryKeyScalar()
+    public function testIsPrimaryKeyScalar(): void
     {
-        $entity = new class extends Entity {const PK_FIELDS = ['id'];};
-        $class = get_class($entity);
+        $entity = new class extends Entity
+        {
+            protected const PK_FIELDS = ['id'];
+        };
+
+        /** @var Entity $class */
+        $class = \get_class($entity);
+
         $this->assertTrue($class::isPrimaryKeyScalar());
 
-        $entity = new class extends Entity {const PK_FIELDS = ['id1', 'id2'];};
-        $class = get_class($entity);
-        $this->assertFalse($class::isPrimaryKeyScalar());
+        $entity = new class extends Entity
+        {
+            protected const PK_FIELDS = ['id1', 'id2'];
+        };
 
+        /** @var Entity $class */
+        $class = \get_class($entity);
+
+        $this->assertFalse($class::isPrimaryKeyScalar());
     }
 
-    public function testGetPk()
+    public function testGetPk(): void
     {
-        $entity = new class(['__id' => 1, 'foo' => 'bar']) extends Entity {
-            const PK_FIELDS = [];
+        $entity = new class(['__id' => 1, 'foo' => 'bar']) extends Entity
+        {
+            protected const PK_FIELDS = [];
             protected static $schema = [
-            '__id' => ['class' => IntValue::class],
-            'foo'  => ['class' => StringValue::class],
-        ];};
-        $this->assertSame(['__id', 'foo'], get_class($entity)::getFieldsList());
-        $this->assertSame(null, $entity->getPrimaryKey());
-        $this->assertFalse($entity->issetPrimaryKey());
-        $this->assertSame(['__id', 'foo'], get_class($entity)::getFieldsListWoPk());
+                '__id' => ['class' => IntValue::class],
+                'foo' => ['class' => StringValue::class],
+            ];
+        };
 
-        $entity = new class(['__id' => 1, 'foo' => 'bar']) extends Entity { protected static $schema = [
-            '__id' => ['class' => IntValue::class],
-            'foo'  => ['class' => StringValue::class],
-        ];};
-        $this->assertSame(['__id', 'foo'], get_class($entity)::getFieldsList());
+        /** @var Entity $class */
+        $class = \get_class($entity);
+
+        $this->assertSame(['__id', 'foo'], $class::getFieldsList());
+        $this->assertNull($entity->getPrimaryKey());
+        $this->assertFalse($entity->issetPrimaryKey());
+        $this->assertSame(['__id', 'foo'], $class::getFieldsListWoPk());
+
+        $entity = new class(['__id' => 1, 'foo' => 'bar']) extends Entity
+        {
+            protected static $schema = [
+                '__id' => ['class' => IntValue::class],
+                'foo' => ['class' => StringValue::class],
+            ];
+        };
+
+        /** @var Entity $class */
+        $class = \get_class($entity);
+
+        $this->assertSame(['__id', 'foo'], $class::getFieldsList());
         $this->assertSame(1, $entity->getPrimaryKey());
         $this->assertTrue($entity->issetPrimaryKey());
-        $this->assertSame(['foo'], get_class($entity)::getFieldsListWoPk());
+        $this->assertSame(['foo'], $class::getFieldsListWoPk());
 
-        $entity = new class() extends Entity {
-            const PK_FIELDS = ['first', 'second'];
+        $entity = new class() extends Entity
+        {
+            protected const PK_FIELDS = ['first', 'second'];
             protected static $schema = [
                 'first' => ['class' => IntValue::class, 'default' => null],
                 'second' => ['class' => IntValue::class, 'default' => null],
-                'foo'  => ['class' => StringValue::class, 'default' => null],
+                'foo' => ['class' => StringValue::class, 'default' => null],
             ];
         };
-        $this->assertSame(['first', 'second', 'foo'], get_class($entity)::getFieldsList());
-        $this->assertSame(null, $entity->getPrimaryKey());
-        $this->assertFalse($entity->issetPrimaryKey());
-        $this->assertSame(['foo'], get_class($entity)::getFieldsListWoPk());
 
-        $entity = new class(['first' => 1, 'second' => 2, 'foo' => 'bar']) extends Entity {
-            const PK_FIELDS = ['first', 'second'];
+        /** @var Entity $class */
+        $class = \get_class($entity);
+
+        $this->assertSame(['first', 'second', 'foo'], $class::getFieldsList());
+        $this->assertNull($entity->getPrimaryKey());
+        $this->assertFalse($entity->issetPrimaryKey());
+        $this->assertSame(['foo'], $class::getFieldsListWoPk());
+
+        $entity = new class(['first' => 1, 'second' => 2, 'foo' => 'bar']) extends Entity
+        {
+            protected const PK_FIELDS = ['first', 'second'];
             protected static $schema = [
                 'first' => ['class' => IntValue::class],
                 'second' => ['class' => IntValue::class],
-                'foo'  => ['class' => StringValue::class],
+                'foo' => ['class' => StringValue::class],
             ];
         };
-        $this->assertSame(['first', 'second', 'foo'], get_class($entity)::getFieldsList());
+
+        /** @var Entity $class */
+        $class = \get_class($entity);
+
+        $this->assertSame(['first', 'second', 'foo'], $class::getFieldsList());
         $this->assertSame(['first' => 1, 'second' => 2], $entity->getPrimaryKey());
         $this->assertTrue($entity->issetPrimaryKey());
-        $this->assertSame(['foo'], get_class($entity)::getFieldsListWoPk());
+        $this->assertSame(['foo'], $class::getFieldsListWoPk());
     }
 
-    public function testGetValueWoPk()
+    public function testGetValueWoPk(): void
     {
-        $entity = new class(['__id' => 1, 'foo' => 'bar']) extends Entity {
-            const PK_FIELDS = [];
+        $entity = new class(['__id' => 1, 'foo' => 'bar']) extends Entity
+        {
+            protected const PK_FIELDS = [];
             protected static $schema = [
                 '__id' => ['class' => IntValue::class],
-                'foo'  => ['class' => StringValue::class],
-            ];};
+                'foo' => ['class' => StringValue::class],
+            ];
+        };
         $this->assertSame(['__id' => 1, 'foo' => 'bar'], $entity->getValueWithoutPrimaryKey());
 
-        $entity = new class(['__id' => 1, 'foo' => 'bar']) extends Entity { protected static $schema = [
-            '__id' => ['class' => IntValue::class],
-            'foo'  => ['class' => StringValue::class],
-        ];};
+        $entity = new class(['__id' => 1, 'foo' => 'bar']) extends Entity
+        {
+            protected static $schema = [
+                '__id' => ['class' => IntValue::class],
+                'foo' => ['class' => StringValue::class],
+            ];
+        };
         $this->assertSame(['foo' => 'bar'], $entity->getValueWithoutPrimaryKey());
 
-        $entity = new class() extends Entity {
-            const PK_FIELDS = ['first', 'second'];
+        $entity = new class() extends Entity
+        {
+            protected const PK_FIELDS = ['first', 'second'];
             protected static $schema = [
                 'first' => ['class' => IntValue::class, 'default' => null],
                 'second' => ['class' => IntValue::class, 'default' => null],
-                'foo'  => ['class' => StringValue::class, 'default' => null],
+                'foo' => ['class' => StringValue::class, 'default' => null],
             ];
         };
         $this->assertSame(['foo' => null], $entity->getValueWithoutPrimaryKey());
 
-        $entity = new class(['first' => 1, 'second' => 2, 'foo' => 'bar']) extends Entity {
-            const PK_FIELDS = ['first', 'second'];
+        $entity = new class(['first' => 1, 'second' => 2, 'foo' => 'bar']) extends Entity
+        {
+            protected const PK_FIELDS = ['first', 'second'];
             protected static $schema = [
                 'first' => ['class' => IntValue::class],
                 'second' => ['class' => IntValue::class],
-                'foo'  => ['class' => StringValue::class],
+                'foo' => ['class' => StringValue::class],
             ];
         };
         $this->assertSame(['foo' => 'bar'], $entity->getValueWithoutPrimaryKey());
     }
 
-    public function testConformsPK()
+    /**
+     * @throws \Runn\Core\Exceptions
+     */
+    public function testConformsPK(): void
     {
-        $entity = new class extends Entity {const PK_FIELDS = ['id'];};
-        $class = get_class($entity);
+        $entity = new class extends Entity
+        {
+            protected const PK_FIELDS = ['id'];
+        };
+
+        /** @var Entity $class */
+        $class = \get_class($entity);
 
         $this->assertTrue($class::conformsToPrimaryKey(null));
         $this->assertTrue($class::conformsToPrimaryKey(1));
@@ -181,8 +261,13 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($class::conformsToPrimaryKey(['id' => 1, 'foo' => 'bar']));
         $this->assertFalse($class::conformsToPrimaryKey(new Std(['id' => 1, 'foo' => 'bar'])));
 
-        $entity = new class extends Entity {const PK_FIELDS = ['id1', 'id2'];};
-        $class = get_class($entity);
+        $entity = new class extends Entity
+        {
+            protected const PK_FIELDS = ['id1', 'id2'];
+        };
+
+        /** @var Entity $class */
+        $class = \get_class($entity);
 
         $this->assertTrue($class::conformsToPrimaryKey(null));
         $this->assertFalse($class::conformsToPrimaryKey(1));
@@ -196,55 +281,70 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($class::conformsToPrimaryKey(new Std(['id1' => 1, 'id2' => 2, 'id3' => 3])));
     }
 
-    public function testIsSame()
+    /**
+     * @throws \Runn\Validation\ValidationError
+     * @throws \Runn\ValueObjects\Errors\ComplexValueObjectErrors
+     * @throws \Runn\ValueObjects\Exception
+     */
+    public function testIsSame(): void
     {
-        $entity1 = new testEntity(['__id' => 1, 'foo' => 'bar']);
+        $entity1 = new EntityTestClass(['__id' => 1, 'foo' => 'bar']);
         $this->assertTrue($entity1->isSame($entity1));
 
         $entity2 = new BooleanValue(true);
         $this->assertFalse($entity1->isSame($entity2));
 
-        $entity2 = new class(['__id' => 1, 'foo' => 'bar']) extends Entity { protected static $schema = [
-            '__id' => ['class' => IntValue::class],
-            'foo'  => ['class' => StringValue::class],
-        ];};
+        $entity2 = new class(['__id' => 1, 'foo' => 'bar']) extends Entity
+        {
+            protected static $schema = [
+                '__id' => ['class' => IntValue::class],
+                'foo' => ['class' => StringValue::class],
+            ];
+        };
         $this->assertFalse($entity1->isSame($entity2));
         $this->assertFalse($entity2->isSame($entity1));
 
-        $entity2 = new testEntity(['__id' => 2, 'foo' => 'bar']);
+        $entity2 = new EntityTestClass(['__id' => 2, 'foo' => 'bar']);
         $this->assertFalse($entity1->isSame($entity2));
         $this->assertFalse($entity2->isSame($entity1));
 
-        $entity2 = new testEntity(['__id' => 1, 'foo' => 'baz']);
+        $entity2 = new EntityTestClass(['__id' => 1, 'foo' => 'baz']);
         $this->assertTrue($entity1->isSame($entity2));
         $this->assertTrue($entity2->isSame($entity1));
 
-        $entity2 = new testEntity(['__id' => 1, 'foo' => 'bar']);
+        $entity2 = new EntityTestClass(['__id' => 1, 'foo' => 'bar']);
         $this->assertTrue($entity1->isSame($entity2));
         $this->assertTrue($entity2->isSame($entity1));
     }
 
-    public function testIsEqual()
+    /**
+     * @throws \Runn\ValueObjects\Errors\ComplexValueObjectErrors
+     * @throws \Runn\ValueObjects\Exception
+     */
+    public function testIsEqual(): void
     {
-        $entity1 = new testEntity(['__id' => 1, 'foo' => 'bar']);
+        $entity1 = new EntityTestClass(['__id' => 1, 'foo' => 'bar']);
         $this->assertTrue($entity1->isEqual($entity1));
 
-        $entity2 = new class(['__id' => 1, 'foo' => 'bar']) extends Entity { protected static $schema = [
-            '__id' => ['class' => IntValue::class],
-            'foo'  => ['class' => StringValue::class],
-        ];};
+        $entity2 = new class(['__id' => 1, 'foo' => 'bar']) extends Entity
+        {
+            protected static $schema = [
+                '__id' => ['class' => IntValue::class],
+                'foo' => ['class' => StringValue::class],
+            ];
+        };
         $this->assertFalse($entity1->isEqual($entity2));
         $this->assertFalse($entity2->isEqual($entity1));
 
-        $entity2 = new testEntity(['__id' => 2, 'foo' => 'bar']);
+        $entity2 = new EntityTestClass(['__id' => 2, 'foo' => 'bar']);
         $this->assertTrue($entity1->isEqual($entity2));
         $this->assertTrue($entity2->isEqual($entity1));
 
-        $entity2 = new testEntity(['__id' => 1, 'foo' => 'baz']);
+        $entity2 = new EntityTestClass(['__id' => 1, 'foo' => 'baz']);
         $this->assertFalse($entity1->isEqual($entity2));
         $this->assertFalse($entity2->isEqual($entity1));
 
-        $entity2 = new testEntity(['__id' => 1, 'foo' => 'bar']);
+        $entity2 = new EntityTestClass(['__id' => 1, 'foo' => 'bar']);
         $this->assertTrue($entity1->isEqual($entity2));
         $this->assertTrue($entity2->isEqual($entity1));
     }
@@ -252,10 +352,13 @@ class EntityTest extends \PHPUnit_Framework_TestCase
     /**
      * @expectedException \Runn\ValueObjects\Exception
      * @expectedExceptionMessage Can not set field "__id" value because of it is part of primary key
+     * @throws \Runn\Validation\ValidationError
+     * @throws \Runn\ValueObjects\Errors\ComplexValueObjectErrors
+     * @throws \Runn\ValueObjects\Exception
      */
-    public function testImmutablePk()
+    public function testImmutablePk(): void
     {
-        $entity = new testEntity(['__id' => 42, 'foo' => 'bar']);
+        $entity = new EntityTestClass(['__id' => 42, 'foo' => 'bar']);
 
         $this->assertSame(42, $entity->getPrimaryKey());
         $this->assertSame(42, $entity->__id);
@@ -269,9 +372,13 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $entity->__id = 13;
     }
 
-    public function testMutablePk()
+    /**
+     * @throws \Runn\ValueObjects\Errors\ComplexValueObjectErrors
+     * @throws \Runn\ValueObjects\Exception
+     */
+    public function testMutablePk(): void
     {
-        $entity = new testEntity(['foo' => 'bar']);
+        $entity = new EntityTestClass(['foo' => 'bar']);
 
         $this->assertFalse($entity->issetPrimaryKey());
         $this->assertNull($entity->getPrimaryKey());
@@ -282,9 +389,14 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(13, $entity->getPrimaryKey());
     }
 
-    public function testMutableField()
+    /**
+     * @throws \Runn\Validation\ValidationError
+     * @throws \Runn\ValueObjects\Errors\ComplexValueObjectErrors
+     * @throws \Runn\ValueObjects\Exception
+     */
+    public function testMutableField(): void
     {
-        $entity = new testEntity(['__id' => 42, 'foo' => 'bar']);
+        $entity = new EntityTestClass(['__id' => 42, 'foo' => 'bar']);
 
         $this->assertSame(42, $entity->getPrimaryKey());
         $this->assertSame(42, $entity->__id);
@@ -305,5 +417,4 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(StringValue::class, $entity->getObject('foo'));
         $this->assertEquals(new StringValue('bla'), $entity->getObject('foo'));
     }
-
 }

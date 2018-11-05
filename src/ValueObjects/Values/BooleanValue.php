@@ -14,10 +14,8 @@ use Runn\ValueObjects\SingleValueObject;
  * Class BooleanValue
  * @package Runn\ValueObjects\Values
  */
-class BooleanValue
-    extends SingleValueObject
+class BooleanValue extends SingleValueObject
 {
-
     /**
      * @return \Runn\Validation\Validator
      */
@@ -33,5 +31,4 @@ class BooleanValue
     {
         return new BooleanSanitizer();
     }
-
 }

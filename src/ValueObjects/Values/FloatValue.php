@@ -14,10 +14,8 @@ use Runn\ValueObjects\SingleValueObject;
  * Class FloatValue
  * @package Runn\ValueObjects\Values
  */
-class FloatValue
-    extends SingleValueObject
+class FloatValue extends SingleValueObject
 {
-
     /**
      * @return \Runn\Validation\Validator
      */
@@ -33,5 +31,4 @@ class FloatValue
     {
         return new FloatSanitizer();
     }
-
 }

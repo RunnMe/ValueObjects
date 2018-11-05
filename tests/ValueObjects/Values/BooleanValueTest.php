@@ -1,124 +1,103 @@
 <?php
 
-namespace Runn\tests\ValueObjects\Values\BooleanValue;
+namespace Runn\Tests\ValueObjects\Values;
 
+use PHPUnit\Framework\TestCase;
 use Runn\ValueObjects\Values\BooleanValue;
 
-class BooleanValueTest extends \PHPUnit_Framework_TestCase
+/**
+ * Class BooleanValueTest
+ * @package Tests\ValueObjects\Values
+ */
+class BooleanValueTest extends TestCase
 {
-
     /**
+     * @param $input
+     * @dataProvider invalidValueProvider
      * @expectedException \Runn\Validation\Exceptions\InvalidBoolean
+     * @throws \Runn\Validation\ValidationError
      */
-    public function testInvalidEmptyArray()
+    public function testInvalidValue($input): void
     {
-        $valueObject = new BooleanValue([]);
-    }
-
-    /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidBoolean
-     */
-    public function testInvalidNotEmptyArray()
-    {
-        $valueObject = new BooleanValue([1, 2, 3]);
+        new BooleanValue($input);
     }
 
     /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidBoolean
+     * @param $input
+     * @dataProvider falseProvider
+     * @throws \Runn\Validation\ValidationError
      */
-    public function testInvalidObject()
+    public function testFalse($input): void
     {
-        $valueObject = new BooleanValue(new class {});
+        $valueObject = new BooleanValue($input);
+        $this->assertInternalType('bool', $valueObject->getValue());
+        $this->assertFalse($valueObject->getValue());
     }
 
     /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidBoolean
+     * @param $input
+     * @dataProvider trueProvider
+     * @throws \Runn\Validation\ValidationError
      */
-    public function testInvalidResource()
+    public function testTrue($input): void
     {
-        $valueObject = new BooleanValue(fopen('php://input', 'r'));
-    }
-
-    public function testFalse()
-    {
-        $valueObject = new BooleanValue(null);
-        $this->assertInternalType('bool', $valueObject->getValue());
-        $this->assertFalse($valueObject->getValue());
-
-        $valueObject = new BooleanValue(false);
-        $this->assertInternalType('bool', $valueObject->getValue());
-        $this->assertFalse($valueObject->getValue());
-
-        $valueObject = new BooleanValue('');
-        $this->assertInternalType('bool', $valueObject->getValue());
-        $this->assertFalse($valueObject->getValue());
-
-        $valueObject = new BooleanValue('false');
-        $this->assertInternalType('bool', $valueObject->getValue());
-        $this->assertFalse($valueObject->getValue());
-
-        $valueObject = new BooleanValue('off');
-        $this->assertInternalType('bool', $valueObject->getValue());
-        $this->assertFalse($valueObject->getValue());
-
-        $valueObject = new BooleanValue('no');
-        $this->assertInternalType('bool', $valueObject->getValue());
-        $this->assertFalse($valueObject->getValue());
-
-        $valueObject = new BooleanValue('0');
-        $this->assertInternalType('bool', $valueObject->getValue());
-        $this->assertFalse($valueObject->getValue());
-
-        $valueObject = new BooleanValue(0);
-        $this->assertInternalType('bool', $valueObject->getValue());
-        $this->assertFalse($valueObject->getValue());
-    }
-
-    public function testTrue()
-    {
-        $valueObject = new BooleanValue(true);
-        $this->assertInternalType('bool', $valueObject->getValue());
-        $this->assertTrue($valueObject->getValue());
-
-        $valueObject = new BooleanValue('true');
-        $this->assertInternalType('bool', $valueObject->getValue());
-        $this->assertTrue($valueObject->getValue());
-
-        $valueObject = new BooleanValue('on');
-        $this->assertInternalType('bool', $valueObject->getValue());
-        $this->assertTrue($valueObject->getValue());
-
-        $valueObject = new BooleanValue('yes');
-        $this->assertInternalType('bool', $valueObject->getValue());
-        $this->assertTrue($valueObject->getValue());
-
-        $valueObject = new BooleanValue('blablabla');
-        $this->assertInternalType('bool', $valueObject->getValue());
-        $this->assertTrue($valueObject->getValue());
-
-        $valueObject = new BooleanValue('1');
-        $this->assertInternalType('bool', $valueObject->getValue());
-        $this->assertTrue($valueObject->getValue());
-
-        $valueObject = new BooleanValue('42');
-        $this->assertInternalType('bool', $valueObject->getValue());
-        $this->assertTrue($valueObject->getValue());
-
-        $valueObject = new BooleanValue('3.14159');
-        $this->assertInternalType('bool', $valueObject->getValue());
-        $this->assertTrue($valueObject->getValue());
-
-        $valueObject = new BooleanValue(1);
-        $this->assertInternalType('bool', $valueObject->getValue());
-        $this->assertTrue($valueObject->getValue());
-
-        $valueObject = new BooleanValue(42);
-        $this->assertInternalType('bool', $valueObject->getValue());
-        $this->assertTrue($valueObject->getValue());
-
-        $valueObject = new BooleanValue(3.14159);
+        $valueObject = new BooleanValue($input);
         $this->assertInternalType('bool', $valueObject->getValue());
         $this->assertTrue($valueObject->getValue());
     }
 
+    /**
+     * @return array
+     */
+    public function falseProvider(): array
+    {
+        return [
+            'null' => [null],
+            'false in a bool' => [false],
+            'empty string' => [''],
+            'false in a string' => ['false'],
+            'false is the string "off"' => ['off'],
+            'false is the string "no"' => ['no'],
+            'false is zero in string' => ['0'],
+            'false is zero' => [0],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function trueProvider(): array
+    {
+        return [
+            'true in a bool' => [true],
+            'true in a string' => ['true'],
+            'true is the string "on"' => ['on'],
+            'true is the string "yes"' => ['yes'],
+            'true is the string "blah-blah-blah"' => ['blah-blah-blah'],
+            'true is 1 in string' => ['1'],
+            'true is 42 in string' => ['42'],
+            'true is float in string' => ['3.14159'],
+            'true is 1 in int' => [1],
+            'true is 42 in int' => [42],
+            'true is float in float' => [3.14159],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function invalidValueProvider(): array
+    {
+        return [
+            'empty array' => [[]],
+            'not empty array' => [[1, 2, 3]],
+            'object' => [
+                new class
+                {
+                    //
+                }
+            ],
+            'resource' => [fopen('php://input', 'rb')],
+        ];
+    }
 }

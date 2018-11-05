@@ -12,13 +12,9 @@ use Runn\Core\ObjectAsArrayInterface;
  * Class Entity
  * @package Runn\ValueObjects
  */
-abstract class Entity
-    extends ComplexValueObject
-    implements EntityInterface
+abstract class Entity extends ComplexValueObject implements EntityInterface
 {
-
-    // @7.1
-    /*protected */const PK_FIELDS = ['__id'];
+    protected const PK_FIELDS = ['__id'];
 
     /**
      * @return array
@@ -34,7 +30,7 @@ abstract class Entity
      */
     public static function isPrimaryKeyScalar(): bool
     {
-        return 1 === count(static::getPrimaryKeyFields());
+        return 1 === \count(static::getPrimaryKeyFields());
     }
 
     /**
@@ -63,7 +59,8 @@ abstract class Entity
         }
         if (empty(array_filter($ret))) {
             return null;
-        } elseif (1 == count($ret)) {
+        }
+        if (1 === \count($ret)) {
             return array_shift($ret);
         }
         return $ret;
@@ -73,7 +70,7 @@ abstract class Entity
     {
         $ret = [];
         foreach ($this as $key => $el) {
-            if (in_array($key, static::getPrimaryKeyFields())) {
+            if (\in_array($key, static::getPrimaryKeyFields(), true)) {
                 continue;
             }
             $ret[$key] = $el instanceof ValueObjectInterface ? $el->getValue() : $el;
@@ -92,18 +89,14 @@ abstract class Entity
             return true;
         }
         $fields = static::getPrimaryKeyFields();
-        if (1 === count($fields)) {
+        if (1 === \count($fields)) {
             if (is_scalar($data)) {
                 return true;
             }
-            return 1 === count($data) && (isset($data[$fields[0]]) || isset($data->{$fields[0]}));
+            return 1 === \count($data) && (isset($data[$fields[0]]) || isset($data->{$fields[0]}));
         }
-        if (is_array($data) || ($data instanceof ObjectAsArrayInterface)) {
-            if (is_array($data)) {
-                $keys = array_keys($data);
-            } else {
-                $keys = $data->keys();
-            }
+        if (\is_array($data) || ($data instanceof ObjectAsArrayInterface)) {
+            $keys = \is_array($data) ? array_keys($data) : $data->keys();
             return empty(array_diff($keys, $fields)) && empty(array_diff($fields, $keys));
         }
         return false;
@@ -112,7 +105,7 @@ abstract class Entity
     /**
      * @return array
      */
-    public static function getFieldsListWoPk()
+    public static function getFieldsListWoPk(): array
     {
         return array_values(array_diff(static::getFieldsList(), static::getPrimaryKeyFields()));
     }
@@ -121,17 +114,23 @@ abstract class Entity
      * All fields except primary key are required!
      * @return array
      */
-    protected static function getRequiredFieldsList()
+    protected static function getRequiredFieldsList(): array
     {
         return static::getFieldsListWoPk();
     }
 
     protected function setField($field, $value)
     {
-        if ($this->constructed) {
-            if ($this->issetPrimaryKey() && in_array($field, static::getPrimaryKeyFields())) {
-                throw new Exception('Can not set field "' . $field . '" value because of it is part of primary key which is already set');
-            }
+        if ($this->constructed
+            && $this->issetPrimaryKey()
+            && \in_array($field, static::getPrimaryKeyFields(), true)
+        ) {
+            throw new Exception(
+                sprintf(
+                    'Can not set field "%s" value because of it is part of primary key which is already set',
+                    $field
+                )
+            );
         }
         if ($this->needCasting($field, $value)) {
             $value = $this->innerCast($field, $value);
@@ -149,11 +148,11 @@ abstract class Entity
             return false;
         }
         return
-            (get_class($object) === get_class($this))
-                &&
+            (\get_class($object) === \get_class($this))
+            &&
             (null !== $object->getPrimaryKey())
-                &&
-            ($object->getPrimaryKey() == $this->getPrimaryKey());
+            &&
+            ($object->getPrimaryKey() === $this->getPrimaryKey());
     }
 
     /**
@@ -163,9 +162,7 @@ abstract class Entity
     public function isEqual(EntityInterface $object): bool
     {
         return
-            (get_class($object) === get_class($this))
-                &&
-            ($this->getValueWithoutPrimaryKey() === $object->getValueWithoutPrimaryKey());
+            (\get_class($object) === \get_class($this))
+            && ($this->getValueWithoutPrimaryKey() === $object->getValueWithoutPrimaryKey());
     }
-
 }

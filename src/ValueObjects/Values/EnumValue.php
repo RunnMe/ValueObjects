@@ -12,12 +12,9 @@ use Runn\ValueObjects\SingleValueObject;
  * Class EnumValue
  * @package Runn\ValueObjects\Values
  */
-abstract class EnumValue
-    extends SingleValueObject
+abstract class EnumValue extends SingleValueObject
 {
-
-    // @7.1
-    /*public */const VALUES = [];
+    public const VALUES = [];
 
     /**
      * @return \Runn\Validation\Validator
@@ -26,5 +23,4 @@ abstract class EnumValue
     {
         return new EnumValidator(static::VALUES);
     }
-
 }

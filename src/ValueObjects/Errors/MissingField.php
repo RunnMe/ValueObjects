@@ -11,11 +11,8 @@ use Throwable;
  * Class MissingField
  * @package Runn\ValueObjects\Errors
  */
-class MissingField
-    extends Exception
-    implements ComplexValueObjectFieldErrorInterface
+class MissingField extends Exception implements ComplexValueObjectFieldErrorInterface
 {
-
     protected $field;
 
     /**
@@ -25,7 +22,7 @@ class MissingField
      * @param int $code
      * @param Throwable|null $previous
      */
-    public function __construct(string $field, $message = "", $code = 0, Throwable $previous = null)
+    public function __construct(string $field, $message = '', $code = 0, Throwable $previous = null)
     {
         $this->field = $field;
         parent::__construct($message, $code, $previous);
@@ -38,5 +35,4 @@ class MissingField
     {
         return $this->field;
     }
-
 }

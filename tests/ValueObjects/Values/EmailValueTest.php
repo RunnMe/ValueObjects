@@ -1,25 +1,22 @@
 <?php
 
-namespace Runn\tests\ValueObjects\Values\EmailValue;
+namespace Runn\Tests\ValueObjects\Values;
 
-use Runn\Validation\Exceptions\EmptyValue;
-use Runn\Validation\Exceptions\InvalidEmail;
+use PHPUnit\Framework\TestCase;
+use Runn\ValueObjects\SingleValueObject;
 use Runn\ValueObjects\Values\EmailValue;
 use Runn\ValueObjects\Values\StringValue;
-use Runn\ValueObjects\SingleValueObject;
 
-class EmailValueTest extends \PHPUnit_Framework_TestCase
+/**
+ * Class EmailValueTest
+ * @package Tests\ValueObjects\Values
+ */
+class EmailValueTest extends TestCase
 {
-
     /**
-     * @expectedException \Runn\Validation\Exceptions\EmptyValue
+     * @throws \Runn\Validation\ValidationError
      */
-    public function testNull()
-    {
-        $valueObject = new EmailValue(null);
-    }
-
-    public function testConstruct()
+    public function testConstruct(): void
     {
         $valueObject = new EmailValue('foo@bar.baz');
 
@@ -32,78 +29,75 @@ class EmailValueTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Runn\Validation\Exceptions\EmptyValue
+     * @throws \Runn\Validation\ValidationError
      */
-    public function testBooleanFalse()
+    public function testValidObject(): void
     {
-        $valueObject = new EmailValue(false);
-    }
-
-    /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidEmail
-     */
-    public function testBooleanTrue()
-    {
-        $valueObject = new EmailValue(true);
-    }
-
-    /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidEmail
-     */
-    public function testInt()
-    {
-        $valueObject = new EmailValue(42);
-    }
-
-    /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidEmail
-     */
-    public function testFloat()
-    {
-        $valueObject = new EmailValue(1.23);
-    }
-
-    /**
-     * @expectedException \Runn\Validation\Exceptions\EmptyValue
-     */
-    public function testEmptyString()
-    {
-        $valueObject = new EmailValue('');
-    }
-
-    /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidEmail
-     */
-    public function testArray()
-    {
-        $valueObject = new EmailValue([1, 2, 3]);
-    }
-
-    /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidEmail
-     */
-    public function testInvalidObject()
-    {
-        $valueObject = new EmailValue(new class {});
-    }
-
-    public function testValidObject()
-    {
-        $valueObject = new EmailValue(new class {public function __toString()
-        {
-            return 'foo@bar.baz';
-        }
-        });
+        $valueObject = new EmailValue(
+            new class
+            {
+                public function __toString()
+                {
+                    return 'foo@bar.baz';
+                }
+            }
+        );
         $this->assertInternalType('string', $valueObject->getValue());
         $this->assertSame('foo@bar.baz', $valueObject->getValue());
     }
 
     /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidEmail
+     * @param $input
+     * @dataProvider emptyValueProvider
+     * @expectedException \Runn\Validation\Exceptions\EmptyValue
+     * @throws \Runn\Validation\ValidationError
      */
-    public function testResource()
+    public function testEmptyValue($input): void
     {
-        $valueObject = new EmailValue(fopen('php://input', 'r'));
+        new EmailValue($input);
     }
 
+    /**
+     * @param $input
+     * @dataProvider invalidValueProvider
+     * @expectedException \Runn\Validation\Exceptions\InvalidEmail
+     * @throws \Runn\Validation\ValidationError
+     */
+    public function testResource($input): void
+    {
+        new EmailValue($input);
+    }
+
+    /**
+     * @return array
+     */
+    public function invalidValueProvider(): array
+    {
+        return [
+            'int' => [42],
+            'float' => [1.23],
+            'true' => [true],
+            'not empty string' => ['blah-blah-blah'],
+            'array' => [[1, 2, 3]],
+            'object' => [
+                new class
+                {
+                    //
+                }
+            ],
+            'resource' => [fopen('php://input', 'rb')],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function emptyValueProvider(): array
+    {
+        return [
+            'null' => [null],
+            'false' => [false],
+            'empty string' => [''],
+        ];
+    }
 }

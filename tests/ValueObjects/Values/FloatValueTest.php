@@ -1,102 +1,74 @@
 <?php
 
-namespace Runn\tests\ValueObjects\Values\FloatValue;
+namespace Runn\Tests\ValueObjects\Values;
 
+use PHPUnit\Framework\TestCase;
 use Runn\ValueObjects\Values\FloatValue;
 
-class FloatValueTest extends \PHPUnit_Framework_TestCase
+/**
+ * Class FloatValueTest
+ * @package Tests\ValueObjects\Values
+ */
+class FloatValueTest extends TestCase
 {
-
     /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidFloat
+     * @param $input
+     * @param $expected
+     * @dataProvider floatProvider
+     * @throws \Runn\Validation\ValidationError
      */
-    public function testNull()
+    public function testFloat($input, $expected): void
     {
-        $valueObject = new FloatValue(null);
-    }
-
-    public function testConstruct()
-    {
-        $valueObject = new FloatValue(42);
+        $valueObject = new FloatValue($input);
 
         $this->assertInternalType('float', $valueObject->getValue());
-        $this->assertSame(42.0, $valueObject->getValue());
-
-        $valueObject = new FloatValue(3.14159);
-
-        $this->assertInternalType('float', $valueObject->getValue());
-        $this->assertSame(3.14159, $valueObject->getValue());
-
-        $valueObject = new FloatValue(1.2e34);
-
-        $this->assertInternalType('float', $valueObject->getValue());
-        $this->assertSame(1.2e34, $valueObject->getValue());
+        $this->assertSame($expected, $valueObject->getValue());
     }
 
     /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidFloat
+     * @param $input
+     * @dataProvider invalidValueProvider
+     * @expectedException \Runn\Validation\ValidationError
+     * @throws \Runn\Validation\ValidationError
      */
-    public function testBooleanFalse()
+    public function testInvalidValue($input): void
     {
-        $valueObject = new FloatValue(false);
+        new FloatValue($input);
     }
 
     /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidFloat
+     * @return array
      */
-    public function testBooleanTrue()
+    public function floatProvider(): array
     {
-        $valueObject = new FloatValue(true);
-    }
-
-    public function testInt()
-    {
-        $valueObject = new FloatValue(0);
-        $this->assertInternalType('float', $valueObject->getValue());
-        $this->assertSame(0.0, $valueObject->getValue());
-
-        $valueObject = new FloatValue(42);
-        $this->assertInternalType('float', $valueObject->getValue());
-        $this->assertSame(42.0, $valueObject->getValue());
+        return [
+            'int #1' => [0, 0.0],
+            'int #2' => [42, 42.0],
+            'float #1' => [3.14159, 3.14159],
+            'float #2' => [1.2e34, 1.2e34],
+            'string' => ['3.14159', 3.14159]
+        ];
     }
 
     /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidFloat
+     * @return array
      */
-    public function testEmptyString()
+    public function invalidValueProvider(): array
     {
-        $valueObject = new FloatValue('');
+        return [
+            'null' => [null],
+            'false' => [false],
+            'true' => [true],
+            'empty string' => [''],
+            'not empty string' => ['blah-blah-blah'],
+            'array' => [[1, 2, 3]],
+            'object' => [
+                new class
+                {
+                    //
+                }
+            ],
+            'resource' => [fopen('php://input', 'rb')],
+        ];
     }
-
-    public function testString()
-    {
-        $valueObject = new FloatValue('3.14159');
-        $this->assertInternalType('float', $valueObject->getValue());
-        $this->assertSame(3.14159, $valueObject->getValue());
-    }
-
-    /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidFloat
-     */
-    public function testArray()
-    {
-        $valueObject = new FloatValue([1, 2, 3]);
-    }
-
-    /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidFloat
-     */
-    public function testObject()
-    {
-        $valueObject = new FloatValue(new class {});
-    }
-
-    /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidFloat
-     */
-    public function testResource()
-    {
-        $valueObject = new FloatValue(fopen('php://input', 'r'));
-    }
-
 }

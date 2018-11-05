@@ -1,46 +1,55 @@
 <?php
 
-namespace Runn\tests\ValueObjects\Values\IntValue;
+namespace Runn\Tests\ValueObjects\Values;
 
+use PHPUnit\Framework\TestCase;
 use Runn\ValueObjects\Values\EnumValue;
 
-class EnumValueTest extends \PHPUnit_Framework_TestCase
+class EnumValueTest extends TestCase
 {
-
     /**
+     * @param $input
+     * @dataProvider invalidValueProvider
      * @expectedException \Runn\Validation\Exceptions\OutOfEnum
      */
-    public function testEmptyValues1()
+    public function testEmptyValue($input): void
     {
-        $value = new class extends EnumValue { };
-    }
-
-    /**
-     * @expectedException \Runn\Validation\Exceptions\OutOfEnum
-     */
-    public function testEmptyValues2()
-    {
-        $value = new class('foo') extends EnumValue { };
-    }
-
-    /**
-     * @expectedException \Runn\Validation\Exceptions\OutOfEnum
-     */
-    public function testInvalid()
-    {
-        $value = new class('foo') extends EnumValue {
-            const VALUES = ['bar', 'baz'];
+        new class($input) extends EnumValue
+        {
         };
     }
 
-    public function testValid()
+    /**
+     * @param $input
+     * @dataProvider invalidValueProvider
+     * @expectedException \Runn\Validation\Exceptions\OutOfEnum
+     */
+    public function testInvalidValue($input): void
+    {
+        new class($input) extends EnumValue {
+            public const VALUES = ['bar', 'baz'];
+        };
+    }
+
+    public function testValid(): void
     {
         $value = new class('foo') extends EnumValue {
-            const VALUES = ['foo', 'bar'];
+            public const VALUES = ['foo', 'bar'];
         };
 
         $this->assertInstanceOf(EnumValue::class, $value);
         $this->assertSame('foo', $value->getValue());
     }
 
+    /**
+     * @return array
+     */
+    public function invalidValueProvider(): array
+    {
+        return [
+            'empty' => [''],
+            'null' => [null],
+            'string' => ['foo'],
+        ];
+    }
 }

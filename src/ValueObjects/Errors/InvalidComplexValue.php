@@ -10,8 +10,6 @@ use Runn\ValueObjects\Exception;
  * Class InvalidComplexValue
  * @package Runn\ValueObjects\Errors
  */
-class InvalidComplexValue
-    extends Exception
-    implements ComplexValueObjectErrorInterface
+class InvalidComplexValue extends Exception implements ComplexValueObjectErrorInterface
 {
 }

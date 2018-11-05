@@ -10,11 +10,8 @@ use Runn\ValueObjects\Exception;
  * @package Runn\ValueObjects\Errors
  *
  */
-class EmptyFieldClass
-    extends Exception
-    implements ComplexValueObjectFieldErrorInterface
+class EmptyFieldClass extends Exception implements ComplexValueObjectFieldErrorInterface
 {
-
     protected $field;
 
     /**
@@ -25,7 +22,7 @@ class EmptyFieldClass
      * @param int $code
      * @param \Throwable|null $previous
      */
-    public function __construct(string $field, $message = "", $code = 0, \Throwable $previous = null)
+    public function __construct(string $field, $message = '', $code = 0, \Throwable $previous = null)
     {
         $this->field = $field;
         parent::__construct($message, $code, $previous);
@@ -38,5 +35,4 @@ class EmptyFieldClass
     {
         return $this->field;
     }
-
 }

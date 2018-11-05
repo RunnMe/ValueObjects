@@ -1,38 +1,42 @@
 <?php
 
-namespace Runn\tests\ValueObjects\Values\UuidValue;
+namespace Runn\Tests\ValueObjects\Values;
 
+use PHPUnit\Framework\TestCase;
 use Runn\ValueObjects\SingleValueObject;
 use Runn\ValueObjects\Values\UuidValue;
 
-class UuidValueTest extends \PHPUnit_Framework_TestCase
+/**
+ * Class UuidValueTest
+ * @package Tests\ValueObjects\Values
+ */
+class UuidValueTest extends TestCase
 {
-
     /**
+     * @param $input
+     * @dataProvider invalidValueProvider
+     * @expectedException \Runn\Validation\Exceptions\InvalidUuid
+     * @throws \Runn\Validation\ValidationError
+     */
+    public function testInvalidValue($input): void
+    {
+        new UuidValue($input);
+    }
+    /**
+     * @param $input
+     * @dataProvider emptyValueProvider
      * @expectedException \Runn\Validation\Exceptions\EmptyValue
+     * @throws \Runn\Validation\ValidationError
      */
-    public function testEmpty()
+    public function testEmptyValue($input): void
     {
-        $valueObject = new UuidValue();
+        new UuidValue($input);
     }
 
     /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidUuid
+     * @throws \Runn\Validation\ValidationError
      */
-    public function testInvalidString()
-    {
-        $valueObject = new UuidValue(42);
-    }
-
-    /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidUuid
-     */
-    public function testInvalidUuid()
-    {
-        $valueObject = new UuidValue('foo');
-    }
-
-    public function testConstruct()
+    public function testConstruct(): void
     {
         $valueObject = new UuidValue('e3b9876f-86e4-4895-8648-1b6ee8091786');
 
@@ -41,5 +45,38 @@ class UuidValueTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInternalType('string', $valueObject->getValue());
         $this->assertSame('{E3B9876F-86E4-4895-8648-1B6EE8091786}', $valueObject->getValue());
+    }
+
+    /**
+     * @return array
+     */
+    public function invalidValueProvider(): array
+    {
+        return [
+            'int' => [42],
+            'float' => [1.23],
+            'true' => [true],
+            'not empty string' => ['blah-blah-blah'],
+            'array' => [[1, 2, 3]],
+            'object' => [
+                new class
+                {
+                    //
+                }
+            ],
+            'resource' => [fopen('php://input', 'rb')],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function emptyValueProvider(): array
+    {
+        return [
+            'null' => [null],
+            'false' => [false],
+            'empty string' => [''],
+        ];
     }
 }

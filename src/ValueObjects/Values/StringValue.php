@@ -14,10 +14,8 @@ use Runn\ValueObjects\SingleValueObject;
  * Class StringValue
  * @package Runn\ValueObjects\Values
  */
-class StringValue
-    extends SingleValueObject
+class StringValue extends SingleValueObject
 {
-
     /**
      * @return \Runn\Validation\Validator
      */
@@ -33,5 +31,4 @@ class StringValue
     {
         return new StringSanitizer();
     }
-
 }

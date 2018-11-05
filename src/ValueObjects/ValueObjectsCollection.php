@@ -10,19 +10,15 @@ use Runn\Core\TypedCollection;
  * Class ValueObjectsCollection
  * @package Runn\ValueObjects
  */
-abstract class ValueObjectsCollection
-    extends TypedCollection
-    implements ValueObjectInterface
+abstract class ValueObjectsCollection extends TypedCollection implements ValueObjectInterface
 {
 
     use ValueObjectTrait;
 
     /**
      * @param iterable|null $data
-     *
-     * @7.1
      */
-    public function __construct(/* iterable */$data = null)
+    public function __construct(/*iterable*/ $data = null)
     {
         parent::__construct($data);
     }
@@ -30,7 +26,7 @@ abstract class ValueObjectsCollection
     /**
      * @return string
      */
-    public static function getType()
+    public static function getType(): string
     {
         return ValueObjectInterface::class;
     }
@@ -38,7 +34,7 @@ abstract class ValueObjectsCollection
     /**
      * @return array
      */
-    protected function notgetters(): array
+    protected function notGetters(): array
     {
         return ['type', 'value'];
     }
@@ -46,19 +42,20 @@ abstract class ValueObjectsCollection
     /**
      * @return array
      */
-    protected function notsetters(): array
+    protected function notSetters(): array
     {
         return ['value'];
     }
 
     /**
      * Does value need cast to this (or another) class?
+     * @param mixed $key
      * @param mixed $value
      * @return bool
      */
     protected function needCasting($key, $value): bool
     {
-        if (is_null($value) || is_scalar($value)) {
+        if (null === $value || is_scalar($value)) {
             return true;
         }
         return parent::needCasting($key, $value);
@@ -73,13 +70,13 @@ abstract class ValueObjectsCollection
     /**
      * @return array
      */
-    public function getValue()
+    public function getValue(): array
     {
         $ret = [];
         foreach ($this as $key => $el) {
+            /** @var ComplexValueObject $el */
             $ret[$key] = null !== $el ? $el->getValue() : null;
         }
         return $ret;
     }
-
 }

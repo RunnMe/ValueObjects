@@ -14,10 +14,8 @@ use Runn\ValueObjects\SingleValueObject;
  * Class UuidValue
  * @package Runn\ValueObjects\Values
  */
-class UuidValue
-    extends SingleValueObject
+class UuidValue extends SingleValueObject
 {
-
     /**
      * @return \Runn\Validation\Validator
      */
@@ -33,5 +31,4 @@ class UuidValue
     {
         return new UuidSanitizer();
     }
-
 }

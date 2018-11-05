@@ -11,12 +11,8 @@ use Throwable;
  * Class InvalidFieldValue
  * @package Runn\ValueObjects\Errors
  */
-class InvalidFieldValue
-    extends Exception
-    implements ComplexValueObjectFieldErrorInterface
-
+class InvalidFieldValue extends Exception implements ComplexValueObjectFieldErrorInterface
 {
-
     protected $field;
     protected $value;
 
@@ -28,7 +24,7 @@ class InvalidFieldValue
      * @param int $code
      * @param Throwable|null $previous
      */
-    public function __construct(string $field, $value, $message = "", $code = 0, Throwable $previous = null)
+    public function __construct(string $field, $value, $message = '', $code = 0, Throwable $previous = null)
     {
         $this->field = $field;
         $this->value = $value;
@@ -50,5 +46,4 @@ class InvalidFieldValue
     {
         return $this->value;
     }
-
 }

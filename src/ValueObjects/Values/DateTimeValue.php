@@ -14,10 +14,8 @@ use Runn\ValueObjects\SingleValueObject;
  * Class DateTimeValue
  * @package Runn\ValueObjects\Values
  */
-class DateTimeValue
-    extends SingleValueObject
+class DateTimeValue extends SingleValueObject
 {
-
     /**
      * @return \Runn\Validation\Validator
      */
@@ -42,5 +40,4 @@ class DateTimeValue
     {
         return $this->getValue()->format('c');
     }
-
 }

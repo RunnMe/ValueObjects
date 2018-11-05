@@ -14,10 +14,8 @@ use Runn\ValueObjects\SingleValueObject;
  * Class IntValue
  * @package Runn\ValueObjects\Values
  */
-class IntValue
-    extends SingleValueObject
+class IntValue extends SingleValueObject
 {
-
     /**
      * @return \Runn\Validation\Validator
      */
@@ -33,5 +31,4 @@ class IntValue
     {
         return new IntSanitizer();
     }
-
 }

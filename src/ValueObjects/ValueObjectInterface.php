@@ -12,14 +12,13 @@ namespace Runn\ValueObjects;
  */
 interface ValueObjectInterface
 {
-
     /**
      * "Static constructor"
      *
      * @param mixed $value
      * @return self
      */
-    public static function new($value = null);
+    public static function new($value = null)/*: self*/;
 
     /**
      * @param mixed $value
@@ -46,5 +45,4 @@ interface ValueObjectInterface
      * @return bool
      */
     public function isSame(ValueObjectInterface $object): bool;
-
 }

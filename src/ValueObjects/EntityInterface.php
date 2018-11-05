@@ -10,10 +10,8 @@ namespace Runn\ValueObjects;
  *
  * @codeCoverageIgnore
  */
-interface EntityInterface
-    extends ValueObjectInterface
+interface EntityInterface extends ValueObjectInterface
 {
-
     /**
      * This method always returns an array
      * @return array
@@ -55,5 +53,4 @@ interface EntityInterface
      * @return bool
      */
     public function isEqual(EntityInterface $object): bool;
-
 }

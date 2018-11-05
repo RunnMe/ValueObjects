@@ -14,10 +14,8 @@ use Runn\ValueObjects\SingleValueObject;
  * Class DateValue
  * @package Runn\ValueObjects\Values
  */
-class DateValue
-    extends SingleValueObject
+class DateValue extends SingleValueObject
 {
-
     /**
      * @return \Runn\Validation\Validator
      */
@@ -42,5 +40,4 @@ class DateValue
     {
         return $this->getValue()->format('Y-m-d');
     }
-
 }
