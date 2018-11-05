@@ -20,7 +20,6 @@ use Runn\ValueObjects\Errors\MissingField;
  *
  * Class ComplexValueObject
  * @package Runn\ValueObjects
- *
  */
 abstract class ComplexValueObject implements ValueObjectInterface, ObjectAsArrayInterface, StdGetSetInterface
 {
@@ -110,7 +109,8 @@ abstract class ComplexValueObject implements ValueObjectInterface, ObjectAsArray
      *
      * @7.1
      */
-    protected function setValue(/*iterable */ $data = null)
+    protected function setValue(/*iterable */
+        $data = null)
     {
         if (empty($data)) {
             $data = [];
