@@ -197,7 +197,6 @@ class ComplexValueObjectValidateTest extends \PHPUnit_Framework_TestCase
                 'second' => 2,
                 'third' => [],
             ]) extends ComplexValueObject {
-                /** @7.1 */
                 protected const ERRORS = [
                     'COLLECTION' => CustomComplexValueObjectErrors::class,
                     'INVALID_FIELD' => CustomInvalidFieldError::class,
@@ -255,8 +254,7 @@ class ComplexValueObjectValidateTest extends \PHPUnit_Framework_TestCase
                 'second' => 2,
                 'third' => [],
             ]) extends ComplexValueObject {
-                /** @7.1 */
-                /*protected */const ERRORS = [
+                protected const ERRORS = [
                     'COLLECTION' => CustomComplexValueObjectErrors::class,
                     'INVALID_FIELD' => CustomInvalidFieldError::class,
                     'EMPTY_FIELD_CLASS' => CustomEmptyFieldClassError::class,
@@ -264,7 +262,6 @@ class ComplexValueObjectValidateTest extends \PHPUnit_Framework_TestCase
                     'INVALID_FIELD_VALUE' => CustomInvalidFieldValueError::class,
                     'MISSING_FIELD' => CustomMissingField::class,
                 ];
-                /** @7.1 */
                 protected const SKIP_EXCESS_FIELDS = false;
                 protected static $schema = [
                     'first' => ['class' => null],

@@ -119,7 +119,6 @@ abstract class ComplexValueObject
         foreach ($data as $key => $val) {
             try {
                 $this->$key = $val;
-            // @7.1
             } catch (InvalidField | EmptyFieldClass | InvalidFieldClass $exception) {
                 $errors->add($exception);
             } catch (\Throwable $exception) {

@@ -8,9 +8,6 @@ use Runn\ValueObjects\Errors\InvalidFieldValue;
 class InvalidFieldValueTest extends \PHPUnit_Framework_TestCase
 {
 
-    /**
-     * @7.1
-     */
     public function testConstructEmptyField()
     {
         $this->expectException(\ArgumentCountError::class);

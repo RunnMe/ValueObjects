@@ -17,7 +17,6 @@ abstract class Entity
     implements EntityInterface
 {
 
-    // @7.1
     protected const PK_FIELDS = ['__id'];
 
     /**

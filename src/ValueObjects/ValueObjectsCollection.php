@@ -19,7 +19,6 @@ abstract class ValueObjectsCollection
 
     /**
      * @param iterable|null $data
-     *
      */
     public function __construct($data = null)
     {
