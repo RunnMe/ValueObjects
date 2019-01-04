@@ -34,8 +34,7 @@ abstract class ComplexValueObject
         StdGetSetTrait::innerGet as trait_innerGet;
     }
 
-    /** @7.1 */
-    /*protected */const ERRORS = [
+    protected const ERRORS = [
         'COLLECTION' => ComplexValueObjectErrors::class,
         'INVALID_FIELD' => InvalidField::class,
         'EMPTY_FIELD_CLASS' => EmptyFieldClass::class,
@@ -44,8 +43,7 @@ abstract class ComplexValueObject
         'MISSING_FIELD' => MissingField::class,
     ];
 
-    /** @7.1 */
-    /*protected */const SKIP_EXCESS_FIELDS = true;
+    protected const SKIP_EXCESS_FIELDS = true;
 
     /**
      * @var array
@@ -107,10 +105,8 @@ abstract class ComplexValueObject
     /**
      * @param iterable|null $data
      * @throws \Runn\ValueObjects\Errors\ComplexValueObjectErrors
-     *
-     * @7.1
      */
-    protected function setValue(/*iterable */$data = null)
+    protected function setValue(iterable $data = null)
     {
         if (empty($data)) {
             $data = [];
@@ -124,11 +120,7 @@ abstract class ComplexValueObject
             try {
                 $this->$key = $val;
             // @7.1
-            } catch (InvalidField $exception) {
-                $errors->add($exception);
-            } catch (EmptyFieldClass $exception) {
-                $errors->add($exception);
-            } catch (InvalidFieldClass $exception) {
+            } catch (InvalidField | EmptyFieldClass | InvalidFieldClass $exception) {
                 $errors->add($exception);
             } catch (\Throwable $exception) {
                 $errorInvalidFieldValue = static::ERRORS['INVALID_FIELD_VALUE'];
@@ -151,6 +143,10 @@ abstract class ComplexValueObject
                     $this->$key = null;
                 }
             }
+        }
+
+        if (!$errors->empty()) {
+            throw $errors;
         }
 
         try {

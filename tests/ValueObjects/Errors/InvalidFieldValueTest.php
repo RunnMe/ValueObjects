@@ -13,11 +13,7 @@ class InvalidFieldValueTest extends \PHPUnit_Framework_TestCase
      */
     public function testConstructEmptyField()
     {
-        if (PHP_VERSION_ID >= 70100) {
-            $this->expectException(\ArgumentCountError::class);
-        } else {
-            $this->expectException(\TypeError::class);
-        }
+        $this->expectException(\ArgumentCountError::class);
         $error = new InvalidFieldValue();
     }
 
