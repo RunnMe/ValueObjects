@@ -1,3 +1,10 @@
+7.2.7, 7.3.7, 7.4.7
+===================
+* PHP 7.0 support is dropped
+* PHP 7.1 support is dropped
+* PHP 7.4 support is added
+* some test improvements
+
 7.0.6, 7.1.6, 7.2.6
 ===================
 * `ComplexValueObject` validation minor improvements
