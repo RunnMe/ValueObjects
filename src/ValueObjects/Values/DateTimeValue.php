@@ -34,13 +34,4 @@ class DateTimeValue
         return new DateTimeSanitizer();
     }
 
-    /**
-     * JsonSerializable implementation
-     * @return mixed
-     */
-    public function jsonSerialize()
-    {
-        return $this->getValue()->format('c');
-    }
-
 }
