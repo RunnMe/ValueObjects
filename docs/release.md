@@ -1,6 +1,7 @@
 7.0.6, 7.1.6, 7.2.6
 ===================
 * `ComplexValueObject` validation minor improvements
+* `ComplexValueObject::jsonSerialize()` method fix
 
 7.0.5, 7.1.5, 7.2.5
 ===================

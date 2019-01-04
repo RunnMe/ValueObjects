@@ -460,7 +460,7 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
     public function testJson()
     {
         $object = new class extends ComplexValueObject {};
-        $this->assertSame('[]', json_encode($object));
+        $this->assertSame('{}', json_encode($object));
 
         $object = new class(['foo' => new IntValue(42), 'bar' => new StringValue('baz')]) extends ComplexValueObject {
             protected static $schema = [
