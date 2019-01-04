@@ -11,6 +11,7 @@ use Runn\ValueObjects\Errors\InvalidField;
 use Runn\ValueObjects\Errors\InvalidFieldClass;
 use Runn\ValueObjects\Errors\InvalidFieldValue;
 use Runn\ValueObjects\Errors\MissingField;
+use Runn\ValueObjects\ValueObjectTrait;
 use Runn\ValueObjects\Values\DateTimeValue;
 use Runn\ValueObjects\Values\DateValue;
 use Runn\ValueObjects\Values\IntValue;
@@ -21,6 +22,10 @@ class testComplexValueObject extends ComplexValueObject {
     protected static $schema = [
         'foo' => ['class' => IntValue::class]
     ];
+}
+
+class testValueObjectInterfaceImplementation implements ValueObjectInterface {
+    use ValueObjectTrait;
 }
 
 class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
@@ -491,6 +496,18 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
             ];
         };
         $this->assertSame('{"foo":"2010-01-01","bar":"2010-01-02T12:01:02' . date('P') . '"}', json_encode($object));
+    }
+
+    public function testJsonWithValueObjectInterface()
+    {
+        $object = new class([
+            'foo' => 42,
+        ]) extends ComplexValueObject {
+            protected static $schema = [
+                'foo' => ['class' => testValueObjectInterfaceImplementation::class],
+            ];
+        };
+        $this->assertSame('{"foo":42}', json_encode($object));
     }
 
 }
