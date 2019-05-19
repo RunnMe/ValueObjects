@@ -2,11 +2,11 @@
 
 namespace Runn\tests\ValueObjects\Errors\InvalidFieldClass;
 
+use PHPUnit\Framework\TestCase;
 use Runn\Core\Exception;
 use Runn\ValueObjects\Errors\InvalidFieldClass;
-use Runn\ValueObjects\Errors\InvalidFieldValue;
 
-class InvalidFieldClassTest extends \PHPUnit_Framework_TestCase
+class InvalidFieldClassTest extends TestCase
 {
 
     public function testConstructEmptyField()

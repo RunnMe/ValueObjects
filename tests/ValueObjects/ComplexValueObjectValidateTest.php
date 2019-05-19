@@ -3,6 +3,7 @@
 
 namespace Runn\tests\ValueObjects\ComplexValueObject;
 
+use PHPUnit\Framework\TestCase;
 use Runn\Core\Exception;
 use Runn\Core\Exceptions;
 use Runn\ValueObjects\ComplexValueObject;
@@ -23,7 +24,7 @@ class CustomInvalidFieldClassError extends InvalidFieldClass {}
 class CustomInvalidFieldValueError extends InvalidFieldValue {}
 class CustomMissingField extends MissingField {}
 
-class ComplexValueObjectValidateTest extends \PHPUnit_Framework_TestCase
+class ComplexValueObjectValidateTest extends TestCase
 {
 
     public function testTrue()

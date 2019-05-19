@@ -2,9 +2,11 @@
 
 namespace Runn\tests\ValueObjects\Entity;
 
+use PHPUnit\Framework\TestCase;
 use Runn\Core\Std;
 use Runn\ValueObjects\ComplexValueObject;
 use Runn\ValueObjects\Entity;
+use Runn\ValueObjects\Exception;
 use Runn\ValueObjects\Values\BooleanValue;
 use Runn\ValueObjects\Values\IntValue;
 use Runn\ValueObjects\Values\StringValue;
@@ -28,7 +30,7 @@ class testValueObject2 extends ComplexValueObject {
     ];
 }
 
-class EntityTest extends \PHPUnit_Framework_TestCase
+class EntityTest extends TestCase
 {
 
     public function testPkFields()
@@ -248,10 +250,6 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($entity2->isEqual($entity1));
     }
 
-    /**
-     * @expectedException \Runn\ValueObjects\Exception
-     * @expectedExceptionMessage Can not set field "__id" value because of it is part of primary key
-     */
     public function testImmutablePk()
     {
         $entity = new testEntity(['__id' => 42, 'foo' => 'bar']);
@@ -264,6 +262,9 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('bar', $entity->foo);
         $this->assertInstanceOf(StringValue::class, $entity->getObject('foo'));
         $this->assertEquals(new StringValue('bar'), $entity->getObject('foo'));
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Can not set field "__id" value because of it is part of primary key');
 
         $entity->__id = 13;
     }

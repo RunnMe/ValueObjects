@@ -2,32 +2,28 @@
 
 namespace Runn\tests\ValueObjects\Values\IntValue;
 
+use PHPUnit\Framework\TestCase;
+use Runn\Validation\Exceptions\OutOfEnum;
 use Runn\ValueObjects\Values\EnumValue;
 
-class EnumValueTest extends \PHPUnit_Framework_TestCase
+class EnumValueTest extends TestCase
 {
 
-    /**
-     * @expectedException \Runn\Validation\Exceptions\OutOfEnum
-     */
     public function testEmptyValues1()
     {
+        $this->expectException(OutOfEnum::class);
         $value = new class extends EnumValue { };
     }
 
-    /**
-     * @expectedException \Runn\Validation\Exceptions\OutOfEnum
-     */
     public function testEmptyValues2()
     {
+        $this->expectException(OutOfEnum::class);
         $value = new class('foo') extends EnumValue { };
     }
 
-    /**
-     * @expectedException \Runn\Validation\Exceptions\OutOfEnum
-     */
     public function testInvalid()
     {
+        $this->expectException(OutOfEnum::class);
         $value = new class('foo') extends EnumValue {
             const VALUES = ['bar', 'baz'];
         };
@@ -36,7 +32,7 @@ class EnumValueTest extends \PHPUnit_Framework_TestCase
     public function testValid()
     {
         $value = new class('foo') extends EnumValue {
-            const VALUES = ['foo', 'bar'];
+            public const VALUES = ['foo', 'bar'];
         };
 
         $this->assertInstanceOf(EnumValue::class, $value);

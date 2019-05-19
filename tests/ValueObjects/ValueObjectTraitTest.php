@@ -2,6 +2,7 @@
 
 namespace Runn\tests\ValueObjects\ValueObjectTrait;
 
+use PHPUnit\Framework\TestCase;
 use Runn\ValueObjects\ValueObjectInterface;
 use Runn\ValueObjects\ValueObjectTrait;
 
@@ -9,8 +10,7 @@ class testClass implements ValueObjectInterface {
     use ValueObjectTrait;
 }
 
-class ValueObjectTraitTest
-    extends \PHPUnit_Framework_TestCase
+class ValueObjectTraitTest extends TestCase
 {
 
     public function testEmptyContsruct()
