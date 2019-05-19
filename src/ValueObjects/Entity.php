@@ -19,6 +19,17 @@ abstract class Entity
 
     protected const PK_FIELDS = ['__id'];
 
+    protected $changed = false;
+
+    /**
+     * @param mixed|null $value
+     */
+    public function __construct($value = null)
+    {
+        parent::__construct($value);
+        $this->changed = false;
+    }
+
     /**
      * @return array
      */
@@ -136,6 +147,16 @@ abstract class Entity
             $value = $this->innerCast($field, $value);
         }
         $this->trait_innerSet($field, $value);
+        $this->changed = true;
+    }
+
+    /**
+     * Returns true if this object's value was changed after it was constructed
+     * @return bool
+     */
+    public function isChanged(): bool
+    {
+        return $this->changed;
     }
 
     /**

@@ -11,7 +11,7 @@ use Runn\ValueObjects\Values\BooleanValue;
 use Runn\ValueObjects\Values\IntValue;
 use Runn\ValueObjects\Values\StringValue;
 
-class testEntity extends Entity{
+class testEntity extends Entity {
     protected static $schema = [
         '__id' => ['class' => IntValue::class],
         'foo' =>  ['class' => StringValue::class]
@@ -45,6 +45,7 @@ class EntityTest extends TestCase
         $this->assertSame([], get_class($entity)::getPrimaryKeyFields());
         $this->assertSame([], get_class($entity)::getFieldsListWoPk());
         $this->assertFalse($entity->issetPrimaryKey());
+        $this->assertFalse($entity->isChanged());
 
         $entity = new class extends Entity {};
 
@@ -52,6 +53,7 @@ class EntityTest extends TestCase
         $this->assertSame(['__id'], get_class($entity)::getPrimaryKeyFields());
         $this->assertSame([], get_class($entity)::getFieldsListWoPk());
         $this->assertFalse($entity->issetPrimaryKey());
+        $this->assertFalse($entity->isChanged());
 
         $entity = new class extends Entity {const PK_FIELDS = ['id'];};
 
@@ -60,6 +62,7 @@ class EntityTest extends TestCase
         $this->assertSame(['id'], get_class($entity)::getPrimaryKeyFields());
         $this->assertSame([], get_class($entity)::getFieldsListWoPk());
         $this->assertFalse($entity->issetPrimaryKey());
+        $this->assertFalse($entity->isChanged());
 
         $entity = new class extends Entity {const PK_FIELDS = ['foo', 'bar'];};
 
@@ -68,6 +71,7 @@ class EntityTest extends TestCase
         $this->assertSame(['foo', 'bar'], get_class($entity)::getPrimaryKeyFields());
         $this->assertSame([], get_class($entity)::getFieldsListWoPk());
         $this->assertFalse($entity->issetPrimaryKey());
+        $this->assertFalse($entity->isChanged());
     }
 
     public function testIsPrimaryKeyScalar()
@@ -275,16 +279,19 @@ class EntityTest extends TestCase
 
         $this->assertFalse($entity->issetPrimaryKey());
         $this->assertNull($entity->getPrimaryKey());
+        $this->assertFalse($entity->isChanged());
 
         $entity->__id = 13;
 
         $this->assertTrue($entity->issetPrimaryKey());
         $this->assertSame(13, $entity->getPrimaryKey());
+        $this->assertTrue($entity->isChanged());
     }
 
     public function testMutableField()
     {
         $entity = new testEntity(['__id' => 42, 'foo' => 'bar']);
+        $this->assertFalse($entity->isChanged());
 
         $this->assertSame(42, $entity->getPrimaryKey());
         $this->assertSame(42, $entity->__id);
@@ -296,11 +303,13 @@ class EntityTest extends TestCase
         $this->assertEquals(new StringValue('bar'), $entity->getObject('foo'));
 
         $entity->foo = new StringValue('baz');
+        $this->assertTrue($entity->isChanged());
         $this->assertSame('baz', $entity->foo);
         $this->assertInstanceOf(StringValue::class, $entity->getObject('foo'));
         $this->assertEquals(new StringValue('baz'), $entity->getObject('foo'));
 
         $entity->foo = 'bla';
+        $this->assertTrue($entity->isChanged());
         $this->assertSame('bla', $entity->foo);
         $this->assertInstanceOf(StringValue::class, $entity->getObject('foo'));
         $this->assertEquals(new StringValue('bla'), $entity->getObject('foo'));

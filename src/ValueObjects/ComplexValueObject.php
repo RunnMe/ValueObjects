@@ -81,7 +81,7 @@ abstract class ComplexValueObject
     protected $constructed = false;
 
     /**
-     * @param mixed $value
+     * @param mixed|null $value
      */
     public function __construct($value = null)
     {
