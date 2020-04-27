@@ -2,7 +2,9 @@
 
 namespace Runn\tests\ValueObjects\ValueObjectsCollection;
 
+use PHPUnit\Framework\TestCase;
 use Runn\Core\CollectionInterface;
+use Runn\Core\Exception;
 use Runn\Core\TypedCollection;
 use Runn\Core\TypedCollectionInterface;
 use Runn\ValueObjects\Values\IntValue;
@@ -16,8 +18,7 @@ class testValueObjectsCollection extends ValueObjectsCollection {
     }
 };
 
-class ValueObjectsCollectionTest
-    extends \PHPUnit_Framework_TestCase
+class ValueObjectsCollectionTest extends TestCase
 {
 
     public function testValid()
@@ -91,12 +92,11 @@ class ValueObjectsCollectionTest
         $this->assertSame(3, $collection[2]->getValue());
     }
 
-    /**
-     * @expectedException \Runn\Core\Exception
-     * @expectedExceptionMessage Typed collection type mismatch
-     */
     public function testInvalid()
     {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Typed collection type mismatch');
+
         $collection = new class([
             new IntValue(1),
             new IntValue(2),

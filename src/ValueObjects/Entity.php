@@ -19,6 +19,17 @@ abstract class Entity
 
     protected const PK_FIELDS = ['__id'];
 
+    protected $changed = false;
+
+    /**
+     * @param mixed|null $value
+     */
+    public function __construct($value = null)
+    {
+        parent::__construct($value);
+        $this->changed = false;
+    }
+
     /**
      * @return array
      */
@@ -132,10 +143,30 @@ abstract class Entity
                 throw new Exception('Can not set field "' . $field . '" value because of it is part of primary key which is already set');
             }
         }
+
+        if (!in_array($field, static::getFieldsList())) {
+            if (static::SKIP_EXCESS_FIELDS) {
+                return;
+            } else {
+                $errorsInvalidField = static::ERRORS['INVALID_FIELD'];
+                throw new $errorsInvalidField($field,'Invalid entity field key: "' . $field . '"');
+            }
+        }
+
         if ($this->needCasting($field, $value)) {
             $value = $this->innerCast($field, $value);
         }
         $this->trait_innerSet($field, $value);
+        $this->changed = true;
+    }
+
+    /**
+     * Returns true if this object's value was changed after it was constructed
+     * @return bool
+     */
+    public function isChanged(): bool
+    {
+        return $this->changed;
     }
 
     /**

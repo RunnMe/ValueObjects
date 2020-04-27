@@ -2,16 +2,17 @@
 
 namespace Runn\tests\ValueObjects\Values\DateTimeValue;
 
+use PHPUnit\Framework\TestCase;
+use Runn\Validation\Exceptions\EmptyValue;
+use Runn\Validation\Exceptions\InvalidDateTime;
 use Runn\ValueObjects\Values\DateTimeValue;
 
-class DateTimeValueTest extends \PHPUnit_Framework_TestCase
+class DateTimeValueTest extends TestCase
 {
 
-    /**
-     * @expectedException \Runn\Validation\Exceptions\EmptyValue
-     */
     public function testNull()
     {
+        $this->expectException(EmptyValue::class);
         $valueObject = new DateTimeValue(null);
     }
 
@@ -24,67 +25,51 @@ class DateTimeValueTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals((new \DateTime('2010-01-01 12:34:56')), $valueObject->getValue());
     }
 
-    /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidDateTime
-     */
     public function testBooleanFalse()
     {
+        $this->expectException(InvalidDateTime::class);
         $valueObject = new DateTimeValue(false);
     }
 
-    /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidDateTime
-     */
     public function testBooleanTrue()
     {
+        $this->expectException(InvalidDateTime::class);
         $valueObject = new DateTimeValue(true);
     }
 
-    /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidDateTime
-     */
     public function testInt()
     {
+        $this->expectException(InvalidDateTime::class);
         $valueObject = new DateTimeValue(42);
     }
 
-    /**
-     * @expectedException \Runn\Validation\Exceptions\EmptyValue
-     */
     public function testEmptyString()
     {
+        $this->expectException(EmptyValue::class);
         $valueObject = new DateTimeValue('');
     }
 
-    /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidDateTime
-     */
     public function testInvalidString()
     {
+        $this->expectException(InvalidDateTime::class);
         $valueObject = new DateTimeValue('2010-XX-YY');
     }
 
-    /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidDateTime
-     */
     public function testArray()
     {
+        $this->expectException(InvalidDateTime::class);
         $valueObject = new DateTimeValue([1, 2, 3]);
     }
 
-    /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidDateTime
-     */
     public function testInvalidObject()
     {
+        $this->expectException(InvalidDateTime::class);
         $valueObject = new DateTimeValue(new class {});
     }
 
-    /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidDateTime
-     */
     public function testResource()
     {
+        $this->expectException(InvalidDateTime::class);
         $valueObject = new DateTimeValue(fopen('php://input', 'r'));
     }
 

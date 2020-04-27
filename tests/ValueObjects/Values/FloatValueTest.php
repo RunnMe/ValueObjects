@@ -2,16 +2,16 @@
 
 namespace Runn\tests\ValueObjects\Values\FloatValue;
 
+use PHPUnit\Framework\TestCase;
+use Runn\Validation\Exceptions\InvalidFloat;
 use Runn\ValueObjects\Values\FloatValue;
 
-class FloatValueTest extends \PHPUnit_Framework_TestCase
+class FloatValueTest extends TestCase
 {
 
-    /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidFloat
-     */
     public function testNull()
     {
+        $this->expectException(InvalidFloat::class);
         $valueObject = new FloatValue(null);
     }
 
@@ -19,83 +19,71 @@ class FloatValueTest extends \PHPUnit_Framework_TestCase
     {
         $valueObject = new FloatValue(42);
 
-        $this->assertInternalType('float', $valueObject->getValue());
+        $this->assertIsFloat($valueObject->getValue());
         $this->assertSame(42.0, $valueObject->getValue());
 
         $valueObject = new FloatValue(3.14159);
 
-        $this->assertInternalType('float', $valueObject->getValue());
+        $this->assertIsFloat($valueObject->getValue());
         $this->assertSame(3.14159, $valueObject->getValue());
 
         $valueObject = new FloatValue(1.2e34);
 
-        $this->assertInternalType('float', $valueObject->getValue());
+        $this->assertIsFloat($valueObject->getValue());
         $this->assertSame(1.2e34, $valueObject->getValue());
     }
 
-    /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidFloat
-     */
     public function testBooleanFalse()
     {
+        $this->expectException(InvalidFloat::class);
         $valueObject = new FloatValue(false);
     }
 
-    /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidFloat
-     */
     public function testBooleanTrue()
     {
+        $this->expectException(InvalidFloat::class);
         $valueObject = new FloatValue(true);
     }
 
     public function testInt()
     {
         $valueObject = new FloatValue(0);
-        $this->assertInternalType('float', $valueObject->getValue());
+        $this->assertIsFloat($valueObject->getValue());
         $this->assertSame(0.0, $valueObject->getValue());
 
         $valueObject = new FloatValue(42);
-        $this->assertInternalType('float', $valueObject->getValue());
+        $this->assertIsFloat($valueObject->getValue());
         $this->assertSame(42.0, $valueObject->getValue());
     }
 
-    /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidFloat
-     */
     public function testEmptyString()
     {
+        $this->expectException(InvalidFloat::class);
         $valueObject = new FloatValue('');
     }
 
     public function testString()
     {
         $valueObject = new FloatValue('3.14159');
-        $this->assertInternalType('float', $valueObject->getValue());
+        $this->assertIsFloat($valueObject->getValue());
         $this->assertSame(3.14159, $valueObject->getValue());
     }
 
-    /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidFloat
-     */
     public function testArray()
     {
+        $this->expectException(InvalidFloat::class);
         $valueObject = new FloatValue([1, 2, 3]);
     }
 
-    /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidFloat
-     */
     public function testObject()
     {
+        $this->expectException(InvalidFloat::class);
         $valueObject = new FloatValue(new class {});
     }
 
-    /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidFloat
-     */
     public function testResource()
     {
+        $this->expectException(InvalidFloat::class);
         $valueObject = new FloatValue(fopen('php://input', 'r'));
     }
 

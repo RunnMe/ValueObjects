@@ -51,6 +51,12 @@ interface EntityInterface
     public static function conformsToPrimaryKey($data): bool;
 
     /**
+     * Returns true if this object's value was changed after it was constructed
+     * @return bool
+     */
+    public function isChanged(): bool;
+
+    /**
      * @param \Runn\ValueObjects\EntityInterface $object
      * @return bool
      */
