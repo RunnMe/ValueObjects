@@ -6,7 +6,7 @@
 
     <testsuites>
         <testsuite name="ValueObjects">
-            <directory phpVersionOperator=">=" phpVersion="7.0">ValueObjects</directory>
+            <directory phpVersionOperator=">=" phpVersion="7.2">ValueObjects</directory>
         </testsuite>
     </testsuites>
 

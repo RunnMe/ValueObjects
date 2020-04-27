@@ -1,3 +1,9 @@
+7.2.8, 7.3.8, 7.4.8
+===================
+* Tests are using PHPUnit 8 framework now
+* `isChanged()` method is added for class `Entity`
+* Entity::SKIP_EXCESS_FIELDS fix
+
 7.2.7, 7.3.7, 7.4.7
 ===================
 * PHP 7.0 support is dropped

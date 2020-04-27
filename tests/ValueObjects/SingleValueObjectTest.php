@@ -2,6 +2,7 @@
 
 namespace Runn\tests\ValueObjects\SingleValueObject;
 
+use PHPUnit\Framework\TestCase;
 use Runn\Sanitization\Sanitizer;
 use Runn\Validation\ValidationError;
 use Runn\Validation\Validator;
@@ -11,7 +12,7 @@ use Runn\ValueObjects\ValueObjectInterface;
 
 class testClass extends SingleValueObject {}
 
-class SingleValueObjectTest extends \PHPUnit_Framework_TestCase
+class SingleValueObjectTest extends TestCase
 {
 
     public function testEmptyContsruct()
@@ -63,10 +64,6 @@ class SingleValueObjectTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(Sanitizer::class, $sanitizer->getValue($valueObject));
     }
 
-    /**
-     * @expectedException \Runn\Validation\ValidationError
-     * @expectedExceptionMessage Some validation error
-     */
     public function testConstructNormalValidatorFails()
     {
         $validator = new class extends Validator {
@@ -75,6 +72,9 @@ class SingleValueObjectTest extends \PHPUnit_Framework_TestCase
                 throw new ValidationError($value, 'Some validation error');
             }
         };
+
+        $this->expectException(ValidationError::class);
+        $this->expectExceptionMessage('Some validation error');
         $valueObject = new testClass(42, $validator);
     }
 
@@ -100,10 +100,6 @@ class SingleValueObjectTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('42', (string)$valueObject);
     }
 
-    /**
-     * @expectedException \Runn\Validation\ValidationError
-     * @expectedExceptionMessage Value object validation error
-     */
     public function testConstructAbnormalValidatorFails()
     {
         $validator = new class extends Validator {
@@ -115,6 +111,9 @@ class SingleValueObjectTest extends \PHPUnit_Framework_TestCase
                 throw new ValidationError($value, 'Some validation error');
             }
         };
+
+        $this->expectException(ValidationError::class);
+        $this->expectExceptionMessage('Value object validation error');
         $valueObject = new testClass(42, $validator);
     }
 

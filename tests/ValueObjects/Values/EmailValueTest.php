@@ -2,20 +2,19 @@
 
 namespace Runn\tests\ValueObjects\Values\EmailValue;
 
+use PHPUnit\Framework\TestCase;
 use Runn\Validation\Exceptions\EmptyValue;
 use Runn\Validation\Exceptions\InvalidEmail;
 use Runn\ValueObjects\Values\EmailValue;
 use Runn\ValueObjects\Values\StringValue;
 use Runn\ValueObjects\SingleValueObject;
 
-class EmailValueTest extends \PHPUnit_Framework_TestCase
+class EmailValueTest extends TestCase
 {
 
-    /**
-     * @expectedException \Runn\Validation\Exceptions\EmptyValue
-     */
     public function testNull()
     {
+        $this->expectException(EmptyValue::class);
         $valueObject = new EmailValue(null);
     }
 
@@ -27,63 +26,52 @@ class EmailValueTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(StringValue::class, $valueObject);
         $this->assertInstanceOf(EmailValue::class, $valueObject);
 
-        $this->assertInternalType('string', $valueObject->getValue());
+        $this->assertIsString($valueObject->getValue());
         $this->assertSame('foo@bar.baz', $valueObject->getValue());
     }
 
     /**
-     * @expectedException \Runn\Validation\Exceptions\EmptyValue
+     * @todo: fix it, change to InvalidEmail!
      */
     public function testBooleanFalse()
     {
+        $this->expectException(EmptyValue::class);
         $valueObject = new EmailValue(false);
     }
 
-    /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidEmail
-     */
     public function testBooleanTrue()
     {
+        $this->expectException(InvalidEmail::class);
         $valueObject = new EmailValue(true);
     }
 
-    /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidEmail
-     */
     public function testInt()
     {
+        $this->expectException(InvalidEmail::class);
         $valueObject = new EmailValue(42);
     }
 
-    /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidEmail
-     */
     public function testFloat()
     {
+        $this->expectException(InvalidEmail::class);
         $valueObject = new EmailValue(1.23);
     }
 
-    /**
-     * @expectedException \Runn\Validation\Exceptions\EmptyValue
-     */
     public function testEmptyString()
     {
+        $this->expectException(EmptyValue::class);
         $valueObject = new EmailValue('');
     }
 
-    /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidEmail
-     */
     public function testArray()
     {
+        $this->expectException(InvalidEmail::class);
         $valueObject = new EmailValue([1, 2, 3]);
     }
 
-    /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidEmail
-     */
     public function testInvalidObject()
     {
+        $this->expectException(InvalidEmail::class);
         $valueObject = new EmailValue(new class {});
     }
 
@@ -94,15 +82,13 @@ class EmailValueTest extends \PHPUnit_Framework_TestCase
             return 'foo@bar.baz';
         }
         });
-        $this->assertInternalType('string', $valueObject->getValue());
+        $this->assertIsString($valueObject->getValue());
         $this->assertSame('foo@bar.baz', $valueObject->getValue());
     }
 
-    /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidEmail
-     */
     public function testResource()
     {
+        $this->expectException(InvalidEmail::class);
         $valueObject = new EmailValue(fopen('php://input', 'r'));
     }
 

@@ -2,6 +2,7 @@
 
 namespace Runn\tests\ValueObjects\ComplexValueObject;
 
+use PHPUnit\Framework\TestCase;
 use Runn\Core\CollectionInterface;
 use Runn\Core\ObjectAsArrayInterface;
 use Runn\Core\TypedCollection;
@@ -23,7 +24,7 @@ class NullableInnerComplexValueObject extends ComplexValueObject {
     ];
 }
 
-class ComplexComplexValueObjectTest extends \PHPUnit_Framework_TestCase
+class ComplexComplexValueObjectTest extends TestCase
 {
 
     public function testValidSubComplex()
