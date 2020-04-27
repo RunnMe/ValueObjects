@@ -2,14 +2,18 @@
 
 namespace Runn\tests\ValueObjects\Entity;
 
+use PHPUnit\Framework\TestCase;
 use Runn\Core\Std;
 use Runn\ValueObjects\ComplexValueObject;
 use Runn\ValueObjects\Entity;
+use Runn\ValueObjects\Errors\ComplexValueObjectErrors;
+use Runn\ValueObjects\Errors\InvalidField;
+use Runn\ValueObjects\Exception;
 use Runn\ValueObjects\Values\BooleanValue;
 use Runn\ValueObjects\Values\IntValue;
 use Runn\ValueObjects\Values\StringValue;
 
-class testEntity extends Entity{
+class testEntity extends Entity {
     protected static $schema = [
         '__id' => ['class' => IntValue::class],
         'foo' =>  ['class' => StringValue::class]
@@ -28,7 +32,7 @@ class testValueObject2 extends ComplexValueObject {
     ];
 }
 
-class EntityTest extends \PHPUnit_Framework_TestCase
+class EntityTest extends TestCase
 {
 
     public function testPkFields()
@@ -43,6 +47,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $this->assertSame([], get_class($entity)::getPrimaryKeyFields());
         $this->assertSame([], get_class($entity)::getFieldsListWoPk());
         $this->assertFalse($entity->issetPrimaryKey());
+        $this->assertFalse($entity->isChanged());
 
         $entity = new class extends Entity {};
 
@@ -50,6 +55,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(['__id'], get_class($entity)::getPrimaryKeyFields());
         $this->assertSame([], get_class($entity)::getFieldsListWoPk());
         $this->assertFalse($entity->issetPrimaryKey());
+        $this->assertFalse($entity->isChanged());
 
         $entity = new class extends Entity {const PK_FIELDS = ['id'];};
 
@@ -58,6 +64,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(['id'], get_class($entity)::getPrimaryKeyFields());
         $this->assertSame([], get_class($entity)::getFieldsListWoPk());
         $this->assertFalse($entity->issetPrimaryKey());
+        $this->assertFalse($entity->isChanged());
 
         $entity = new class extends Entity {const PK_FIELDS = ['foo', 'bar'];};
 
@@ -66,6 +73,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(['foo', 'bar'], get_class($entity)::getPrimaryKeyFields());
         $this->assertSame([], get_class($entity)::getFieldsListWoPk());
         $this->assertFalse($entity->issetPrimaryKey());
+        $this->assertFalse($entity->isChanged());
     }
 
     public function testIsPrimaryKeyScalar()
@@ -248,10 +256,6 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($entity2->isEqual($entity1));
     }
 
-    /**
-     * @expectedException \Runn\ValueObjects\Exception
-     * @expectedExceptionMessage Can not set field "__id" value because of it is part of primary key
-     */
     public function testImmutablePk()
     {
         $entity = new testEntity(['__id' => 42, 'foo' => 'bar']);
@@ -265,6 +269,9 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(StringValue::class, $entity->getObject('foo'));
         $this->assertEquals(new StringValue('bar'), $entity->getObject('foo'));
 
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Can not set field "__id" value because of it is part of primary key');
+
         $entity->__id = 13;
     }
 
@@ -274,16 +281,19 @@ class EntityTest extends \PHPUnit_Framework_TestCase
 
         $this->assertFalse($entity->issetPrimaryKey());
         $this->assertNull($entity->getPrimaryKey());
+        $this->assertFalse($entity->isChanged());
 
         $entity->__id = 13;
 
         $this->assertTrue($entity->issetPrimaryKey());
         $this->assertSame(13, $entity->getPrimaryKey());
+        $this->assertTrue($entity->isChanged());
     }
 
     public function testMutableField()
     {
         $entity = new testEntity(['__id' => 42, 'foo' => 'bar']);
+        $this->assertFalse($entity->isChanged());
 
         $this->assertSame(42, $entity->getPrimaryKey());
         $this->assertSame(42, $entity->__id);
@@ -295,14 +305,43 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(new StringValue('bar'), $entity->getObject('foo'));
 
         $entity->foo = new StringValue('baz');
+        $this->assertTrue($entity->isChanged());
         $this->assertSame('baz', $entity->foo);
         $this->assertInstanceOf(StringValue::class, $entity->getObject('foo'));
         $this->assertEquals(new StringValue('baz'), $entity->getObject('foo'));
 
         $entity->foo = 'bla';
+        $this->assertTrue($entity->isChanged());
         $this->assertSame('bla', $entity->foo);
         $this->assertInstanceOf(StringValue::class, $entity->getObject('foo'));
         $this->assertEquals(new StringValue('bla'), $entity->getObject('foo'));
+    }
+
+    public function testEmptyComplexObjectInvalidNotSkippedKey()
+    {
+        try {
+            $entity = new class(['foo' => 42]) extends Entity {
+                protected const SKIP_EXCESS_FIELDS = false;
+            };
+        } catch (ComplexValueObjectErrors $errors) {
+            $this->assertCount(1, $errors);
+
+            $this->assertInstanceOf(InvalidField::class, $errors[0]);
+            $this->assertSame('foo', $errors[0]->getField());
+            $this->assertSame('Invalid entity field key: "foo"', $errors[0]->getMessage());
+
+            return;
+        }
+        $this->fail();
+    }
+
+    public function testEmptyComplexObjectInvalidSkippedKey()
+    {
+        $entity = new class(['foo' => 42]) extends Entity {
+            protected const SKIP_EXCESS_FIELDS = true;
+        };
+        $this->assertCount(0, $entity);
+        $this->assertFalse(isset($entity->foo));
     }
 
 }

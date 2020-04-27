@@ -3,6 +3,7 @@
 
 namespace Runn\tests\ValueObjects\ComplexValueObject;
 
+use PHPUnit\Framework\TestCase;
 use Runn\Core\ObjectAsArrayInterface;
 use Runn\ValueObjects\ComplexValueObject;
 use Runn\ValueObjects\Errors\ComplexValueObjectErrors;
@@ -11,6 +12,7 @@ use Runn\ValueObjects\Errors\InvalidField;
 use Runn\ValueObjects\Errors\InvalidFieldClass;
 use Runn\ValueObjects\Errors\InvalidFieldValue;
 use Runn\ValueObjects\Errors\MissingField;
+use Runn\ValueObjects\Exception;
 use Runn\ValueObjects\ValueObjectTrait;
 use Runn\ValueObjects\Values\DateTimeValue;
 use Runn\ValueObjects\Values\DateValue;
@@ -28,7 +30,7 @@ class testValueObjectInterfaceImplementation implements ValueObjectInterface {
     use ValueObjectTrait;
 }
 
-class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
+class ComplexValueObjectTest extends TestCase
 {
 
     public function testEmptyComplexObjectEmptyData()
@@ -364,10 +366,6 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
         $this->fail();
     }
 
-    /*
-     * @expectedException \Runn\ValueObjects\Exception
-     * @expectedExceptionMessage Invalid complex value object field "foo" class
-     */
     public function testInvalidFieldClassConstruct()
     {
         try {
@@ -393,12 +391,11 @@ class ComplexValueObjectTest extends \PHPUnit_Framework_TestCase
         $this->fail();
     }
 
-    /**
-     * @expectedException \Runn\ValueObjects\Exception
-     * @expectedExceptionMessage Can not set field "foo" value because of value object is constructed
-     */
     public function testImmutable()
     {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Can not set field "foo" value because of value object is constructed');
+
         $object = new testComplexValueObject(['foo' => 42]);
 
         $this->assertSame(42, $object->foo);

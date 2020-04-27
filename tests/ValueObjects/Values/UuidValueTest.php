@@ -2,33 +2,30 @@
 
 namespace Runn\tests\ValueObjects\Values\UuidValue;
 
+use PHPUnit\Framework\TestCase;
+use Runn\Validation\Exceptions\EmptyValue;
+use Runn\Validation\Exceptions\InvalidUuid;
 use Runn\ValueObjects\SingleValueObject;
 use Runn\ValueObjects\Values\UuidValue;
 
-class UuidValueTest extends \PHPUnit_Framework_TestCase
+class UuidValueTest extends TestCase
 {
 
-    /**
-     * @expectedException \Runn\Validation\Exceptions\EmptyValue
-     */
     public function testEmpty()
     {
+        $this->expectException(EmptyValue::class);
         $valueObject = new UuidValue();
     }
 
-    /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidUuid
-     */
     public function testInvalidString()
     {
+        $this->expectException(InvalidUuid::class);
         $valueObject = new UuidValue(42);
     }
 
-    /**
-     * @expectedException \Runn\Validation\Exceptions\InvalidUuid
-     */
     public function testInvalidUuid()
     {
+        $this->expectException(InvalidUuid::class);
         $valueObject = new UuidValue('foo');
     }
 
@@ -39,7 +36,7 @@ class UuidValueTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(SingleValueObject::class, $valueObject);
         $this->assertInstanceOf(UuidValue::class, $valueObject);
 
-        $this->assertInternalType('string', $valueObject->getValue());
+        $this->assertIsString($valueObject->getValue());
         $this->assertSame('{E3B9876F-86E4-4895-8648-1B6EE8091786}', $valueObject->getValue());
     }
 }
