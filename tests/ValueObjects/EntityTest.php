@@ -6,6 +6,8 @@ use PHPUnit\Framework\TestCase;
 use Runn\Core\Std;
 use Runn\ValueObjects\ComplexValueObject;
 use Runn\ValueObjects\Entity;
+use Runn\ValueObjects\Errors\ComplexValueObjectErrors;
+use Runn\ValueObjects\Errors\InvalidField;
 use Runn\ValueObjects\Exception;
 use Runn\ValueObjects\Values\BooleanValue;
 use Runn\ValueObjects\Values\IntValue;
@@ -313,6 +315,33 @@ class EntityTest extends TestCase
         $this->assertSame('bla', $entity->foo);
         $this->assertInstanceOf(StringValue::class, $entity->getObject('foo'));
         $this->assertEquals(new StringValue('bla'), $entity->getObject('foo'));
+    }
+
+    public function testEmptyComplexObjectInvalidNotSkippedKey()
+    {
+        try {
+            $entity = new class(['foo' => 42]) extends Entity {
+                protected const SKIP_EXCESS_FIELDS = false;
+            };
+        } catch (ComplexValueObjectErrors $errors) {
+            $this->assertCount(1, $errors);
+
+            $this->assertInstanceOf(InvalidField::class, $errors[0]);
+            $this->assertSame('foo', $errors[0]->getField());
+            $this->assertSame('Invalid entity field key: "foo"', $errors[0]->getMessage());
+
+            return;
+        }
+        $this->fail();
+    }
+
+    public function testEmptyComplexObjectInvalidSkippedKey()
+    {
+        $entity = new class(['foo' => 42]) extends Entity {
+            protected const SKIP_EXCESS_FIELDS = true;
+        };
+        $this->assertCount(0, $entity);
+        $this->assertFalse(isset($entity->foo));
     }
 
 }

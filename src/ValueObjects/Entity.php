@@ -143,6 +143,16 @@ abstract class Entity
                 throw new Exception('Can not set field "' . $field . '" value because of it is part of primary key which is already set');
             }
         }
+
+        if (!in_array($field, static::getFieldsList())) {
+            if (static::SKIP_EXCESS_FIELDS) {
+                return;
+            } else {
+                $errorsInvalidField = static::ERRORS['INVALID_FIELD'];
+                throw new $errorsInvalidField($field,'Invalid entity field key: "' . $field . '"');
+            }
+        }
+
         if ($this->needCasting($field, $value)) {
             $value = $this->innerCast($field, $value);
         }
