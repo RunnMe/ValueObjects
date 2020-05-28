@@ -3,7 +3,7 @@
 * Тесты теперь используют фреймворк PHPUnit
 * К классу `Entity` добавлен метод `isChanged()`
 * Исправлен баг с `Entity::SKIP_EXCESS_FIELDS`
-* В схему класса `ComplexValueObject` добавлен новый параметр `json.skip-if-null` is added 
+* В схему класса `ComplexValueObject` добавлен новый параметр `json.skip-if-null` 
 
 7.2.7, 7.3.7, 7.4.7
 ===================
