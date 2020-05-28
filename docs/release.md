@@ -2,7 +2,8 @@
 ===================
 * Tests are using PHPUnit 8 framework now
 * `isChanged()` method is added for class `Entity`
-* Entity::SKIP_EXCESS_FIELDS fix
+* `Entity::SKIP_EXCESS_FIELDS` fix
+* `ComplexValueObject` schema new parameter `json.skip-if-null` is added
 
 7.2.7, 7.3.7, 7.4.7
 ===================
