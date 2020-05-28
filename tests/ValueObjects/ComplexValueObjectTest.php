@@ -505,4 +505,21 @@ class ComplexValueObjectTest extends TestCase
         $this->assertSame('{"foo":42}', json_encode($object));
     }
 
+    public function testJsonWithSkipIfNullFields()
+    {
+        $object = new class([
+            'foo' => null,
+            'bar' => null,
+            'baz' => null
+        ]) extends ComplexValueObject {
+            protected static $schema = [
+                'foo' => ['class' => IntValue::class, 'default' => null],
+                'bar' => ['class' => IntValue::class, 'default' => null, 'json' => ['skip-if-null' => true]],
+                'baz' => ['class' => IntValue::class, 'default' => null, 'json' => ['skip-if-null' => false]],
+            ];
+        };
+        $this->assertSame('{"baz":null}', json_encode($object));
+
+    }
+
 }
