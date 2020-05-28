@@ -180,11 +180,21 @@ abstract class ComplexValueObject
 
     }
 
+    /**
+     * @param $key
+     * @param $val
+     * @throws Exception
+     */
     protected function innerSet($key, $val)
     {
         $this->setField($key, $val);
     }
 
+    /**
+     * @param $field
+     * @param $value
+     * @throws Exception
+     */
     protected function setField($field, $value)
     {
         if ($this->constructed) {
@@ -230,6 +240,11 @@ abstract class ComplexValueObject
         return true;
     }
 
+    /**
+     * @param $key
+     * @param $value
+     * @return mixed
+     */
     protected function innerCast($key, $value)
     {
         if (empty(static::getSchema()[$key]['class'])) {
@@ -299,9 +314,10 @@ abstract class ComplexValueObject
     public function jsonSerialize()
     {
         $ret = new \stdClass;
+        $schema = static::getSchema();
         foreach ($this->keys() as $key) {
             $obj = $this->getObject($key);
-            if (null !== $obj) {
+            if (null !== $obj || (isset($schema[$key]['json']['skip-if-null'])) && false === $schema[$key]['json']['skip-if-null']) {
                 if ($obj instanceof \JsonSerializable) {
                     $ret->$key = $obj;
                 } elseif ($obj instanceof ValueObjectInterface) {
