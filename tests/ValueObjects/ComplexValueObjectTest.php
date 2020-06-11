@@ -226,7 +226,7 @@ class ComplexValueObjectTest extends TestCase
         $object = new class(['foo' => null, 'bar' => 'baz']) extends ComplexValueObject
         {
             protected static $schema = [
-                'foo' => ['class' => IntValue::class, 'default' => null],
+                'foo' => ['class' => IntValue::class, 'default' => 42],
                 'bar' => ['class' => StringValue::class],
             ];
         };
@@ -238,7 +238,8 @@ class ComplexValueObjectTest extends TestCase
         $this->assertEquals(2, count($object));
         $this->assertSame(['foo', 'bar'], get_class($object)::getFieldsList());
 
-        $this->assertNull($object->foo);
+        $this->assertSame(42, $object->foo);
+        $this->assertInstanceOf(IntValue::class, $object->getObject('foo'));
 
         $this->assertSame('baz', $object->bar);
         $this->assertInstanceOf(StringValue::class, $object->getObject('bar'));
