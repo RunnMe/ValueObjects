@@ -14,7 +14,7 @@ use Throwable;
 class MissingField extends Exception implements ComplexValueObjectFieldErrorInterface
 {
 
-    protected $field;
+    use ComplexValueObjectFieldErrorTrait;
 
     /**
      * MissingField constructor.
@@ -25,26 +25,8 @@ class MissingField extends Exception implements ComplexValueObjectFieldErrorInte
      */
     public function __construct(string $field, $message = "", $code = 0, Throwable $previous = null)
     {
-        $this->field = $field;
+        $this->setField($field);
         parent::__construct($message, $code, $previous);
-    }
-
-    /**
-     * @param string $key
-     * @return static
-     */
-    public function setField(string $key)
-    {
-        $this->field = $key;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getField(): string
-    {
-        return $this->field;
     }
 
 }

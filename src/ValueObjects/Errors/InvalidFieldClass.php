@@ -15,8 +15,9 @@ use Throwable;
 class InvalidFieldClass extends Exception implements ComplexValueObjectFieldErrorInterface
 {
 
-    protected $field;
-    protected $class;
+    use ComplexValueObjectFieldErrorTrait;
+
+    protected/*@7.4 string*/ $class;
 
     /**
      * EmptyFieldClass constructor.
@@ -29,27 +30,9 @@ class InvalidFieldClass extends Exception implements ComplexValueObjectFieldErro
      */
     public function __construct(string $field, string $class, $message = "", $code = 0, Throwable $previous = null)
     {
-        $this->field = $field;
+        $this->setField($field);
         $this->class = $class;
         parent::__construct($message, $code, $previous);
-    }
-
-    /**
-     * @param string $key
-     * @return static
-     */
-    public function setField(string $key)
-    {
-        $this->field = $key;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getField(): string
-    {
-        return $this->field;
     }
 
     /**

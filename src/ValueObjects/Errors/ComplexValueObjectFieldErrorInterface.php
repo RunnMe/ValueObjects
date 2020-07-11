@@ -20,6 +20,6 @@ interface ComplexValueObjectFieldErrorInterface extends ComplexValueObjectErrorI
     /**
      * @return string
      */
-    public function getField(): string;
+    public function getField(): ?string;
 
 }
