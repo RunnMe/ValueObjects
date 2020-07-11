@@ -7,7 +7,7 @@ use Runn\Core\Std;
 use Runn\ValueObjects\ComplexValueObject;
 use Runn\ValueObjects\Entity;
 use Runn\ValueObjects\Errors\ComplexValueObjectErrors;
-use Runn\ValueObjects\Errors\InvalidField;
+use Runn\ValueObjects\Errors\InvalidFieldKey;
 use Runn\ValueObjects\Exception;
 use Runn\ValueObjects\Values\BooleanValue;
 use Runn\ValueObjects\Values\IntValue;
@@ -326,7 +326,7 @@ class EntityTest extends TestCase
         } catch (ComplexValueObjectErrors $errors) {
             $this->assertCount(1, $errors);
 
-            $this->assertInstanceOf(InvalidField::class, $errors[0]);
+            $this->assertInstanceOf(InvalidFieldKey::class, $errors[0]);
             $this->assertSame('foo', $errors[0]->getField());
             $this->assertSame('Invalid entity field key: "foo"', $errors[0]->getMessage());
 

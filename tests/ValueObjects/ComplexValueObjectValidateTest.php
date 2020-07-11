@@ -10,7 +10,7 @@ use Runn\ValueObjects\ComplexValueObject;
 use Runn\ValueObjects\Errors\ComplexValueObjectErrors;
 use Runn\ValueObjects\Errors\EmptyFieldClass;
 use Runn\ValueObjects\Errors\InvalidComplexValue;
-use Runn\ValueObjects\Errors\InvalidField;
+use Runn\ValueObjects\Errors\InvalidFieldKey;
 use Runn\ValueObjects\Errors\InvalidFieldClass;
 use Runn\ValueObjects\Errors\InvalidFieldValue;
 use Runn\ValueObjects\Errors\MissingField;
@@ -18,7 +18,7 @@ use Runn\ValueObjects\Values\BooleanValue;
 use Runn\ValueObjects\Values\IntValue;
 
 class CustomComplexValueObjectErrors extends ComplexValueObjectErrors {}
-class CustomInvalidFieldError extends InvalidField {}
+class CustomInvalidFieldKeyError extends InvalidFieldKey {}
 class CustomEmptyFieldClassError extends EmptyFieldClass {}
 class CustomInvalidFieldClassError extends InvalidFieldClass {}
 class CustomInvalidFieldValueError extends InvalidFieldValue {}
@@ -200,7 +200,7 @@ class ComplexValueObjectValidateTest extends TestCase
             ]) extends ComplexValueObject {
                 protected const ERRORS = [
                     'COLLECTION' => CustomComplexValueObjectErrors::class,
-                    'INVALID_FIELD' => CustomInvalidFieldError::class,
+                    'INVALID_FIELD_KEY' => CustomInvalidFieldKeyError::class,
                     'EMPTY_FIELD_CLASS' => CustomEmptyFieldClassError::class,
                     'INVALID_FIELD_CLASS' => CustomInvalidFieldClassError::class,
                     'INVALID_FIELD_VALUE' => CustomInvalidFieldValueError::class,
@@ -215,11 +215,10 @@ class ComplexValueObjectValidateTest extends TestCase
 
         } catch (ComplexValueObjectErrors $errors) {
 
-            $this->assertCount(6, $errors);
+            $this->assertCount(3, $errors);
 
             $this->assertInstanceOf(CustomComplexValueObjectErrors::class, $errors);
             $this->assertInstanceOf(ComplexValueObjectErrors::class, $errors);
-
 
             $this->assertInstanceOf(CustomEmptyFieldClassError::class, $errors[0]);
             $this->assertSame('first', $errors[0]->getField());
@@ -229,15 +228,6 @@ class ComplexValueObjectValidateTest extends TestCase
 
             $this->assertInstanceOf(CustomInvalidFieldValueError::class, $errors[2]);
             $this->assertSame('third', $errors[2]->getField());
-
-            $this->assertInstanceOf(CustomMissingField::class, $errors[3]);
-            $this->assertSame('first', $errors[3]->getField());
-
-            $this->assertInstanceOf(CustomMissingField::class, $errors[4]);
-            $this->assertSame('second', $errors[4]->getField());
-
-            $this->assertInstanceOf(CustomMissingField::class, $errors[5]);
-            $this->assertSame('third', $errors[5]->getField());
 
             return;
 
@@ -257,7 +247,7 @@ class ComplexValueObjectValidateTest extends TestCase
             ]) extends ComplexValueObject {
                 protected const ERRORS = [
                     'COLLECTION' => CustomComplexValueObjectErrors::class,
-                    'INVALID_FIELD' => CustomInvalidFieldError::class,
+                    'INVALID_FIELD_KEY' => CustomInvalidFieldKeyError::class,
                     'EMPTY_FIELD_CLASS' => CustomEmptyFieldClassError::class,
                     'INVALID_FIELD_CLASS' => CustomInvalidFieldClassError::class,
                     'INVALID_FIELD_VALUE' => CustomInvalidFieldValueError::class,
@@ -273,12 +263,12 @@ class ComplexValueObjectValidateTest extends TestCase
 
         } catch (ComplexValueObjectErrors $errors) {
 
-            $this->assertCount(7, $errors);
+            $this->assertCount(4, $errors);
 
             $this->assertInstanceOf(CustomComplexValueObjectErrors::class, $errors);
             $this->assertInstanceOf(ComplexValueObjectErrors::class, $errors);
 
-            $this->assertInstanceOf(CustomInvalidFieldError::class, $errors[0]);
+            $this->assertInstanceOf(CustomInvalidFieldKeyError::class, $errors[0]);
             $this->assertSame('foo', $errors[0]->getField());
 
             $this->assertInstanceOf(CustomEmptyFieldClassError::class, $errors[1]);
@@ -289,15 +279,6 @@ class ComplexValueObjectValidateTest extends TestCase
 
             $this->assertInstanceOf(CustomInvalidFieldValueError::class, $errors[3]);
             $this->assertSame('third', $errors[3]->getField());
-
-            $this->assertInstanceOf(CustomMissingField::class, $errors[4]);
-            $this->assertSame('first', $errors[4]->getField());
-
-            $this->assertInstanceOf(CustomMissingField::class, $errors[5]);
-            $this->assertSame('second', $errors[5]->getField());
-
-            $this->assertInstanceOf(CustomMissingField::class, $errors[6]);
-            $this->assertSame('third', $errors[6]->getField());
 
             return;
 

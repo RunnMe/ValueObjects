@@ -8,7 +8,7 @@ use Runn\Core\ObjectAsArrayInterface;
 use Runn\ValueObjects\ComplexValueObject;
 use Runn\ValueObjects\Errors\ComplexValueObjectErrors;
 use Runn\ValueObjects\Errors\EmptyFieldClass;
-use Runn\ValueObjects\Errors\InvalidField;
+use Runn\ValueObjects\Errors\InvalidFieldKey;
 use Runn\ValueObjects\Errors\InvalidFieldClass;
 use Runn\ValueObjects\Errors\InvalidFieldValue;
 use Runn\ValueObjects\Errors\MissingField;
@@ -60,7 +60,7 @@ class ComplexValueObjectTest extends TestCase
         } catch (ComplexValueObjectErrors $errors) {
             $this->assertCount(1, $errors);
 
-            $this->assertInstanceOf(InvalidField::class, $errors[0]);
+            $this->assertInstanceOf(InvalidFieldKey::class, $errors[0]);
             $this->assertSame('foo', $errors[0]->getField());
             $this->assertSame('Invalid complex value object field key: "foo"', $errors[0]->getMessage());
 
@@ -304,7 +304,7 @@ class ComplexValueObjectTest extends TestCase
         } catch (ComplexValueObjectErrors $errors) {
             $this->assertCount(3, $errors);
 
-            $this->assertInstanceOf(InvalidField::class, $errors[0]);
+            $this->assertInstanceOf(InvalidFieldKey::class, $errors[0]);
             $this->assertSame('baz', $errors[0]->getField());
             $this->assertSame('Invalid complex value object field key: "baz"', $errors[0]->getMessage());
 
@@ -330,15 +330,11 @@ class ComplexValueObjectTest extends TestCase
                 ];
             };
         } catch (ComplexValueObjectErrors $errors) {
-            $this->assertCount(2, $errors);
+            $this->assertCount(1, $errors);
 
             $this->assertInstanceOf(EmptyFieldClass::class, $errors[0]);
             $this->assertSame('foo', $errors[0]->getField());
             $this->assertSame('Empty complex value object field "foo" class', $errors[0]->getMessage());
-
-            $this->assertInstanceOf(MissingField::class, $errors[1]);
-            $this->assertSame('foo', $errors[1]->getField());
-            $this->assertSame('Missing complex value object field "foo"', $errors[1]->getMessage());
 
             return;
         }
@@ -354,7 +350,7 @@ class ComplexValueObjectTest extends TestCase
                 ];
             };
         } catch (ComplexValueObjectErrors $errors) {
-            $this->assertCount(2, $errors);
+            $this->assertCount(1, $errors);
 
             $this->assertInstanceOf(InvalidFieldValue::class, $errors[0]);
             $this->assertSame('foo', $errors[0]->getField());
@@ -375,16 +371,12 @@ class ComplexValueObjectTest extends TestCase
                 ];
             };
         } catch (ComplexValueObjectErrors $errors) {
-            $this->assertCount(2, $errors);
+            $this->assertCount(1, $errors);
 
             $this->assertInstanceOf(InvalidFieldClass::class, $errors[0]);
             $this->assertSame('foo', $errors[0]->getField());
             $this->assertSame(\stdClass::class, $errors[0]->getClass());
             $this->assertSame('Invalid complex value object field "foo" class', $errors[0]->getMessage());
-
-            $this->assertInstanceOf(MissingField::class, $errors[1]);
-            $this->assertSame('foo', $errors[1]->getField());
-            $this->assertSame('Missing complex value object field "foo"', $errors[1]->getMessage());
 
             return;
         }

@@ -6,14 +6,12 @@ use Runn\ValueObjects\Exception;
 use Throwable;
 
 /**
- * Invalid colplex value object field's name error
+ * Invalid complex value object field's key error
  *
- * Class InvalidField
+ * Class InvalidFieldKey
  * @package Runn\ValueObjects\Errors
  */
-class InvalidField
-    extends Exception
-    implements ComplexValueObjectFieldErrorInterface
+class InvalidFieldKey extends Exception implements ComplexValueObjectFieldErrorInterface
 {
 
     protected $field;
@@ -30,6 +28,16 @@ class InvalidField
     {
         $this->field = $field;
         parent::__construct($message, $code, $previous);
+    }
+
+    /**
+     * @param string $key
+     * @return static
+     */
+    public function setField(string $key)
+    {
+        $this->field = $key;
+        return $this;
     }
 
     /**

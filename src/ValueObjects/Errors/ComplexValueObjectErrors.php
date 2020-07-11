@@ -10,8 +10,7 @@ use Runn\Core\Exceptions;
  * Class ComplexValueObjectErrors
  * @package Runn\ValueObjects\Errors
  */
-class ComplexValueObjectErrors
-    extends Exceptions
+class ComplexValueObjectErrors extends Exceptions
 {
 
     public static function getType()

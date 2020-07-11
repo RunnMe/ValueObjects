@@ -8,7 +8,6 @@ namespace Runn\ValueObjects\Errors;
  * Interface ComplexValueObjectErrorInterface
  * @package Runn\ValueObjects\Errors
  */
-interface ComplexValueObjectErrorInterface
-    extends \Throwable
+interface ComplexValueObjectErrorInterface extends \Throwable
 {
 }

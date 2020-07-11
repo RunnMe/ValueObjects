@@ -12,9 +12,7 @@ use Throwable;
  * @package Runn\ValueObjects\Errors
  *
  */
-class InvalidFieldClass
-    extends Exception
-    implements ComplexValueObjectFieldErrorInterface
+class InvalidFieldClass extends Exception implements ComplexValueObjectFieldErrorInterface
 {
 
     protected $field;
@@ -34,6 +32,16 @@ class InvalidFieldClass
         $this->field = $field;
         $this->class = $class;
         parent::__construct($message, $code, $previous);
+    }
+
+    /**
+     * @param string $key
+     * @return static
+     */
+    public function setField(string $key)
+    {
+        $this->field = $key;
+        return $this;
     }
 
     /**

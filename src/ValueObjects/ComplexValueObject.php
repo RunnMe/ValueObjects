@@ -9,7 +9,7 @@ use Runn\Core\StdGetSetTrait;
 use Runn\ValueObjects\Errors\ComplexValueObjectErrors;
 use Runn\ValueObjects\Errors\EmptyFieldClass;
 use Runn\ValueObjects\Errors\InvalidComplexValue;
-use Runn\ValueObjects\Errors\InvalidField;
+use Runn\ValueObjects\Errors\InvalidFieldKey;
 use Runn\ValueObjects\Errors\InvalidFieldClass;
 use Runn\ValueObjects\Errors\InvalidFieldValue;
 use Runn\ValueObjects\Errors\MissingField;
@@ -22,8 +22,7 @@ use Runn\ValueObjects\Errors\MissingField;
  * @package Runn\ValueObjects
  *
  */
-abstract class ComplexValueObject
-    implements ValueObjectInterface, ObjectAsArrayInterface, StdGetSetInterface
+abstract class ComplexValueObject implements ValueObjectInterface, ObjectAsArrayInterface, StdGetSetInterface
 {
 
     use ValueObjectTrait, StdGetSetTrait
@@ -36,7 +35,7 @@ abstract class ComplexValueObject
 
     protected const ERRORS = [
         'COLLECTION' => ComplexValueObjectErrors::class,
-        'INVALID_FIELD' => InvalidField::class,
+        'INVALID_FIELD_KEY' => InvalidFieldKey::class,
         'EMPTY_FIELD_CLASS' => EmptyFieldClass::class,
         'INVALID_FIELD_CLASS' => InvalidFieldClass::class,
         'INVALID_FIELD_VALUE' => InvalidFieldValue::class,
@@ -116,21 +115,33 @@ abstract class ComplexValueObject
         /** @var ComplexValueObjectErrors $errors */
         $errors = new $errorsCollectionClass;
 
+        $invalidFields = [];
+
         foreach ($data as $key => $val) {
             try {
+
                 $this->$key = $val;
-            } catch (InvalidField | EmptyFieldClass | InvalidFieldClass $exception) {
+
+            } catch (ComplexValueObjectErrors $exceptions) {
+                foreach ($exceptions as $error) {
+                    $error->setField($key . '.' . $error->getField());
+                    $errors->add($error);
+                }
+                $invalidFields[] = $key;
+            } catch (InvalidFieldKey | EmptyFieldClass | InvalidFieldClass $exception) {
                 $errors->add($exception);
+                $invalidFields[] = $key;
             } catch (\Throwable $exception) {
                 $errorInvalidFieldValue = static::ERRORS['INVALID_FIELD_VALUE'];
                 $errors->add(
                     new $errorInvalidFieldValue($key, $val, 'Invalid complex value object field "' . $key . '" value', 0, $exception)
                 );
+                $invalidFields[] = $key;
             }
         }
 
         foreach (static::getSchema() as $key => $field) {
-            if (!isset($this->$key)) {
+            if (!isset($this->$key) && !in_array($key, $invalidFields)) {
                 if (in_array($key, static::getRequiredFieldsList())) {
                     if (!array_key_exists('default', $field)) {
                         $errorMissingField = static::ERRORS['MISSING_FIELD'];
@@ -205,8 +216,8 @@ abstract class ComplexValueObject
             if (static::SKIP_EXCESS_FIELDS) {
                 return;
             } else {
-                $errorsInvalidField = static::ERRORS['INVALID_FIELD'];
-                throw new $errorsInvalidField($field,'Invalid complex value object field key: "' . $field . '"');
+                $errorsInvalidFieldKey = static::ERRORS['INVALID_FIELD_KEY'];
+                throw new $errorsInvalidFieldKey($field,'Invalid complex value object field key: "' . $field . '"');
             }
         }
 

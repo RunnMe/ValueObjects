@@ -10,9 +10,7 @@ use Runn\ValueObjects\Exception;
  * @package Runn\ValueObjects\Errors
  *
  */
-class EmptyFieldClass
-    extends Exception
-    implements ComplexValueObjectFieldErrorInterface
+class EmptyFieldClass extends Exception implements ComplexValueObjectFieldErrorInterface
 {
 
     protected $field;
@@ -29,6 +27,16 @@ class EmptyFieldClass
     {
         $this->field = $field;
         parent::__construct($message, $code, $previous);
+    }
+
+    /**
+     * @param string $key
+     * @return static
+     */
+    public function setField(string $key)
+    {
+        $this->field = $key;
+        return $this;
     }
 
     /**

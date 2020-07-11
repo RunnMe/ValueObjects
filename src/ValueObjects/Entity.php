@@ -12,9 +12,7 @@ use Runn\Core\ObjectAsArrayInterface;
  * Class Entity
  * @package Runn\ValueObjects
  */
-abstract class Entity
-    extends ComplexValueObject
-    implements EntityInterface
+abstract class Entity extends ComplexValueObject implements EntityInterface
 {
 
     protected const PK_FIELDS = ['__id'];
@@ -148,8 +146,8 @@ abstract class Entity
             if (static::SKIP_EXCESS_FIELDS) {
                 return;
             } else {
-                $errorsInvalidField = static::ERRORS['INVALID_FIELD'];
-                throw new $errorsInvalidField($field,'Invalid entity field key: "' . $field . '"');
+                $errorsInvalidFieldKey = static::ERRORS['INVALID_FIELD_KEY'];
+                throw new $errorsInvalidFieldKey($field,'Invalid entity field key: "' . $field . '"');
             }
         }
 
